@@ -54,7 +54,7 @@
     type          = bc,
     author        = Henrieta Micheľová,
     gender        = f,
-    advisor       = prof. RNDr. Ivana Černá CSc.,
+    advisor       = prof. RNDr. Ivana Černá{,} CSc.,
     title         = {Distribuované algoritmy pro rekonfiguraci platformy RoFI},
     TeXtitle      = {Distribuované algoritmy pro rekonfiguraci platformy RoFI},
     keywords      = {RoFI platforma, MPI, ...},
@@ -90,6 +90,44 @@
 \begin{document}
 \chapter*{Úvod}
 \addcontentsline{toc}{chapter}{Úvod}
+
+\chapter{Popis platformy RoFI}
+RoFI je modulárna robotická platforma, ktorá vzniká na pôde Fakulty informatiky Masarykovej univerzity. Táto platforma zastrešuje vývoj modulárnych robotov a iného príslušenstva po ich hardvérovej, ale aj softvérovej stránke na rôznych úrovniach. 
+
+Primárnym cieľom platformy RoFI je vytvorenie modulárnych robotov, ktoré je možné využiť k rôznym úlohám. Príkladom sú úlohy ako prechádzanie cez úzke priestory, prekonávanie prekážok a podobne. 
+
+Ich dizajn je navrhovaný tak, aby bolo jednoduché a nie príliš finančne náročné ich fyzicky skonštruovať. Softvérové vybavenie pokrýva široké spektrum požiadaviek modulárnych robotov a je jednoduché na prácu aj menej skúseným užívateľom. Zároveň je platforma navrhnutá tak, aby bola ľahko rozšíriteľná o dodatočné periférie a pasívne prvky. 
+
+Základnou jednotkou platformy RoFI sú moduly \cite{mrazekMasterThesis}, ktoré sú schopné sa vzájomne fyzicky prepojiť a zároveň medzi sebou komunikovať \cite{rofiCom}. Okrem toho sa každý modul dokáže pripojiť aj na pasívne prvky. 
+
+Prepojenie viacerých modulov umožňuje vytvoriť tzv. RoFIbotov \cite{rofiWeb}, ktoré majú širšie spektrum funkcionalít ako samostatné moduly. Cieľom tejto práce je práve zamerať sa na RoFIbotov a ich schopnosť rekonfigurovať sa za špecifických podmienok (podrobnejší popis v kapitole \ref{sec:restrictions}). 
+
+Pre účel tejto práce je v kapitole \ref{sec:moduleSpec} popísaná iba časť hardvérového vybavenia modulu a schopnosti prepájania modulov. Ďalšie rozšírenia, softvérové vybavenie a iné komponenty a návody sa nachádzajú sa stránkach platformy \cite{rofiWeb}. 
+
+\section{Formálna špecifikácia modulov}
+\label{sec:moduleSpec}
+Modul platformy RoFI bol navrhnutý tak, aby bol tzv. \textit{lattice type}\footnote{v preklade kryštálová mriežka - každý modul je umiestnený v pravidelnej 3D mriežke} a zároveň má vlastnosť \textit{grid-awareness}\footnote{pri pohybe modulu zasahuje modul do najnižšieho počtu polí mriežky}. V súčasnej dobe je platforma RoFI prispôsobená na mriežku o veľkosti 10\,cm. Podrobný popis vlastností sa nachádza v diplomovej práci \cite{mrazekMasterThesis}. 
+
+Každý z modulov sa skladá z dvoch častí (\textit{side} A a B). Obe sú zložené z dvoch častí, a to \textit{body} a \textit{shoe}. 
+
+/*obrázok s popisom*/
+
+
+
+\section{Obmedzenia pre môj problém}
+\label{sec:restrictions}
+
+\chapter{Vlastná práca}
+\section{Formálna špecifikácia problému, vstupných a výstupných údajov - kompatibilita s vizualizérom}
+\section{Popis ako funguje simulácia a využité knižnice}
+\section{Popis navrhnutých a implementovaných algoritmov na rekonfiguráciu}
+\subsection{Centralizovane-distribuovaný algoritmus}
+\subsection{Distribuovaný algoritmus}
+
+\chapter{Zhodnotenie a záver}
+\section{Porovnanie algoritmov z pohľadu časovej a priestorovej zložitosti}
+\section{Ukážkové konfigurácie a porovnanie rýchlostí ich výpočtov a prípadne rôznorodosti nájdených riešení}
+\section{Popis, ktorý algoritmus a na aké konfigurácie a zmeny v rekonfiguráciách je viac vhodný}
 
   \printbibliography[heading=bibintoc] %% Print the bibliography.
 
