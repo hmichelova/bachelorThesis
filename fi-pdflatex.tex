@@ -26,6 +26,7 @@
   %% More options are listed in the user guide at
   %% <http://mirrors.ctan.org/macros/latex/contrib/fithesis/guide/mu/fi.pdf>.
 ]{fithesis3}
+\usepackage{gensymb}
 %% The following section sets up the locales used in the thesis.
 \usepackage[resetfonts]{cmap} %% We need to load the T2A font encoding
 \usepackage[T1,T2A]{fontenc}  %% to use the Cyrillic fonts with Russian texts.
@@ -102,15 +103,58 @@ Základnou jednotkou platformy RoFI sú moduly \cite{mrazekMasterThesis}, ktoré
 
 Prepojenie viacerých modulov umožňuje vytvoriť tzv. RoFIbotov \cite{rofiWeb}, ktoré majú širšie spektrum funkcionalít ako samostatné moduly. Cieľom tejto práce je práve zamerať sa na RoFIbotov a ich schopnosť rekonfigurovať sa za špecifických podmienok (podrobnejší popis v kapitole \ref{sec:restrictions}). 
 
-Pre účel tejto práce je v kapitole \ref{sec:moduleSpec} popísaná iba časť hardvérového vybavenia modulu a schopnosti prepájania modulov. Ďalšie rozšírenia, softvérové vybavenie a iné komponenty a návody sa nachádzajú sa stránkach platformy \cite{rofiWeb}. 
+Pre účel tejto práce je v kapitole \ref{sec:moduleSpec} popísaná iba časť hardvérového vybavenia modulu a schopnosti prepájania modulov. Ďalšie rozšírenia, softvérové vybavenie a iné komponenty a návody sa nachádzajú na stránkach platformy \cite{rofiWeb}. 
 
 \section{Formálna špecifikácia modulov}
 \label{sec:moduleSpec}
-Modul platformy RoFI bol navrhnutý tak, aby bol tzv. \textit{lattice type}\footnote{v preklade kryštálová mriežka - každý modul je umiestnený v pravidelnej 3D mriežke} a zároveň má vlastnosť \textit{grid-awareness}\footnote{pri pohybe modulu zasahuje modul do najnižšieho počtu polí mriežky}. V súčasnej dobe je platforma RoFI prispôsobená na mriežku o veľkosti 10\,cm. Podrobný popis vlastností sa nachádza v diplomovej práci \cite{mrazekMasterThesis}. 
+Modul platformy RoFI bol navrhnutý tak, aby bol tzv. \textit{lattice type}\footnote{v preklade kryštálová mriežka - každý modul je umiestnený v pravidelnej 3D mriežke} a zároveň má vlastnosť \textit{grid-awareness}\footnote{pri pohybe modulu zasahuje modul do najnižšieho počtu polí mriežky}. V súčasnej dobe je platforma RoFI prispôsobená na mriežku o veľkosti 10\,cm. Podrobný popis vlastností sa nachádza v diplomovej práci \textit{RoFI – Distributed Metamorphic Robots} \cite{mrazekMasterThesis}. 
 
-Každý z modulov sa skladá z dvoch častí (\textit{side} A a B). Obe sú zložené z dvoch častí, a to \textit{body} a \textit{shoe}. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{pictures/module.jpg}
+    \caption{//TODO popis+zdroj}
+    \label{fig:module}
+\end{figure}
 
-/*obrázok s popisom*/
+Každý z modulov sa skladá z dvoch častí (\textit{side A} a \textit{side B}). Každá z nich sa delí na dve časti označené ako \textit{body} a \textit{shoe} (viď. obrázok \ref{fig:module_parts}). 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{pictures/module_parts.pdf}
+    \caption{//TODO popis+zdroj}
+    \label{fig:module_parts}
+\end{figure}
+
+Moduly majú schopnosť sa pohybovať, a to vďaka až trom stupňom voľnosti. Prvé dva z nich umožňujú pohybovať so \textit{shoe} časťou modulu. Konkrétne ide o pohyb okolo osí označovaných ako $\alpha$ a $\beta$  o uhol v rozsahu $\interval[{-90\degree, 90\degree}]$. Posledným stupňom voľnosti je pohyb okolo osi označovanej ako $\gamma$. Tento pohyb umožňuje otáčaním meniť vzájomnú polohu \textit{body} častí modulu a jeho rozsah je $\interval({-180\degree, 180\degree}]$. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{pictures/module_angles.pdf}
+    \caption{//TODO popis+zdroj}
+    \label{fig:module_angle}
+\end{figure}
+
+Ako bolo spomenuté vyššie, tak každý modul má schopnosť pripojiť sa k iným modulom (a vytvoriť tak RoFIbotov) alebo k pasívnym prvkom pomocou dockov. Dockovací systém platformy RoFI je navrhnutý ako tzv. \textit{genderless}, čo umožňuje vzájomné spojenie ľubovoľných dvoch dockov. 
+
+Každý modul obsahuje práve šesť dockov, ktoré sú rozmiestnené po tri na každej \textit{shoe} modulu. Dock je okrem svojej polohy na module definovaný aj orientačným vektorom (viď. obrázok \ref{fig:dock_desc}). Prepojenie je definované vzájomnou polohou orientačných vektorov dockov spojenia. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{pictures/dock_desc.pdf}
+    \caption{//TODO popis+zdroj}
+    \label{fig:dock_desc}
+\end{figure}
+
+Konštrukcia dockov dovoľuje ich prepojenie až v štyroch rôznych polohách. Vzájomná poloha orientačných vektorov dockov môže byť postupne $0\degree$, $90\degree$, $180\degree$ alebo $270\degree$ a tieto prepojenia sa označujú v tomto poradí ako \textit{north - N}, \textit{east - E}, \textit{south - S} a \textit{west - W} (viď. obrázok \ref{fig:dock_orientation}). 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{pictures/dock_orientation.pdf}
+    \caption{//TODO popis+zdroj}
+    \label{fig:dock_orientation}
+\end{figure}
+
+
 
 
 
