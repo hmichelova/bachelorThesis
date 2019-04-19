@@ -93,9 +93,10 @@
 \addcontentsline{toc}{chapter}{Úvod}
 
 \chapter{Popis platformy RoFI}
-RoFI je modulárna robotická platforma, ktorá vzniká na pôde Fakulty informatiky Masarykovej univerzity. Táto platforma zastrešuje vývoj modulárnych robotov a iného príslušenstva po ich hardvérovej, ale aj softvérovej stránke na rôznych úrovniach. 
+\label{sec:platform}
+RoFI je modulárna robotická platforma, ktorá vzniká na pôde Fakulty informatiky Masarykovej univerzity v laboratóriu ParaDiSe\footnote{celý názov: Laboratoř paralelních a distribuovaných systémů (web laboratória: http://paradise.fi.muni.cz/)}. Táto platforma zastrešuje vývoj modulárnych robotov a iného príslušenstva po ich hardvérovej, ale aj softvérovej stránke na rôznych úrovniach. 
 
-Primárnym cieľom platformy RoFI je vytvorenie modulárnych robotov, ktoré je možné využiť k rôznym úlohám. Príkladom sú úlohy ako prechádzanie cez úzke priestory, prekonávanie prekážok a podobne. 
+Primárnym cieľom platformy RoFI je vytvorenie modulárnych robotov, ktoré je možné využiť na rôzne úlohy. Príkladom sú úlohy ako prechádzanie cez úzke priestory, prekonávanie prekážok a podobne. 
 
 Ich dizajn je navrhovaný tak, aby bolo jednoduché a nie príliš finančne náročné ich fyzicky skonštruovať. Softvérové vybavenie pokrýva široké spektrum požiadaviek modulárnych robotov a je jednoduché na prácu aj menej skúseným užívateľom. Zároveň je platforma navrhnutá tak, aby bola ľahko rozšíriteľná o dodatočné periférie a pasívne prvky. 
 
@@ -107,7 +108,7 @@ Pre účel tejto práce je v kapitole \ref{sec:moduleSpec} popísaná iba časť
 
 \section{Formálna špecifikácia modulov}
 \label{sec:moduleSpec}
-Modul platformy RoFI bol navrhnutý tak, aby bol tzv. \textit{lattice type}\footnote{v preklade kryštálová mriežka - každý modul je umiestnený v pravidelnej 3D mriežke} a zároveň má vlastnosť \textit{grid-awareness}\footnote{pri pohybe modulu zasahuje modul do najnižšieho počtu polí mriežky}. V súčasnej dobe je platforma RoFI prispôsobená na mriežku o veľkosti 10\,cm. Podrobný popis vlastností sa nachádza v diplomovej práci \textit{RoFI – Distributed Metamorphic Robots} \cite{mrazekMasterThesis}. 
+Modul platformy RoFI bol navrhnutý tak, aby bol tzv. \textit{lattice type}\footnote{v preklade kryštálová mriežka - každý modul je umiestnený v pravidelnej 3D mriežke} a zároveň má vlastnosť \textit{grid-awareness}\footnote{pri pohybe modulu zasahuje modul do najnižšieho počtu polí mriežky}. V súčasnej dobe je platforma RoFI prispôsobená na mriežku s veľkosťou 10\,cm. Podrobný popis vlastností sa nachádza v diplomovej práci \textit{RoFI – Distributed Metamorphic Robots} \cite{mrazekMasterThesis}. 
 
 \begin{figure}[htbp]
     \centering
@@ -136,7 +137,7 @@ Moduly majú schopnosť sa pohybovať, a to vďaka až trom stupňom voľnosti. 
 
 Ako bolo spomenuté vyššie, tak každý modul má schopnosť pripojiť sa k iným modulom (a vytvoriť tak RoFIbotov) alebo k pasívnym prvkom pomocou dockov. Dockovací systém platformy RoFI je navrhnutý ako tzv. \textit{genderless}, čo umožňuje vzájomné spojenie ľubovoľných dvoch dockov. 
 
-Každý modul obsahuje práve šesť dockov, ktoré sú rozmiestnené po tri na každej \textit{shoe} modulu. Dock je okrem svojej polohy na module definovaný aj orientačným vektorom (viď obrázok \ref{fig:dock_desc}). Prepojenie je definované vzájomnou polohou orientačných vektorov dockov spojenia. 
+Každý modul obsahuje práve šesť dockov, ktoré sú rozmiestnené po tri na každej \textit{shoe} modulu. Dock je okrem svojej polohy na module definovaný aj orientačným vektorom (viď obrázok \ref{fig:dock_desc}). Prepojenie je definované vzájomnou polohou orientačných vektorov dockov spojenia.
 
 \begin{figure}[htbp]
     \centering
@@ -154,14 +155,59 @@ Konštrukcia dockov dovoľuje ich prepojenie až v štyroch rôznych polohách. 
     \label{fig:dock_orientation}
 \end{figure}
 
+\section{Formálna špecifikácia RoFIbotov}
+\label{sec:rofibotSec}
+V kapitole \ref{sec:moduleSpec} je formálny popis jedného modulu platformy RoFI. Ako bolo spomenuté v kapitole \ref{sec:platform}, tak vzájomné prepojenie modulov pomocou dockov vytvára RoFIbotov. 
+
+Parametre RoFIbota, ktoré ho definujú sa dajú rozdeliť do dvoch kategórií.  
+\begin{enumerate}
+    \item Tvar RoFIbota vzhľadom na jeho vnútornú štruktúru: 
+    \begin{itemize}
+        \item množina modulov RoFIbota, 
+        \item množina prepojení (hrán) modulov. 
+    \end{itemize}
+    \item Poloha RoFIbota vzhľadom k okolitému svetu: 
+    \begin{itemize}
+        \item natočenie celého RoFIbota vzhľadom na okolie, 
+        \item umiestnenie RoFIbota do priestoru.  
+    \end{itemize}
+\end{enumerate}
+
+V tejto kapitole sú konkrétnejšie definované iba parametre RoFIbota vzhľadom na vnútornú štruktúru (viď kapitola \ref{sec:restrictions}). 
+
+Každý modul v množine modulov RoFIbota je definovaný ako jedinečný identifikátor modulu a hodnoty všetkých troch stupňov voľnosti modulu. 
+
+Jednotlivé hrany (prepojenia) v RoFIbote sú definované jedinečnými identifikátormi spojených modulov a presným popisom dockov, ktorými sú prepojené. Zároveň aj vzájomnou polohou spojených dockov. 
+
+Fyzické údaje a popisy modulov a spojení sú definované v kapitole \ref{sec:moduleSpec}. Formálne značenie všetkých parametrov a ich rozsahy sú zavedené v kapitole \ref{sec:inputOutput}. 
+
 \section{Formulácia problému}
 \label{sec:restrictions}
+Cieľom tejto práce je navrhnúť, implementovať a evaluovať výsledky pre rekonfiguráciu RoFIbotov za podmienok popísaných v tejto kapitole. 
+
+V kapitole \ref{sec:rofibotSec} sú formálne definovaný RoFIboti. Pre účeli tejto práce je zavedený predpoklad, že RoFIboti nemajú definovaný stav voči okolitému svetu. Tým pádom je RoFIbot správne definovaný iba vzhľadom na svoju vnútornú štruktúru. 
+
+Každý RoFIbot vykonáva svoju rekonfiguráciu "vo vákuu", bez fyzických obmedzení reálneho sveta (ako je napríklad podlaha, či iné prekážky). Zároveň fyzikálne vlastnosti (napríklad gravitácia) pri rekonfigurácii nehrajú žiadnu rolu. 
+
+Nakoľko komunikácia medzi modulmi môže prebiehať po fyzickom spojení pomocou dockov, ale aj bezdrôtovo, tak si zadefinujeme spojitosť RoFIbota. 
+
+RoFIbot je spojitý ak medzi akýmikoľvek dvomi modulmi RoFIbota existuje cesta tvorená modulmi a prepojeniami RoFIbota. To značí, že komunikácia medzi akýmikoľvek dvomi modulmi RoFIbota môže prebiehať výhradne fyzickými spojeniami. 
+
+/*obrazok spojiteho rofibota a nespojiteho rofibota*/
+
+V rámci tejto práce je zavedený predpoklad, že RoFIbot, ktorý sa rekonfiguruje je v počiatočnej konfigurácii, počas celého procesu rekonfigurácie, ale aj v cieľovej konfigurácii spojitý. Toto obmedzenie je podstatné pre odpojenie dvoch modulov (podrobnejší popis v kapitole \ref{sec:reconfigActions}). 
 
 \chapter{Distribuované algoritmy}
-%vlastna praca
+\label{sec:distributedAlgo}
+Popis pohľadu na problém ako distribuovaný - porovnanie s pohľadom čo má Viki. 
+
 \section{Formálna špecifikácia problému}
+\label{sec:inputOutput}
 vstupné a výstupné údaje + kompatibilita s vizualizérom
-\section{-------}
+
+\section{Špecifikácia rekonfigurácie RoFIbota}
+\label{sec:reconfigActions}
+
 
 \chapter{Implementácia}
 \section{Technická špecifikácia a využité knižnice}
