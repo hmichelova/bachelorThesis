@@ -174,7 +174,7 @@ Vzájomné prepojenie modulov pomocou dockov vytvára RoFIbotov. Parametre RoFIb
     \end{itemize}
 \end{enumerate}
 
-\textit{Konfigurácia} RoFIbota je tvar RoFIbota vzhľadom na jeho vnútornú štruktúru, teda množina modulov a ich prepojení. a
+\textit{Konfigurácia} RoFIbota je tvar RoFIbota vzhľadom na jeho vnútornú štruktúru, teda množina modulov a ich prepojení. 
 
 Každý modul v konfigurácii RoFIbota je definovaný jedinečným identifikátorom modulu a hodnotami všetkých troch stupňov voľnosti modulu. 
 
@@ -192,11 +192,9 @@ Pre účely tejto práce je zavedený predpoklad, že RoFIboti nemajú definovan
 
 Každý RoFIbot vykonáva svoju rekonfiguráciu „vo vákuu“, bez fyzických obmedzení reálneho sveta (ako je napríklad podlaha, či iné prekážky). Zároveň fyzikálne zákony (napríklad gravitácia) pri rekonfigurácii nehrajú žiadnu rolu. 
 
-Zároveň musí platiť, že v každom kroku rekonfigurácie musí byť RoFIbot vo validnej konfigurácii, čo napríklad značí, že nesmie dôjsť ku kolíziám a podobne (konkrétny popis v kapitole \ref{sec:reconfigActions}). 
+Zároveň musí platiť, že v každom kroku rekonfigurácie musí byť RoFIbot vo validnej konfigurácii, čo napríklad značí, že nesmie dôjsť ku kolíziám modulov (konkrétny popis v kapitole \ref{sec:reconfigActions}). 
 
 Keďže komunikácia medzi modulmi môže prebiehať po fyzickom spojení pomocou dockov, ale aj bezdrôtovo, tak si zadefinujeme spojitosť RoFIbota. 
-
-RoFIbot je \textit{spojitý}, ak medzi akýmikoľvek dvomi modulmi spojitého RoFIbota existuje cesta tvorená modulmi a prepojeniami RoFIbota. To značí, že komunikácia medzi akýmikoľvek dvomi modulmi RoFIbota môže prebiehať výhradne fyzickými spojeniami (viď príklad spojitej a nespojitej konfigurácie na obrázku \ref{fig:exampleCfg}). 
 
 \begin{figure}[hbt!]
     \centering
@@ -214,14 +212,16 @@ RoFIbot je \textit{spojitý}, ak medzi akýmikoľvek dvomi modulmi spojitého Ro
     \label{fig:exampleCfg}
 \end{figure}
 
+RoFIbot je \textit{spojitý}, ak medzi akýmikoľvek dvomi modulmi spojitého RoFIbota existuje cesta tvorená modulmi a prepojeniami RoFIbota. To značí, že komunikácia medzi akýmikoľvek dvomi modulmi RoFIbota môže prebiehať výhradne fyzickými spojeniami (viď príklad spojitej a nespojitej konfigurácie na obrázku \ref{fig:exampleCfg}). 
+
 V rámci tejto práce je zavedený predpoklad, že RoFIbot, ktorý sa rekonfiguruje, je v počiatočnej konfigurácii, počas celého procesu rekonfigurácie, ale aj v cieľovej konfigurácii spojitý. 
 
 \chapter{Distribuované algoritmy}
 \label{sec:distributedAlgo}
-Popis pohľadu na problém ako distribuovaný - porovnanie s pohľadom čo má Viki. 
 
-\section{Formálna špecifikácia problému}
+\section{Formálna špecifikácia konfigurácie}
 \label{sec:inputOutput}
+
 vstupné a výstupné údaje + kompatibilita s vizualizérom
 
 \section{Špecifikácia rekonfigurácie RoFIbota}
@@ -229,8 +229,11 @@ vstupné a výstupné údaje + kompatibilita s vizualizérom
 
 
 \chapter{Implementácia}
+\label{sec:implementation}
 \section{Technická špecifikácia a využité knižnice}
+\label{sec:libraries}
 \section{Popis algoritmov na rekonfiguráciu}
+\label{sec:algoDesc}
 \subsection{Centralizovane-distribuovaný algoritmus - //TODO premenovat}
 \subsection{Distribuovaný algoritmus}
 
