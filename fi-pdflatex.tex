@@ -218,9 +218,23 @@ V rámci tejto práce je zavedený predpoklad, že RoFIbot, ktorý sa rekonfigur
 
 \chapter{Distribuované algoritmy}
 \label{sec:distributedAlgo}
+Obsahom tejto kapitoly je formálna špecifikácia konfigurácie RoFIbota a prípustných akcií použitých na rekonfiguráciu. Popis samotných algoritmov sa nachádza v kapitole \ref{sec:algoDesc}. 
+
+Diplomová práca \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis} popisuje rekonfiguráciu RoFIbotov z centralizovaného pohľadu, teda s úplnou znalosťou počiatočnej a cieľovej konfigurácie RoFIbota. 
+
+Platforma RoFI je však navrhnutá ako distribuovaný systém, kde najmenšou stavebnou jednotkou je modul. Z toho vyplýva, že RoFIbot nemá žiadnu centralizovanú logickú jednotku, ktorá by dokázala riadiť rekonfiguráciu. 
+
+Algoritmy sú navrhnuté tak, aby každý z modulov s rovnakou verziou algoritmu dokázal zo svojich vstupných údajov (popis v kapitole \ref{sec:inputOutput}) pomocou posielania si správ medzi ostatnými modulmi RoFIbota vykonať jeho rekonfiguráciu. 
+
+Samotný modul nepozná celú konfiguráciu RoFIbota (dokonca pri veľkých konfiguráciách by znalosť celej konfigurácie mohla zberať veľa miesta v pamäti a nebola by potrebná). V tejto práci má každý modul znalosť výhradne o svojom stave. Každý ďalší údaj o stave iných modulov vie získať výhradne posielaním si správ. 
+
+\textit{Stav modulu} je množina nasledujúcich údajov: unikátny identifikátor modulu, aktuálne hodnoty natočenia stupňov voľnosti modulu a údaje o všetkých hranách daného modulu. 
 
 \section{Formálna špecifikácia konfigurácie}
 \label{sec:inputOutput}
+Navrhnuté vstupné a výstupné údaje konfigurácie RoFIbota a prípustných akcii na rekonfiguráciu sú prevzaté z diplomovej práce \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. 
+
+\cite{nausovaBachelorThesis}
 
 vstupné a výstupné údaje + kompatibilita s vizualizérom
 
