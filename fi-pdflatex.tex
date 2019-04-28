@@ -212,30 +212,29 @@ Keďže komunikácia medzi modulmi môže prebiehať po fyzickom spojení pomoco
     \label{fig:exampleCfg}
 \end{figure}
 
-RoFIbot je \textit{spojitý}, ak medzi akýmikoľvek dvomi modulmi spojitého RoFIbota existuje cesta tvorená modulmi a prepojeniami RoFIbota. To značí, že komunikácia medzi akýmikoľvek dvomi modulmi RoFIbota môže prebiehať výhradne fyzickými spojeniami (viď príklad spojitej a nespojitej konfigurácie na obrázku \ref{fig:exampleCfg}). 
+RoFIbot je \textit{spojitý}, ak medzi akýmikoľvek jeho dvomi modulmi RoFIbota existuje cesta tvorená modulmi a prepojeniami. To značí, že komunikácia medzi akýmikoľvek dvomi modulmi spojitého RoFIbota môže prebiehať výhradne fyzickými spojeniami (viď príklad spojitej a nespojitej konfigurácie na obrázku \ref{fig:exampleCfg}). 
 
 V rámci tejto práce je zavedený predpoklad, že RoFIbot, ktorý sa rekonfiguruje, je v počiatočnej konfigurácii, počas celého procesu rekonfigurácie, ale aj v cieľovej konfigurácii spojitý. 
 
 \chapter{Distribuované algoritmy}
 \label{sec:distributedAlgo}
-Obsahom tejto kapitoly je formálna špecifikácia konfigurácie RoFIbota a prípustných akcií použitých na rekonfiguráciu. Popis samotných algoritmov sa nachádza v kapitole \ref{sec:algoDesc}. 
+Obsahom tejto kapitoly je formálna špecifikácia konfigurácie RoFIbota a prípustných akcií použiteľných na rekonfiguráciu. Popis samotných algoritmov sa nachádza v kapitole \ref{sec:algoDesc}. 
 
 Diplomová práca \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis} popisuje rekonfiguráciu RoFIbotov z centralizovaného pohľadu, teda s úplnou znalosťou počiatočnej a cieľovej konfigurácie RoFIbota. 
 
 Platforma RoFI je však navrhnutá ako distribuovaný systém, kde najmenšou stavebnou jednotkou je modul. Z toho vyplýva, že RoFIbot nemá žiadnu centralizovanú logickú jednotku, ktorá by dokázala riadiť rekonfiguráciu. 
 
-Algoritmy sú navrhnuté tak, aby každý z modulov s rovnakou verziou algoritmu dokázal zo svojich vstupných údajov (popis v kapitole \ref{sec:inputOutput}) pomocou posielania si správ medzi ostatnými modulmi RoFIbota vykonať jeho rekonfiguráciu. 
+Distribuované algoritmy na rekonfiguráciu sú navrhnuté tak, aby každý z modulov s rovnakou verziou algoritmu dokázal zo svojich vstupných údajov (popis v kapitole \ref{sec:inputOutput}) pomocou posielania si správ medzi ostatnými modulmi RoFIbota vykonať jeho rekonfiguráciu. 
 
 Samotný modul nepozná celú konfiguráciu RoFIbota (dokonca pri veľkých konfiguráciách by znalosť celej konfigurácie mohla zberať veľa miesta v pamäti a nebola by potrebná). V tejto práci má každý modul znalosť výhradne o svojom stave. Každý ďalší údaj o stave iných modulov vie získať výhradne posielaním si správ. 
 
-\textit{Stav modulu} je množina nasledujúcich údajov: unikátny identifikátor modulu, aktuálne hodnoty natočenia stupňov voľnosti modulu a údaje o všetkých hranách daného modulu. 
+\textit{Stav modulu} je tvorený nasledujúcimi údajmi: unikátny identifikátor modulu, aktuálne hodnoty natočenia stupňov voľnosti modulu a kompletná informácia o všetkých prepojeniach daného modulu. 
 
 \section{Formálna špecifikácia konfigurácie}
 \label{sec:inputOutput}
 --- poznamky
 
-
-Navrhnuté vstupné a výstupné údaje konfigurácie RoFIbota a prípustných akcii na rekonfiguráciu sú prevzaté z diplomovej práce \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. 
+Navrhnuté vstupné a výstupné údaje konfigurácie RoFIbota a prípustných akcií na rekonfiguráciu sú prevzaté z diplomovej práce \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. 
 
 \cite{nausovaBachelorThesis}
 
