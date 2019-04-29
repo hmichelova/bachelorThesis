@@ -272,8 +272,37 @@ V prípade, že RoFIbot sa nedokáže rekonfigurovať z počiatočnej konfigurá
 
 \section{Špecifikácia rekonfigurácie RoFIbota}
 \label{sec:reconfigActions}
-povolene akcie na zmeny
-komunikacia podla sprav
+Atomickou zmenou v konfigurácii RoFIbota je \textit{akcia}, ktorá môže byť dvoch druhov. 
+
+Prvým typom akcií je \textit{akcia rotácie}, ktorá sa deje na jednom z modulov RoFIbota a ide o zmenu jedného z parametrov $\alpha$, $\beta$ alebo $\gamma$. Je definovaná nasledovnými parametrami: 
+\begin{itemize}
+    \item \textit{id} -- id modulu, ktorý mení jeden z uhlov, 
+    \item \textit{joint} -- identifikácia stupeňa voľnosti; $joint \in \{\alpha, \beta, \gamma\}$, 
+    \item \textit{angle} -- orientovaný uhol, o ktorý sa daný joint bude otáčať. 
+\end{itemize}
+
+Druhý typ akcie je \textit{akcia prepojenia}, ktorá definuje spojenie alebo rozpojenie dvoch modulov. Je definovaná nasledujúcimi parametrami: 
+\begin{itemize}
+    \item \textit{add} -- príznak, či ide o prepojenie alebo rozpojenie,
+    \item \textit{edge} -- popis hrany, ktorá buď vznikne alebo zanikne (sedmica definovaná v kapitole \ref{sec:inputOutput}). 
+\end{itemize}
+
+Nie každú akciu je možné aplikovať na akúkoľvek konfiguráciu RoFIbota. \textit{Validná akcia} je akcia, ktorá spĺňa aj nasledujúce podmienky:
+\begin{itemize}
+    \item akcia rotácie: nesmie dôjsť ku kolízii s inými modulmi (viď obrázok \ref{fig:rotationsExample}), 
+    \item akcia prepojenia: docky, ktoré sa majú prepojiť musia byť fyzicky schopné prepojenia (viď obrázok \ref{fig:reconnectionExample}). 
+\end{itemize}
+
+// TODO: obrazok rotacie, kde nastane kolizia a kde nie
+
+// TODO: obrazok spojenia, kde su doky blizko seba a kde nie su
+
+Rekonfigurácia RoFIbota zložená z krokov. \textit{Krok rekonfigurácie} je definovaný ako množina validných akcií. Zároveň pre ne musí platiť že, ak je konfigurácia pred krokom spojitá a validna tak aj počas vykonávania kroku a po jeho vykonaní musí byť konfigurácia spojitá a validna. 
+
+
+--poznamky
+
+povolene akcie na zmeny; komunikacia podla sprav
 
 \chapter{Implementácia}
 \label{sec:implementation}
