@@ -295,10 +295,26 @@ Nie každú akciu je možné aplikovať na akúkoľvek konfiguráciu RoFIbota. \
 
 // TODO: obrazok rotacie, kde nastane kolizia a kde nie
 
-// TODO: obrazok spojenia, kde su doky blizko seba a kde nie su
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}[b]{0.5\textwidth}
+        \includegraphics[width=\textwidth]{pictures/reconnection_example.png}
+        \caption[Pred prepojením]{Príklad konfigurácie pred vytvorením spojenia.}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{pictures/reconnection_example_correct.png}
+        \caption[Správne spojenie]{Správne spojenie modulov.}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+        \includegraphics[width=\textwidth]{pictures/reconnection_example_wrong.png}
+        \caption[Nesprávne prepojenie]{Nesprávne spojenie modulov.}
+    \end{subfigure}
+    \caption[Príklad akcie prepojenia]{Príklad akcie prepojenia.}
+    \label{fig:reconnectionExample}
+\end{figure}
 
 Rekonfigurácia RoFIbota zložená z krokov. \textit{Krok rekonfigurácie} je definovaný ako množina validných akcií. Zároveň pre ne musí platiť že, ak je konfigurácia pred krokom spojitá a validna tak aj počas vykonávania kroku a po jeho vykonaní musí byť konfigurácia spojitá a validna. 
-
 
 --poznamky
 
@@ -332,7 +348,7 @@ Popis, ktorý algoritmus a na aké konfigurácie a zmeny v rekonfiguráciách je
 Rekapitulácia. 
 Ako ďalej zlepšovať algoritmy a čo ešte pridávať a podobne. 
 
-%\listoffigures
+\listoffigures
   \printbibliography[heading=bibintoc] %% Print the bibliography.
 
 
