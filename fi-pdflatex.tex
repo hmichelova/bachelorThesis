@@ -19,7 +19,7 @@
            %% at your faculty.
   table,   %% This option causes the coloring of tables. Replace
            %% with `notable` to restore plain LaTeX tables.
-  nolof,     %% This option prints the List of Figures. Replace with
+  lof,     %% This option prints the List of Figures. Replace with
            %% `nolof` to hide the List of Figures.
   nolot,     %% This option prints the List of Tables. Replace with
            %% `nolot` to hide the List of Tables.
@@ -253,22 +253,22 @@ Ako už bolo popísané v kapitole \ref{sec:moduleSpec}, tak spojenie definujú 
 \end{itemize}
 Zároveň platí, že tieto hodnoty sú z množín: $side1, side2 \in \{A, B\}$; $dock1, dock2 \in \{X+, X-, Z-\}$; $ori \in \{N, E, S, W\}$. 
 
-Každý modul v spojitom RoFIbote, ktorý sa má rekonfigurovať, dostane na vstup svoj aktuálny (počiatočný) stav a zároveň aj svoj koncový stav. 
+Každý modul v spojitom RoFIbotovi, ktorý sa má rekonfigurovať, dostane na vstup svoj aktuálny (počiatočný) stav a zároveň aj svoj koncový stav. 
 
-Predpokladá sa, že údaje, ktoré dostanú moduly sú validné. To znamená, že údaje sú z popísaných rozsahov a množín. Každá hrana je definovaná pre oba prepojené moduly a to v rovnakom tvare. Zároveň, že konfigurácia RoFIbota, ktoré popisujú dané stavy modulov je spojitá a validná. Toto platí ako pre počiatočné aj pre koncové stavy. 
+Predpokladá sa, že údaje, ktoré dostanú moduly, sú validné. To znamená, že údaje sú z popísaných rozsahov a množín. Každá hrana je definovaná pre oba prepojené moduly, a to v rovnakom tvare. Zároveň platí, že konfigurácia RoFIbota, ktorú popisujú dané stavy modulov, je spojitá a validná. Toto platí ako pre počiatočné, tak aj pre koncové stavy. 
 
-Konfigurácia RoFIbota je \textit{validná} ak: 
+Konfigurácia RoFIbota je \textit{validná}, ak: 
 \begin{itemize}
     \item každé prepojenie je vzájomné,
     \item každý dock každého modulu sa podieľa na maximálne jednom prepojení, 
     \item všetky definované prepojenia je možné vytvoriť, 
-    \item nesmie dochádzať k žiadne fyzickej kolízii modulov. 
+    \item nesmie dochádzať k žiadnej fyzickej kolízii modulov. 
 \end{itemize}
 Formálny popis výpočtu kolízií v konfigurácii RoFIbota je podrobnejšie popísaný v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. 
 
-Výstup výpočtu z pohľadu jedného modulu je fyzická kroková zmena stavu z počiatočného do koncového s prihliadnutím na rekonfigurovanie ostatných modulov RoFIbota. Z pohľadu celého programu ide o postupnosť akcií označených poradovým číslom, v ktorom  kroku rekonfigurácie sa má daná akcia vykonať (ich zoznam a formálny popis sa nachádza v kapitole \ref{sec:reconfigActions}). 
+Výstup výpočtu rekonfigurácie z pohľadu jedného modulu je fyzická kroková zmena stavu z počiatočného do koncového s prihliadnutím na rekonfigurovanie ostatných modulov RoFIbota. Z pohľadu celého programu ide o postupnosť akcií označených poradovým číslom, v ktorom  kroku rekonfigurácie sa má daná akcia vykonať (ich zoznam a formálny popis sa nachádza v kapitole \ref{sec:reconfigActions}). 
 
-V prípade, že RoFIbot sa nedokáže rekonfigurovať z počiatočnej konfigurácie do koncovej, tak algoritmy túto skutočnosť dokážu identifikovať. 
+V prípade, že sa RoFIbot nedokáže rekonfigurovať z počiatočnej konfigurácie do koncovej, tak implementované algoritmy túto skutočnosť dokážu identifikovať. 
 
 \section{Špecifikácia rekonfigurácie RoFIbota}
 \label{sec:reconfigActions}
@@ -289,30 +289,57 @@ Druhý typ akcie je \textit{akcia prepojenia}, ktorá definuje spojenie alebo ro
 
 Nie každú akciu je možné aplikovať na akúkoľvek konfiguráciu RoFIbota. \textit{Validná akcia} je akcia, ktorá spĺňa aj nasledujúce podmienky:
 \begin{itemize}
-    \item akcia rotácie: nesmie dôjsť ku kolízii s inými modulmi (viď obrázok \ref{fig:rotationsExample}), 
+    \item akcia rotácie: nesmie dôjsť ku kolízii s inými modulmi (viď obrázok \ref{fig:rotationExample}), 
     \item akcia prepojenia: docky, ktoré sa majú prepojiť musia byť fyzicky schopné prepojenia (viď obrázok \ref{fig:reconnectionExample}). 
 \end{itemize}
 
-// TODO: obrazok rotacie, kde nastane kolizia a kde nie
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}[b]{\textwidth}
+        \centering
+        \includegraphics[width=0.47\textwidth]{pictures/rotation_example.png}
+        \caption[Pred rotáciou]{Príklad konfigurácie pred rotáciou.}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{0.47\textwidth}
+        \includegraphics[width=\textwidth]{pictures/rotation_example_correct.png}
+        \caption[Správna rotácia]{Správna rotácia modulu.}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.47\textwidth}
+        \includegraphics[width=\textwidth]{pictures/rotation_example_wrong.png}
+        \caption[Nesprávna rotácia]{Nesprávna rotácia modulu.}
+    \end{subfigure}
+    \caption[Príklad akcie rotácie]{Príklad akcie rotácie (rotácia bieleho modulu o $90\degree$ uhla $\gamma$).}
+    \label{fig:rotationExample}
+\end{figure}
 
 \begin{figure}[hbt!]
     \centering
-    \begin{subfigure}[b]{0.5\textwidth}
-        \includegraphics[width=\textwidth]{pictures/reconnection_example.png}
+    \begin{subfigure}[b]{\textwidth}
+        \centering
+        \includegraphics[width=0.47\textwidth]{pictures/reconnection_example.png}
         \caption[Pred prepojením]{Príklad konfigurácie pred vytvorením spojenia.}
     \end{subfigure}
 
-    \begin{subfigure}[b]{0.49\textwidth}
+    \begin{subfigure}[b]{0.47\textwidth}
         \includegraphics[width=\textwidth]{pictures/reconnection_example_correct.png}
         \caption[Správne spojenie]{Správne spojenie modulov.}
     \end{subfigure}
-    \begin{subfigure}[b]{0.49\textwidth}
+    \begin{subfigure}[b]{0.47\textwidth}
         \includegraphics[width=\textwidth]{pictures/reconnection_example_wrong.png}
         \caption[Nesprávne prepojenie]{Nesprávne spojenie modulov.}
     \end{subfigure}
-    \caption[Príklad akcie prepojenia]{Príklad akcie prepojenia.}
+    \caption[Príklad akcie prepojenia]{Príklad akcie prepojenia (medzi bielym a modrým modulom).}
     \label{fig:reconnectionExample}
 \end{figure}
+
+% {0, 0, 136},
+% {0, 0, 255},
+% {119, 119, 255},
+% {220, 220, 220},
+% {255, 255, 136},
+% {255, 255, 0},
+% {119, 119, 0}};
 
 Rekonfigurácia RoFIbota zložená z krokov. \textit{Krok rekonfigurácie} je definovaný ako množina validných akcií. Zároveň pre ne musí platiť že, ak je konfigurácia pred krokom spojitá a validna tak aj počas vykonávania kroku a po jeho vykonaní musí byť konfigurácia spojitá a validna. 
 
@@ -348,8 +375,7 @@ Popis, ktorý algoritmus a na aké konfigurácie a zmeny v rekonfiguráciách je
 Rekapitulácia. 
 Ako ďalej zlepšovať algoritmy a čo ešte pridávať a podobne. 
 
-\listoffigures
-  \printbibliography[heading=bibintoc] %% Print the bibliography.
+\printbibliography[heading=bibintoc] %% Print the bibliography.
 
 
 \end{document}
