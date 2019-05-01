@@ -11,7 +11,7 @@
            %% digital version of a document. Replace with `printed`
            %% to enable the default options for the printed version
            %% of a document.
-  twoside, %% This option enables double-sided typesetting. Use at
+  oneside, %% This option enables double-sided typesetting. Use at
            %% least 120 g/m² paper to prevent show-through. Replace
            %% with `oneside` to use one-sided typesetting; use only
            %% if you don’t have access to a double-sided printer,
@@ -116,7 +116,7 @@ Modul platformy RoFI bol navrhnutý tak, aby bol tzv. \textit{lattice type}\foot
 \begin{figure}[hbt!]
     \centering
     \includegraphics[width=0.6\textwidth]{pictures/module.jpg}
-    \caption[Fotografia modulu]{Fotografia modulu \cite{rofiWeb}. TODO - univerzálny}
+    \caption[Fotografia modulu]{Fotografia modulu \cite{rofiWeb}.}
     \label{fig:module}
 \end{figure}
 
@@ -343,7 +343,7 @@ Nie každú akciu je možné aplikovať na akúkoľvek konfiguráciu RoFIbota. \
 
 \textit{Krok rekonfigurácie} je definovaný ako množina validných akcií. Zároveň pre ne musí platiť, že ak je konfigurácia pred krokom spojitá a validná, tak aj počas vykonávania kroku a po jeho vykonaní musí byť konfigurácia spojitá a validná. 
 
-Poradie akcií, ktoré sa vykonávajú v jednom kroku rekofingurácie, nie je definované (prebiehajú zároveň, ale synchronizácia nikdy nie je úplne presná). Nakoľko musí byť RoFIbot spojitý aj počas kroku rekonfigurácie, tak \textit{validný krok} je krok rekonfigurácie taký, že kofingurácia je spojitá aj v prípade, ak sa vykonajú iba všetky rozpojenia a žiadne iné akcie. 
+Poradie akcií, ktoré sa vykonávajú v jednom kroku rekonfigurácie, nie je definované (prebiehajú zároveň, ale synchronizácia nikdy nie je úplne presná). Nakoľko musí byť RoFIbot spojitý aj počas kroku rekonfigurácie, tak \textit{validný krok} je krok rekonfigurácie taký, že konfigurácia je spojitá aj v prípade, ak sa vykonajú iba všetky rozpojenia a žiadne iné akcie. 
 
 Rekonfigurácia RoFIbota je zložená z validných krokov. 
 
@@ -352,11 +352,32 @@ Rekonfigurácia RoFIbota je zložená z validných krokov.
 \label{sec:implementation}
 Platforma RoFI, ako už bolo spomenuté v kapitole \ref{sec:platform}, je open-source projekt. Časť RoFILib\footnote{\url{https://github.com/paradise-fi/RoFI/tree/master/RoFILib}} sa zaoberá vývojom simulácií a vizualizácie, kde patrí aj implementačná časť tejto práce. 
 
+RoFILib je knižnica naprogramovaná v jazyku C++. Táto knižnica poskytuje funkcie na simuláciu rekonfigurácie rôznymi algoritmami a z rôznych pohľadov na problém rekonfigurácie. V súčasnej dobe sú to algoritmy navrhnuté v rámci tejto práce a v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}.
+
+Knižnica zároveň poskytuje možnosť vizualizácie konfigurácií a rekonfigurácií RoFIbotov. Vizualizér vznikol ako bakalárska práca \textit{Vizualizace pro robotickou platformu RoFI} \cite{nausovaBachelorThesis} a dokáže produkovať obrázky konfigurácie alebo videá rekonfigurácie. Obrázky v tejto práci sú výstupom vizualizéru. 
+
 \section{Technická špecifikácia a využité knižnice}
 \label{sec:libraries}
-Implementované algoritmy sú plne kompatibilné so vstupnými a výstupnými súbormi pre platformu RoFI. Vstupné a výstupné súbory a aj typy prístupných akcií na rekonfiguráciu sú prevzaté z diplomovej práce \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. 
+Problémy, ktoré má táto práca riešiť, majú nasledujúce vstupy a výstupy: Na vstupe sa nachádzajú dva súbory, ktoré popisujú počiatočnú a cieľovú konfiguráciu RoFIbota, ktorý sa má rekonfigurovať. Výstupom je súbor, ktorý obsahuje zoznam konfigurácií RoFIbota takých, ktoré vznikli po každom kroku rekonfigurácie. 
 
-kompatibilita s vizualizerom \cite{nausovaBachelorThesis}. 
+Podrobný popis vstupných a výstupných súborov sa nachádza v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. Tieto súbory sú zároveň kompatibilné s vizualizérom. 
+
+Vstupné a výstupné súbory obsahujú celú konfiguráciu RoFIbota, ktorej celková znalosť na vstupe simulácie ľubovoľného modulu nie je pre túto prácu možná. Tým pádom z dôvodu kompatibility so zvyškom knižnice je implementovaný aj preprocessing a postprocessing, ktorý obaľuje implementované algoritmy. 
+
+Algoritmy v tejto práci sú navrhnuté tak, aby každý modul RoFIbota fungoval ako samostatná entita. Komunikácia medzi entitami je možná výhradne pomocou správ. V softvéri fyzických modulov je implementovaný protokol MPI\footnote{Message Passing Interface}. 
+
+Z týchto dôvodov je implementácia navrhnutých algoritmov v jazyku C++ s využitím knižnice OpenMPI \cite{openMPILibrary}. 
+
+Knižnica OpenMPI umožňuje spustiť zadaný počet procesov s rovnakým programom a unikátnou identifikáciou pre každý z nich. Zároveň poskytuje komunikačnú vrstvu medzi zadanými procesmi (príkladom je posielanie správ medzi dvomi konkrétnymi procesmi, broadcast alebo all-to-all komunikácia). 
+
+Simulácia v tejto práci prebieha tak, že každý modul je samostatný proces, ktorý dostane na vstup vstupné informácie (svoj počiatočný a cieľový stav). 
+
+Spustený program následne dokáže pomocou posielania správ medzi procesmi vykonať validné akcie tak, aby sa každý modul rekonfiguroval z počiatočného stavu do cieľového stavu. 
+
+Každú vykonanú akciu sú procesy schopné vhodným spôsobom zapísať do logu. Z logov je následne možné vytvoriť súbor kompatibilný s vizualizérom. 
+
+Simulácia sa má čo najviac podobať fyzickému modelu rekonfigurácie RoFIbota. To znamená, že algoritmy využívajú iba minimálnu sadu funkcií a možností knižnice OpenMPI, a to také, ktoré je možné využiť vo fyzických moduloch. Príkladom tohto obmedzenia je, že algoritmy nevyužívajú zdieľanú pamäť, lebo fyzické moduly nemajú žiadnu zdieľanú pamäť. 
+
 \section{Popis algoritmov na rekonfiguráciu}
 \label{sec:algoDesc}
 \subsection{Centralizovane-distribuovaný algoritmus - //TODO premenovat}
