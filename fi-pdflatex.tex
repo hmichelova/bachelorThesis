@@ -208,7 +208,7 @@ RoFIbot je \textit{spojitý}, ak medzi akýmikoľvek jeho dvomi modulmi existuje
         \label{fig:connectCfg}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
-        \includegraphics[width=\textwidth]{pictures/disconneted_rofibot.png}
+        \includegraphics[width=\textwidth]{pictures/disconnected_rofibot.png}
         \caption[Nespojitá konfigurácia.]{Nespojitá konfigurácia}
         \label{fig:disconnectCfg}
     \end{subfigure}
@@ -218,7 +218,7 @@ RoFIbot je \textit{spojitý}, ak medzi akýmikoľvek jeho dvomi modulmi existuje
 
 V rámci tejto práce je zavedený predpoklad, že RoFIbot, ktorý sa rekonfiguruje, je v počiatočnej konfigurácii, počas celého procesu rekonfigurácie, ale aj v cieľovej konfigurácii spojitý. 
 
-\chapter{Distribuované algoritmy}
+\chapter{Formálny popis problému}
 \label{sec:distributedAlgo}
 Obsahom tejto kapitoly je formálna špecifikácia konfigurácie RoFIbota a prípustných akcií použiteľných na rekonfiguráciu. Popis samotných algoritmov sa nachádza v kapitole \ref{sec:algoDesc}. 
 
@@ -261,7 +261,7 @@ Konfigurácia RoFIbota je \textit{validná}, ak:
 \begin{itemize}
     \item každé prepojenie je vzájomné,
     \item každý dock každého modulu sa podieľa na maximálne jednom prepojení, 
-    \item všetky definované prepojenia je možné vytvoriť, 
+    \item všetky definované prepojenia je možné fyzicky vytvoriť, 
     \item nesmie dochádzať k žiadnej fyzickej kolízii modulov. 
 \end{itemize}
 Formálny popis výpočtu kolízií v konfigurácii RoFIbota je podrobnejšie popísaný v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. 
@@ -277,20 +277,20 @@ Atomickou zmenou v konfigurácii RoFIbota je \textit{akcia}, ktorá môže byť 
 Prvým typom akcií je \textit{akcia rotácie}, ktorá sa deje na jednom z modulov RoFIbota a ide o zmenu jedného z parametrov $\alpha$, $\beta$ alebo $\gamma$. Je definovaná nasledovnými parametrami: 
 \begin{itemize}
     \item \textit{id} -- id modulu, ktorý mení jeden z uhlov, 
-    \item \textit{joint} -- identifikácia stupeňa voľnosti; $joint \in \{\alpha, \beta, \gamma\}$, 
+    \item \textit{joint} -- identifikácia stupňa voľnosti; $joint \in \{\alpha, \beta, \gamma\}$, 
     \item \textit{angle} -- orientovaný uhol, o ktorý sa daný joint bude otáčať. 
 \end{itemize}
 
 Druhý typ akcie je \textit{akcia prepojenia}, ktorá definuje spojenie alebo rozpojenie dvoch modulov. Je definovaná nasledujúcimi parametrami: 
 \begin{itemize}
-    \item \textit{add} -- príznak, či ide o prepojenie alebo rozpojenie,
+    \item \textit{add} -- príznak, či ide o spojenie alebo rozpojenie,
     \item \textit{edge} -- popis hrany, ktorá buď vznikne alebo zanikne (sedmica definovaná v kapitole \ref{sec:inputOutput}). 
 \end{itemize}
 
 Nie každú akciu je možné aplikovať na akúkoľvek konfiguráciu RoFIbota. \textit{Validná akcia} je akcia, ktorá spĺňa aj nasledujúce podmienky:
 \begin{itemize}
     \item akcia rotácie: nesmie dôjsť ku kolízii s inými modulmi (viď obrázok \ref{fig:rotationExample}), 
-    \item akcia prepojenia: docky, ktoré sa majú prepojiť musia byť fyzicky schopné prepojenia (viď obrázok \ref{fig:reconnectionExample}). 
+    \item akcia prepojenia: docky, ktoré sa majú prepojiť, musia byť fyzicky schopné prepojenia (viď obrázok \ref{fig:reconnectionExample}). 
 \end{itemize}
 
 \begin{figure}[hbt!]
@@ -303,11 +303,11 @@ Nie každú akciu je možné aplikovať na akúkoľvek konfiguráciu RoFIbota. \
 
     \begin{subfigure}[b]{0.47\textwidth}
         \includegraphics[width=\textwidth]{pictures/rotation_example_correct.png}
-        \caption[Správna rotácia]{Správna rotácia modulu.}
+        \caption[Validná rotácia]{Validná rotácia modulu.}
     \end{subfigure}
     \begin{subfigure}[b]{0.47\textwidth}
         \includegraphics[width=\textwidth]{pictures/rotation_example_wrong.png}
-        \caption[Nesprávna rotácia]{Nesprávna rotácia modulu.}
+        \caption[Nevalidná rotácia]{Nevalidná rotácia modulu.}
     \end{subfigure}
     \caption[Príklad akcie rotácie]{Príklad akcie rotácie (rotácia bieleho modulu o $90\degree$ uhla $\gamma$).}
     \label{fig:rotationExample}
@@ -317,17 +317,17 @@ Nie každú akciu je možné aplikovať na akúkoľvek konfiguráciu RoFIbota. \
     \centering
     \begin{subfigure}[b]{\textwidth}
         \centering
-        \includegraphics[width=0.47\textwidth]{pictures/reconnection_example.png}
+        \includegraphics[width=0.8\textwidth]{pictures/reconnection_example.png}
         \caption[Pred prepojením]{Príklad konfigurácie pred vytvorením spojenia.}
     \end{subfigure}
 
     \begin{subfigure}[b]{0.47\textwidth}
         \includegraphics[width=\textwidth]{pictures/reconnection_example_correct.png}
-        \caption[Správne spojenie]{Správne spojenie modulov.}
+        \caption[Validné spojenie]{Validné spojenie modulov \\(obidva sa podieľajú na spojení).}
     \end{subfigure}
     \begin{subfigure}[b]{0.47\textwidth}
         \includegraphics[width=\textwidth]{pictures/reconnection_example_wrong.png}
-        \caption[Nesprávne prepojenie]{Nesprávne spojenie modulov.}
+        \caption[Nevalidné prepojenie]{Nevalidné spojenie modulov \\(modrý sa nepodieľa na spojení).}
     \end{subfigure}
     \caption[Príklad akcie prepojenia]{Príklad akcie prepojenia (medzi bielym a modrým modulom).}
     \label{fig:reconnectionExample}
@@ -341,11 +341,12 @@ Nie každú akciu je možné aplikovať na akúkoľvek konfiguráciu RoFIbota. \
 % {255, 255, 0},
 % {119, 119, 0}};
 
-Rekonfigurácia RoFIbota zložená z krokov. \textit{Krok rekonfigurácie} je definovaný ako množina validných akcií. Zároveň pre ne musí platiť že, ak je konfigurácia pred krokom spojitá a validna tak aj počas vykonávania kroku a po jeho vykonaní musí byť konfigurácia spojitá a validna. 
+\textit{Krok rekonfigurácie} je definovaný ako množina validných akcií. Zároveň pre ne musí platiť, že ak je konfigurácia pred krokom spojitá a validná, tak aj počas vykonávania kroku a po jeho vykonaní musí byť konfigurácia spojitá a validná. 
 
---poznamky
+Poradie akcií, ktoré sa vykonávajú v jednom kroku rekofingurácie, nie je definované (prebiehajú zároveň, ale synchronizácia nikdy nie je úplne presná). Nakoľko musí byť RoFIbot spojitý aj počas kroku rekonfigurácie, tak \textit{validný krok} je krok rekonfigurácie taký, že kofingurácia je spojitá aj v prípade, ak sa vykonajú iba všetky rozpojenia a žiadne iné akcie. 
 
-povolene akcie na zmeny; komunikacia podla sprav
+Rekonfigurácia RoFIbota je zložená z validných krokov. 
+
 
 \chapter{Implementácia}
 \label{sec:implementation}
