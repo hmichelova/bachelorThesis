@@ -89,6 +89,10 @@
   commentstyle    = \itshape\color{magenta}}
 \usepackage{floatrow} %% Putting captions above tables
 \floatsetup[table]{capposition=top}
+
+\usepackage{enumitem}
+\setitemize{itemsep=-5pt,topsep=10pt,parsep=10pt,partopsep=10pt}
+\setenumerate{itemsep=-5pt,topsep=10pt,parsep=10pt,partopsep=10pt}
 \begin{document}
 \chapter*{Úvod}
 \addcontentsline{toc}{chapter}{Úvod}
@@ -109,7 +113,7 @@ Základnou jednotkou platformy RoFI sú moduly \cite{mrazekMasterThesis}, ktoré
 
 Prepojenie viacerých modulov umožňuje vytvoriť tzv. RoFIbotov \cite{rofiWeb}, ktoré majú širšie spektrum funkcionalít ako samostatné moduly. Cieľom tejto práce je práve zamerať sa na RoFIbotov (popis v kapitole \ref{sec:rofibotSpec}) a ich schopnosť rekonfigurovať sa za špecifických podmienok (popis v kapitole \ref{sec:problemDesc}). 
 
-Pre účel tejto práce je v kapitole \ref{sec:moduleSpec} popísaná iba časť hardvérového vybavenia modulu a schopnosti prepájania modulov. Ďalšie rozšírenia, softvérové vybavenie a iné komponenty a návody sa nachádzajú na stránkach platformy \cite{rofiWeb}. 
+Pre účel tejto práce je v kapitole \ref{sec:moduleSpec} popísaná iba časť hardvérového vybavenia modulu a schopnosti prepájania modulov. Ďalšie rozšírenia, softvérové vybavenie a iné komponenty a návody sa nachádzajú na stránkach platformy \cite{rofiWeb}.
 
 \section{Popis modulu}
 \label{sec:moduleSpec}
@@ -171,20 +175,18 @@ Vzájomná poloha orientačných vektorov dockov môže byť postupne $0\degree$
 Vzájomné prepojenie modulov pomocou dockov vytvára RoFIbotov. Parametre RoFIbota, ktoré ho definujú, sa dajú rozdeliť do dvoch kategórií:   
 \begin{enumerate}
     \item tvar RoFIbota vzhľadom na jeho vnútornú štruktúru: 
-    \begin{itemize}
+    \begin{itemize}[topsep=-5pt]
         \item množina modulov RoFIbota, 
         \item množina prepojení (hrán) modulov; 
     \end{itemize}
     \item poloha RoFIbota vzhľadom k okolitému svetu: 
-    \begin{itemize}
+    \begin{itemize}[topsep=-5pt]
         \item natočenie celého RoFIbota vzhľadom na okolie, 
         \item umiestnenie RoFIbota do priestoru.  
     \end{itemize}
 \end{enumerate}
 
-\textit{Konfigurácia} RoFIbota je tvar RoFIbota vzhľadom na jeho vnútornú štruktúru, teda množina modulov a ich prepojení. 
-
-Každý modul v konfigurácii RoFIbota je definovaný jedinečným identifikátorom modulu a hodnotami všetkých troch stupňov voľnosti modulu. 
+\textit{Konfigurácia} RoFIbota je tvar RoFIbota vzhľadom na jeho vnútornú štruktúru, teda množina modulov a ich prepojení. Každý modul v konfigurácii RoFIbota je definovaný jedinečným identifikátorom modulu a hodnotami všetkých troch stupňov voľnosti modulu. 
 
 Jednotlivé hrany (prepojenia) v konfigurácii RoFIbota sú definované identifikátormi spojených modulov a presným popisom dockov, ktorými sú prepojené, a vzájomnou polohou spojených dockov. 
 
@@ -339,25 +341,23 @@ Rekonfigurácia RoFIbota je definovaná ako postupnosť validných krokov.
 
 \section{Popis problému}
 \label{sec:problemDesc}
-Cieľom tejto práce je navrhnúť a implementovať algoritmy na rekonfiguráciu RoFIbotov, ktoré spĺňajú podmienky popísané v tejto kapitole a následne evaluovať výsledky. 
+Cieľom tejto práce je navrhnúť a implementovať algoritmy na rekonfiguráciu RoFIbotov, ktoré spĺňajú podmienky popísané v tejto kapitole, a následne evaluovať výsledky. 
 
 Diplomová práca \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis} popisuje rekonfiguráciu RoFIbotov z centralizovaného pohľadu. To znamená, že algoritmy na rekonfiguráciu majú úplnú znalosť počiatočnej a cieľovej konfigurácie RoFIbota. 
 
-Platforma RoFI je však navrhnutá ako distribuovaný systém, kde najmenšou stavebnou jednotkou je modul. Z toho vyplýva, že RoFIbot nemá žiadnu centralizovanú logickú jednotku, ktorá by dokázala riadiť rekonfiguráciu. 
+Platforma RoFI je však navrhnutá ako distribuovaný systém, kde najmenšou stavebnou jednotkou je modul. Zároveň je platforma navrhnutá tak, že RoFIbot nemá žiadnu centralizovanú logickú jednotku, ktorá by dokázala riadiť rekonfiguráciu. 
 
-Navrhnuté algoritmy považujú modul za samostatnú entitu, ktorá na vstup dostane počiatočný a cieľový stav modulu, ktorý reprezentuje. Výstupom tejto entity zoznam akcií, ktoré daný modul vykonal počas rekonfigurácie RoFIbota v určitom čase s prihliadnutím na validitu a spojitosť.  
+Navrhnuté algoritmy považujú modul za samostatnú entitu, ktorá na vstup dostane počiatočný a cieľový stav modulu, ktorý reprezentuje. Výstupom tejto entity je zoznam akcií, ktoré daný modul vykonal počas rekonfigurácie RoFIbota v jednom momente s prihliadnutím na validitu a spojitosť. V prípade, že sa RoFIbot nedokáže rekonfigurovať z počiatočnej konfigurácie do cieľovej, tak implementované algoritmy túto skutočnosť dokážu identifikovať. 
 
-Samotný modul nepozná celú konfiguráciu RoFIbota (dokonca pri veľkých konfiguráciách by znalosť celej konfigurácie mohla zberať veľa miesta v pamäti a nebola by potrebná). V tejto práci má každý modul znalosť výhradne o svojom stave. Každý ďalší údaj o stave iných modulov vie získať výhradne posielaním si správ so susednými modulmi. 
+Samotný modul nepozná celú konfiguráciu RoFIbota (dokonca pri veľkých konfiguráciách by znalosť celej konfigurácie mohla zaberať veľa miesta v pamäti a nebola by potrebná). V tejto práci má každý modul znalosť výhradne o svojom stave, pričom každý ďalší údaj o stave iných modulov vie získať výhradne posielaním si správ so susednými modulmi. 
 
-V prípade, že sa RoFIbot nedokáže rekonfigurovať z počiatočnej konfigurácie do cieľovej, tak implementované algoritmy túto skutočnosť dokážu identifikovať. 
+Implementované algoritmy sú iba simuláciou reálnych rekonfigurácií RoFIbotov, teda je možné zaviesť si obmedzujúce podmienky na svet, kde sa RoFIboti rekonfigurujú. 
 
-Táto práca je iba simuláciou reálnych rekonfigurácií RoFIbotov, teda je možné zaviesť si obmedzujúce podmienky na svet, kde sa RoFIboti rekonfigurujú. 
-
-Ako je popísané v kapitol \ref{sec:rofibotSpec}, tak konfigurácia RoFIbota je tvar RoFIbota vzhľadom na jeho vnútornú štruktúru. Teda pre účely tejto práce je zavedený predpoklad, že RoFIboti nemajú definované natočenie a umiestnenie do okolitého sveta. 
+Ako je popísané v kapitole \ref{sec:rofibotSpec}, tak konfigurácia RoFIbota je tvar RoFIbota vzhľadom na jeho vnútornú štruktúru. Teda pre účely tejto práce je zavedený predpoklad, že RoFIboti nemajú definované natočenie a umiestnenie do okolitého sveta. 
 
 Každý RoFIbot vykonáva svoju rekonfiguráciu „vo vákuu“, bez fyzických obmedzení reálneho sveta (ako je napríklad podlaha, či iné prekážky). Pri rekonfigurácii nehrajú rolu ani fyzikálne zákony (napríklad gravitácia). Zároveň musí platiť, že počas celej rekonfigurácie musí byť RoFIbot vo validnej a spojitej konfigurácií. 
 
-To značí, že RoFIbot nemusí mať žiadne vnímanie okolitého svet. Jedinými prekážkami v pohyboch sú moduly samotné (ich poloha) a tú si entity vedia zistiť pomocou posielania si správ. 
+To značí, že RoFIbot nemusí mať žiadne vnímanie okolitého sveta. Jedinými prekážkami v pohyboch sú moduly samotné (ich poloha) a tú si entity vedia zistiť pomocou posielania si správ. 
 
 \section{Popis algoritmov na rekonfiguráciu}
 \label{sec:algoDesc}
