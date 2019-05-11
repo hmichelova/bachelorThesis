@@ -347,22 +347,54 @@ Diplomová práca \textit{Motion Planning for the RoFI Platform} \cite{vozarovaM
 
 Platforma RoFI je však navrhnutá ako distribuovaný systém, kde najmenšou stavebnou jednotkou je modul. Zároveň je platforma navrhnutá tak, že RoFIbot nemá žiadnu centralizovanú logickú jednotku, ktorá by dokázala riadiť rekonfiguráciu. 
 
-Navrhnuté algoritmy považujú modul za samostatnú entitu, ktorá na vstup dostane počiatočný a cieľový stav modulu, ktorý reprezentuje. Výstupom tejto entity je zoznam akcií, ktoré daný modul vykonal počas rekonfigurácie RoFIbota v jednom momente s prihliadnutím na validitu a spojitosť. V prípade, že sa RoFIbot nedokáže rekonfigurovať z počiatočnej konfigurácie do cieľovej, tak implementované algoritmy túto skutočnosť dokážu identifikovať. 
+Algoritmy navrhnuté v tejto práci považujú modul za samostatnú entitu, ktorá na vstup dostane počiatočný a cieľový stav modulu, ktorý reprezentuje. Výstupom tejto entity je zoznam akcií, ktoré daný modul vykonal počas rekonfigurácie RoFIbota s prihliadnutím na validitu a spojitosť. V prípade, že sa RoFIbot nedokáže rekonfigurovať z počiatočnej konfigurácie do cieľovej, tak implementované algoritmy túto skutočnosť dokážu identifikovať. 
 
 Samotný modul nepozná celú konfiguráciu RoFIbota (dokonca pri veľkých konfiguráciách by znalosť celej konfigurácie mohla zaberať veľa miesta v pamäti a nebola by potrebná). V tejto práci má každý modul znalosť výhradne o svojom stave, pričom každý ďalší údaj o stave iných modulov vie získať výhradne posielaním si správ so susednými modulmi. 
 
-Implementované algoritmy sú iba simuláciou reálnych rekonfigurácií RoFIbotov, teda je možné zaviesť si obmedzujúce podmienky na svet, kde sa RoFIboti rekonfigurujú. 
-
-Ako je popísané v kapitole \ref{sec:rofibotSpec}, tak konfigurácia RoFIbota je tvar RoFIbota vzhľadom na jeho vnútornú štruktúru. Teda pre účely tejto práce je zavedený predpoklad, že RoFIboti nemajú definované natočenie a umiestnenie do okolitého sveta. 
-
-Každý RoFIbot vykonáva svoju rekonfiguráciu „vo vákuu“, bez fyzických obmedzení reálneho sveta (ako je napríklad podlaha, či iné prekážky). Pri rekonfigurácii nehrajú rolu ani fyzikálne zákony (napríklad gravitácia). Zároveň musí platiť, že počas celej rekonfigurácie musí byť RoFIbot vo validnej a spojitej konfigurácií. 
+Implementované algoritmy sú iba simuláciou reálnych rekonfigurácií RoFIbotov, teda nie je nutné striktne dodržiavať všetky fyzikálne zákonitosti reálneho sveta. Tým pádom každý RoFIbot vykonáva svoju rekonfiguráciu „vo vákuu“, bez fyzických obmedzení (ako je napríklad podlaha, či iné prekážky). Pri rekonfigurácii nehrajú rolu ani fyzikálne zákony (napríklad gravitácia). Zároveň musí platiť, že počas celej rekonfigurácie musí byť RoFIbot vo validnej a spojitej konfigurácií. 
 
 To značí, že RoFIbot nemusí mať žiadne vnímanie okolitého sveta. Jedinými prekážkami v pohyboch sú moduly samotné (ich poloha) a tú si entity vedia zistiť pomocou posielania si správ. 
 
 \section{Popis algoritmov na rekonfiguráciu}
 \label{sec:algoDesc}
-\subsection{Centralizovane-distribuovaný algoritmus - //TODO premenovat}
+V tejto práci sú navrhnuté a implementovaná dva algoritmy na rekonfiguráciu RoFIbotov, ktoré sa líšia hlavne prístupom k znalosti celej konfigurácie RoFIbota. 
+
+Prvý algoritmus využíva plnú znalosť celej konfigurácie RoFIbota. Zároveň využíva algoritmy na rekonfiguráciu navrhnuté a implementované v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. Výsledok výpočtu rekonfigurácie pomocou motion planning je následne distribuovaný medzi moduly. Podrobný popis sa nachádza v kapitole \ref{sec:motionPlanningAlgo}. 
+
+Druhý algoritmus nevyžaduje znalosť celej konfigurácie, ale pomocou zasadenia RoFIbota do súradnicovej sústavy je RoFIbot schopný rekonfigurácie pomocou komunikácie medzi modulmi. Podrobný popis algoritmu sa nachádza v kapitole \ref{sec:distributedAlgo}. 
+
+Pre oba algoritmy platí, že každý modul je reprezentovaný ako samostatná entita, ktorá má na začiatku znalosť o svojom počiatočnom a cieľovom stave. Zároveň má možnosť komunikovať s modulmi, s ktorými je fyzicky prepojený. 
+
+Keďže je táto práca zameraná na samotné algoritmy rekonfigurácie, tak môžeme predpokladať, že moduly dokážu komunikovať každý s každým, nakoľko je RoFIbot v každom momente rekonfigurácie spojitý. Tento predpoklad je  možné zaviesť hlavne z dôvodu toho, že problém posielania správ rieši nižšia softvérová vrstva, ktorá je už vo fyzických moduloch implementovaná a je možné ju využívať. 
+
+\subsection{Algoritmus s úplnou znalosťou konfigurácie}
+\label{sec:motionPlanningAlgo}
+V počiatočnej fáze algoritmu pošle každý z modulov svoju počiatočnú a cieľovú konfiguráciu pomocou broadcastu. Tým zároveň každý modul získa stavy ostatných modulov RoFIbota. Broadcast funguje iba na spojitej časti RoFIbota, teda moduly dostanú výhradne informácie od spojitého RoFIbota. Ten je vo fyzických moduloch implementovaný na nižšej úrovni softvéru.
+
+Aby modul mal úplnú konfiguráciu RoFIbota, je nutné získať hodnoty stupňov voľnosti $\alpha$, $\beta$ a $\gamma$ o všetkých moduloch RoFIbota a zároveň je nutné mať plnú informáciu o všetkých prepojeniach modulov. Všetky tieto údaje sú uložené v stavoch modulov. Z toho vyplýva, že po vzájomnom zdieľaní stavov medzi modulmi si je každý modul schopný reprezentovať celú počiatočnú aj cieľovú konfiguráciu RoFIbota. 
+
+To znamená, že každý modul je schopný vypočítať celú rekonfiguráciu pomocou algoritmov implementovaných v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}, teda postupnosť validných krokov. Cieľom je, aby každý modul vypočítal rovnakú postupnosť krokov. To znamená, že z algoritmov implementovaných v spomínanej diplomovej prácu je nutné vybrať deterministický algoritmus, ktorým je buď \textit{BFS} alebo \textit{A*} (algoritmus \textit{RRT} nie je deterministický). Podľa výsledkov v spomínanej diplomovej práci využívajú moduly algoritmus \textit{A*}. 
+
+Pre algoritmus \textit{A*} je nutné vybrať heuristiku (pre každý modul rovnakú). Pre účely tejto práce je vybraná heuristika, ktorá počíta rozdiel v hodnotách všetkých jointov. Zároveň budú moduly počítať postupnosť krokov tak, aby sa v každom kroku udiala výhradne jedna validná akcia (ide o parameter -- maximálny počet akcii v jednom kroku -- algoritmu \textit{A*}). Tento výber je vhodný hlavne kvôli optimalizovaniu krokov rekonfigurácie, ktoré je popísané neskôr. 
+
+Po výpočte má každý modul napočítanú tú istú postupnosť krokov, ktoré sa majú vykonávať na to, aby sa RoFIbot mohol rekonfigurovať. 
+
+Ak nie je rekonfigurácia možná, tak táto postupnosť nie je správne vypočítaná, a teda už v tejto fáze dokáže algoritmus implementovaný v tejto práci označiť rekonfiguráciu za nemožnú. 
+
+Ak je rekonfigurácia validná, tak následne budú moduly túto postupnosť optimalizovať. Optimalizácia je vhodná hlavne z dôvodu zrýchlenia fyzickej rekonfigurácie RoFIbota, čiže chceme, aby sa viacero krokov pôvodnej postupnosti vykonávalo v rovnakom čase. 
+
+Optimalizácia bude opäť iba heuristikou a nezaručuje nájdenie optimálneho riešenia (vzhľadom na počet krokov rekonfigurácie) paralelizácie krokov, ale zaručuje, že nájdené riešenie ostane validnou rekonfiguráciou RoFIbota. Táto optimalizácia spočíva v dvoch častiach, a to v spájaní krokov a v ich výmenách. 
+
+Na to, aby samotná fyzická rekonfigurácia (bez výpočtov) prebehla čo najrýchlejšie, je nutné minimalizovať počet krokov rekonfigurácie, čo zabezpečuje spájanie krokov v optimalizácii. Spojenie dvoch krokov je možné iba, ak tieto kroky po sebe bezprostredne nasledujú. 
+
+Zadefinujme si $\mathcal{C}_i$ ako konfiguráciu RoFIbota po $i$-tom kroku. Teda $\mathcal{C}_0$ je počiatočná konfigurácia. Ďalej si definujme $\mathcal{S}_i$ ako $i$-ty krok rekonfigurácie. Zároveň nech je operátor \lstinline{<*>} definovaný ako aplikácia kroku $\mathcal{S}$ na konfiguráciu $\mathcal{C}$, teda platí $\mathcal{S}_{i + 1}$ \lstinline{<*>} $\mathcal{C}_i = \mathcal{C}_{i + 1}$. Nech $\mathcal{S}'_i$ je zjednotenie akcií v krokoch $\mathcal{S}_i$ a $\mathcal{S}_{i + 1}$. 
+
+Spojenie krokov $i$ a $i + 1$ je možné iba v prípade ak platí, že $\mathcal{S}'_i$ je validný krok. Zároveň musí platiť, že ak zjednotenie krokov $i$ a $i + 1$ aplikujeme na konfiguráciu $\mathcal{C}_{i - 1}$, tak výsledok bude rovnaký ako keby sme ich aplikovali postupne. Čo je ekvivalentne zapísané nasledovne: $\mathcal{S}_{i + 1}$ \lstinline{<*>} $(\mathcal{S}_i$ \lstinline{<*>} $\mathcal{C}_{i - 1}) = \mathcal{S}'_i$ \lstinline{<*>} $\mathcal{C}_{i - 1}$. 
+
+
+
 \subsection{Distribuovaný algoritmus}
+\label{sec:distributedAlgo}
 
 % ------------------------------------------------------ 2 ------------------------------------------------------
 
