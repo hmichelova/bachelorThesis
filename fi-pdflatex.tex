@@ -93,6 +93,8 @@
 \usepackage{enumitem}
 \setitemize{itemsep=-5pt,topsep=10pt,parsep=10pt,partopsep=10pt}
 \setenumerate{itemsep=-5pt,topsep=10pt,parsep=10pt,partopsep=10pt}
+\usepackage[slovak,linesnumbered,ruled]{algorithm2e}
+    
 \begin{document}
 \chapter*{Úvod}
 \addcontentsline{toc}{chapter}{Úvod}
@@ -365,17 +367,17 @@ Druhý algoritmus nevyžaduje znalosť celej konfigurácie, ale pomocou zasadeni
 
 Pre oba algoritmy platí, že každý modul je reprezentovaný ako samostatná entita, ktorá má na začiatku znalosť o svojom počiatočnom a cieľovom stave. Zároveň má možnosť komunikovať s modulmi, s ktorými je fyzicky prepojený. 
 
-Keďže je táto práca zameraná na samotné algoritmy rekonfigurácie, tak môžeme predpokladať, že moduly dokážu komunikovať každý s každým, nakoľko je RoFIbot v každom momente rekonfigurácie spojitý. Tento predpoklad je  možné zaviesť hlavne z dôvodu toho, že problém posielania správ rieši nižšia softvérová vrstva, ktorá je už vo fyzických moduloch implementovaná a je možné ju využívať. 
+Keďže je táto práca zameraná na samotné algoritmy rekonfigurácie, tak môžeme predpokladať, že moduly dokážu komunikovať každý s každým, nakoľko je RoFIbot v každom momente rekonfigurácie spojitý. Tento dôsledok je  možné zaviesť hlavne z dôvodu toho, že problém posielania správ rieši nižšia softvérová vrstva, ktorá je už vo fyzických moduloch implementovaná a je možné ju využívať. 
 
 \subsection{Algoritmus s úplnou znalosťou konfigurácie}
 \label{sec:motionPlanningAlgo}
-V počiatočnej fáze algoritmu pošle každý z modulov svoju počiatočnú a cieľovú konfiguráciu pomocou broadcastu. Tým zároveň každý modul získa stavy ostatných modulov RoFIbota. Broadcast funguje iba na spojitej časti RoFIbota, teda moduly dostanú výhradne informácie od spojitého RoFIbota. Ten je vo fyzických moduloch implementovaný na nižšej úrovni softvéru.
+V počiatočnej fáze algoritmu pošle každý z modulov svoju počiatočnú a cieľovú konfiguráciu pomocou broadcastu. Tým zároveň každý modul získa stavy ostatných modulov RoFIbota. Broadcast funguje iba na spojitej časti RoFIbota a je vo fyzických moduloch implementovaný na nižšej úrovni softvéru.
 
-Aby modul mal úplnú konfiguráciu RoFIbota, je nutné získať hodnoty stupňov voľnosti $\alpha$, $\beta$ a $\gamma$ o všetkých moduloch RoFIbota a zároveň je nutné mať plnú informáciu o všetkých prepojeniach modulov. Všetky tieto údaje sú uložené v stavoch modulov. Z toho vyplýva, že po vzájomnom zdieľaní stavov medzi modulmi si je každý modul schopný reprezentovať celú počiatočnú aj cieľovú konfiguráciu RoFIbota. 
+Aby mal modul úplnú konfiguráciu RoFIbota, je nutné získať hodnoty stupňov voľnosti $\alpha$, $\beta$ a $\gamma$ od všetkých modulov RoFIbota a zároveň je nutné mať plnú informáciu o všetkých prepojeniach modulov. Všetky tieto údaje sú uložené v stavoch modulov. Z toho vyplýva, že po vzájomnom zdieľaní stavov medzi modulmi je každý modul schopný reprezentovať celú počiatočnú aj cieľovú konfiguráciu RoFIbota. To znamená, že každý modul je schopný vypočítať celú rekonfiguráciu pomocou algoritmov implementovaných v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}, teda postupnosť validných krokov. 
 
-To znamená, že každý modul je schopný vypočítať celú rekonfiguráciu pomocou algoritmov implementovaných v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}, teda postupnosť validných krokov. Cieľom je, aby každý modul vypočítal rovnakú postupnosť krokov. To znamená, že z algoritmov implementovaných v spomínanej diplomovej prácu je nutné vybrať deterministický algoritmus, ktorým je buď \textit{BFS} alebo \textit{A*} (algoritmus \textit{RRT} nie je deterministický). Podľa výsledkov v spomínanej diplomovej práci využívajú moduly algoritmus \textit{A*}. 
+Cieľom je, aby každý modul vypočítal rovnakú postupnosť krokov. To znamená, že z algoritmov implementovaných v spomínanej diplomovej práci je nutné vybrať deterministický algoritmus, ktorým je buď \textit{BFS} alebo \textit{A*} (algoritmus \textit{RRT} nie je deterministický). Výsledky porovnania tých dvoch algoritmov v spomínanej diplomovej práci ukazujú, že algoritmus \textit{A*} je časovo rýchlejší ako algoritmus \textit{BFS}. Z tohto dôvodu moduly budú využívať algoritmus \textit{A*}. 
 
-Pre algoritmus \textit{A*} je nutné vybrať heuristiku (pre každý modul rovnakú). Pre účely tejto práce je vybraná heuristika, ktorá počíta rozdiel v hodnotách všetkých jointov. Zároveň budú moduly počítať postupnosť krokov tak, aby sa v každom kroku udiala výhradne jedna validná akcia (ide o parameter -- maximálny počet akcii v jednom kroku -- algoritmu \textit{A*}). Tento výber je vhodný hlavne kvôli optimalizovaniu krokov rekonfigurácie, ktoré je popísané neskôr. 
+Pre algoritmus \textit{A*} je nutné vybrať heuristiku (pre každý modul rovnakú). Pre účely tejto práce bola vybraná heuristika, ktorá počíta rozdiel v hodnotách všetkých jointov. Tento výber je vhodný hlavne kvôli optimalizácii krokov rekonfigurácie, ktorá je popísaná neskôr. Zároveň budú moduly počítať postupnosť krokov tak, aby sa v každom kroku udiala výhradne jedna validná akcia (ide o parameter -- maximálny počet akcií v jednom kroku -- algoritmu \textit{A*}). 
 
 Po výpočte má každý modul napočítanú tú istú postupnosť krokov, ktoré sa majú vykonávať na to, aby sa RoFIbot mohol rekonfigurovať. 
 
@@ -383,15 +385,100 @@ Ak nie je rekonfigurácia možná, tak táto postupnosť nie je správne vypoč�
 
 Ak je rekonfigurácia validná, tak následne budú moduly túto postupnosť optimalizovať. Optimalizácia je vhodná hlavne z dôvodu zrýchlenia fyzickej rekonfigurácie RoFIbota, čiže chceme, aby sa viacero krokov pôvodnej postupnosti vykonávalo v rovnakom čase. 
 
-Optimalizácia bude opäť iba heuristikou a nezaručuje nájdenie optimálneho riešenia (vzhľadom na počet krokov rekonfigurácie) paralelizácie krokov, ale zaručuje, že nájdené riešenie ostane validnou rekonfiguráciou RoFIbota. Táto optimalizácia spočíva v dvoch častiach, a to v spájaní krokov a v ich výmenách. 
+Optimalizácia bude opäť iba heuristikou a nezaručuje nájdenie optimálneho riešenia (vzhľadom na počet krokov rekonfigurácie) paralelizácie krokov, ale zaručuje, že nájdené riešenie ostane validnou rekonfiguráciou RoFIbota. Táto optimalizácia spočíva v dvoch fázach, a to v spájaní krokov a v ich výmenách. Tieto optimalizácie je možné robiť výhradne na dvoch krokoch, ktoré po sebe nasledujú. 
 
-Na to, aby samotná fyzická rekonfigurácia (bez výpočtov) prebehla čo najrýchlejšie, je nutné minimalizovať počet krokov rekonfigurácie, čo zabezpečuje spájanie krokov v optimalizácii. Spojenie dvoch krokov je možné iba, ak tieto kroky po sebe bezprostredne nasledujú. 
+Zadefinujme si $\mathcal{C}_i$ ako konfiguráciu RoFIbota po $i$-tom kroku. Teda $\mathcal{C}_0$ je počiatočná konfigurácia. Ďalej si definujme $\mathcal{S}_i$ ako $i$-ty krok rekonfigurácie. Zároveň, nech je operátor \lstinline{<*>} definovaný ako aplikácia kroku $\mathcal{S}$ na konfiguráciu $\mathcal{C}$, teda platí $\mathcal{S}_{i + 1}$ \lstinline{<*>} $\mathcal{C}_i = \mathcal{C}_{i + 1}$. Nech $\mathcal{S}'_i$ je zjednotenie akcií v krokoch $\mathcal{S}_i$ a $\mathcal{S}_{i + 1}$. 
 
-Zadefinujme si $\mathcal{C}_i$ ako konfiguráciu RoFIbota po $i$-tom kroku. Teda $\mathcal{C}_0$ je počiatočná konfigurácia. Ďalej si definujme $\mathcal{S}_i$ ako $i$-ty krok rekonfigurácie. Zároveň nech je operátor \lstinline{<*>} definovaný ako aplikácia kroku $\mathcal{S}$ na konfiguráciu $\mathcal{C}$, teda platí $\mathcal{S}_{i + 1}$ \lstinline{<*>} $\mathcal{C}_i = \mathcal{C}_{i + 1}$. Nech $\mathcal{S}'_i$ je zjednotenie akcií v krokoch $\mathcal{S}_i$ a $\mathcal{S}_{i + 1}$. 
+\textit{Spojenie krokov} $i$ a $i + 1$ je možné iba v prípade ak platí, že $\mathcal{S}'_i$ je validný krok. Zároveň musí platiť, že ak zjednotenie krokov $i$ a $i + 1$ aplikujeme na konfiguráciu $\mathcal{C}_{i - 1}$, tak výsledok bude rovnaký, ako keby sme ich aplikovali postupne. To je ekvivalentne zapísané nasledovne: 
+\begin{align}
+\label{align:stepJoin}
+\mathcal{S}_{i + 1} \lstinline{<*>} (\mathcal{S}_i \lstinline{<*>} \mathcal{C}_{i - 1}) = \mathcal{S}'_i \lstinline{<*>} \mathcal{C}_{i - 1}. 
+\end{align}
 
-Spojenie krokov $i$ a $i + 1$ je možné iba v prípade ak platí, že $\mathcal{S}'_i$ je validný krok. Zároveň musí platiť, že ak zjednotenie krokov $i$ a $i + 1$ aplikujeme na konfiguráciu $\mathcal{C}_{i - 1}$, tak výsledok bude rovnaký ako keby sme ich aplikovali postupne. Čo je ekvivalentne zapísané nasledovne: $\mathcal{S}_{i + 1}$ \lstinline{<*>} $(\mathcal{S}_i$ \lstinline{<*>} $\mathcal{C}_{i - 1}) = \mathcal{S}'_i$ \lstinline{<*>} $\mathcal{C}_{i - 1}$. 
+Rovnosť \ref{align:stepJoin} však popisuje iba spojenie dvoch krokov. Navrhnutý algoritmus sa snaží minimalizovať počet krokov celkovo, a teda je potrebné systematicky spájať kroky. 
 
+Toto spájanie prebieha nasledovne: Postupne sa prechádza každý index krokov od $1$ až po predposledný krok rekonfigurácie. Ak sa kroky $i$ a $i + 1$ dajú spojiť, tak sa postupnosť upraví tak, že tieto dva kroky sa vymažú, na ich miesto sa vloží $\mathcal{S}'_i$ (ostatné kroky sa následne prečíslujú) a pokračuje sa opäť testovaním spájania krokov $i$ (novovytvorený krok $\mathcal{S}'_i$) a $i + 1$. Tento postup je popísaný aj v algoritme~\ref{algorithm:stepJoin}. 
 
+\begin{algorithm}
+    \caption{Spájanie krokov. }
+    \label{algorithm:stepJoin}
+    
+    \SetKwInOut{Input}{vstup}\SetKwInOut{Output}{výstup}
+    \SetKwData{CurrIndex}{currentIndex}
+    \SetKwData{NextIndex}{currentIndex + 1}
+    \SetKwData{JoinStep}{S'}
+    \Input{Postupnosť krokov rekonfigurácie.}
+    \Output{Postupnosť krokov rekonfigurácie taká, že už sa žiadne dva susedné kroky nedajú spojiť.}
+    
+    \CurrIndex $\leftarrow$ 1\;
+    \While{\CurrIndex < počet krokov rekonfigurácie}{
+        \JoinStep $\leftarrow$ spojenie krokov \CurrIndex a \NextIndex\;
+        
+        \eIf{aplikácia \CurrIndex a \NextIndex na konfiguráciu $==$ aplikácia \JoinStep na konfiguráciu {\bf and} \JoinStep je validný}{
+            vymaž kroky na indexoch \NextIndex a \CurrIndex\;
+            na index \CurrIndex vlož krok \JoinStep\;
+        }{
+            \CurrIndex $\leftarrow$ \NextIndex\;
+        }
+    }
+\end{algorithm}
+
+\textit{Výmena krokov} $i$ a $i + 1$ je definovaná tak, že sa vymení poradie týchto dvoch krokov. Táto výmena musí spĺňať nasledujúce podmienky: Ak sa najskôr vykoná krok $i + 1$, a až potom krok $i$, tak bude výsledok rovnaký ako pri vykonaní krokov v pôvodnom poradí. Zároveň však musí platiť, že aj vymenené poradie krokov je validné a dodržiavajú sa podmienky na validný krok (napr. spojitosť RoFIbota). Formálne je prvá podmienka definovaná nasledovne: 
+\begin{align}
+\label{align:stepSwap}
+\mathcal{S}_{i + 1} \lstinline{<*>} (\mathcal{S}_i \lstinline{<*>} \mathcal{C}_{i - 1}) = \mathcal{S}_i \lstinline{<*>} (\mathcal{S}_{i + 1} \lstinline{<*>} \mathcal{C}_{i - 1}). 
+\end{align}
+
+Rovnosť \ref{align:stepSwap} však popisuje iba výmenu dvoch krokov. Cieľom algoritmu bude však v časti výmen krokov ich vymeniť viacero nakoľko tieto výmeny môžu umožniť ďalšie spájania krokov. 
+
+Tieto výmeny prebiehajú nasledovne: Postupne sa prechádza každý index krokov od $1$ až po predposledný krok rekonfigurácie. Ak sa kroky $i$ a $i + 1$ dajú vymeniť, tak sa vymenia. Následne sa pokračuje na testovaní výmen pre kroku $i + 1$. Tento postup je uvedený pomocou pseudo kódu v algoritme~\ref{algorithm:stepSwap}. 
+
+\begin{algorithm}
+    \caption{Výmena krokov. }
+    \label{algorithm:stepSwap}
+    
+    \SetKwInOut{Input}{vstup}\SetKwInOut{Output}{výstup}
+    \SetKwData{CurrIndex}{currentIndex}
+    \SetKwData{NextIndex}{currentIndex + 1}
+    
+    \CurrIndex $\leftarrow$ 1\;
+    \While{\CurrIndex < počet krokov rekonfigurácie}{
+        \If{aplikácia \CurrIndex a \NextIndex na konfiguráciu $==$ aplikácia \NextIndex a \CurrIndex na konfiguráciu {\bf and} \NextIndex a \CurrIndex sú validné v tomto poradí}{
+            vymeň kroky \CurrIndex a \NextIndex\;
+        }
+        
+        \CurrIndex $\leftarrow$ \NextIndex\;
+    }
+\end{algorithm}
+
+Celá optimalizácia prebieha nasledovným spôsobom: V prvom rade sa vykoná spájanie krokov. Následne opakuje výmena krokov a spájanie krokov, a to dovtedy kým spájanie krokov vykoná nejakú zmenu. Táto optimalizácia je znázornená aj v algoritme~\ref{algorithm:algo1}. 
+
+\begin{algorithm}
+    \caption{Optimalizácia krokov rekonfigurácie. }
+    \label{algorithm:algo1}
+    
+    \SetKwInOut{Input}{vstup}
+    \SetKwData{Steps}{stepVector}
+    \Input{\Steps -- postupnosť akcií na optimalizáciu.}
+    
+    \Steps $\leftarrow joinSteps($\Steps$)$\;
+    \While{postupnosť sa zmenila po spojení krokov}{
+        \Steps $\leftarrow swapSteps($\Steps$)$\;
+        \Steps $\leftarrow joinSteps($\Steps$)$\;
+    }
+\end{algorithm}
+
+Vyššie popísaná optimalizácia vždy zastaví. Algoritmus \ref{algorithm:stepJoin} po každom cykle buď zvýši hodnotu aktuálneho indexu, alebo zníži celkový počet krokov, teda sa v každom prípade zníži hodnota rozdielu medzi celkovým počtom krokov a aktuálnym indexom. To znamená, že v konečnom čase sa dostane hodnotu menšiu ako $0$, čo podľa podmienky v cykle skončí. Algoritmus \ref{algorithm:stepSwap} sa vždy zvýši aktuálny index, a teda ak táto časť vždy skončí v konečnom čase. 
+
+Ostáva dokázať, že algoritmus \ref{algorithm:algo1} skončí. Cyklus je podmienený výhradne tým, či nastane zmena po spájaní krokov. Ak by sa do podmienky započítavali aj zmeny vo vymieňaní krokov, tak potom je možné, že nastane to, že sa niekoľko krokov bude vymieňať, ale k spojeniam už nedôjde. Každým zavolaním cyklu vieme, že sa počet krokov určite zmenšil (nastalo aspoň jedno spojenie), takže v konečnom čase sa buď spojenie neuskutoční alebo bude počet krokov rovný $1$, čo bude znamenať, že v nasledujúcom kroku sa nebude môcť vykonať spojenie krokov čím sa ukončí cyklus. 
+
+Táto optimalizácia je korektná nakoľko sa vykonávajú iba korektné akcie spojenia a výmeny, ktoré sa vždy kontrolujú pred ich vykonaním. Preto ak optimalizácia dostane na vstup korektnú postupnosť krokov, tak na výstup vráti optimalizovanú korektnú postupnosť krokov. 
+
+Každý modul teda optimalizoval vypočítanú postupnosť krokov rekonfigurácie. Nakoľko je každý algoritmus deterministický, tak každý z nich vypočíta rovnaký výsledok. Tým pádom sa môže začať fyzická rekonfigurácia, ktorá je daná postupnosťou krokov, teda každý modul vie v ktorom čase má vykonať akú zmenu. 
+
+Moduly vzájomne komunikujú a posielajú si informácie, že už vykonali daný krok a môže nastať ďalší. Prvý krok môže nastať hneď ako každý dopočíta optimalizáciu. Ak modul vykoná fyzickú akciu v $i$-tom kroku, tak pošle správu každému modulu v $(i + 1)$-tom kroku, že daný modul už vykonal $i$-ty krok. Modul začne vykonávať fyzickú akciu v $(i + 1)$-tom kroku až v prípade, ak dostal správu od každého modulu, ktorý mal vykonávať akciu v $i$-tom kroku. Ak má modul vykonávať viacero akcií v jednom kroku, tak správy posiela až po vykonaní všetkých akcií. Po vykonaní akcií v poslednom kroku rekonfigurácie sa správy už neposielajú. 
+
+Tento algoritmus je navrhnutý tak, že ak niektorý z modulov z nejakého dôvodu nie je schopný výpočtov, tak je možné mu výsledky iba poslať. Zároveň je navrhnutý tak, aby sa dal ľahko adaptovať na zmeny a vylepšenia, pričom niektoré sú popísané v kapitole \ref{sec:future}.  
 
 \subsection{Distribuovaný algoritmus}
 \label{sec:distributedAlgo}
@@ -452,6 +539,7 @@ Popis, ktorý algoritmus a na aké konfigurácie a zmeny v rekonfiguráciách je
 
 
 \chapter{Záver}
+\label{sec:future}
 Rekapitulácia. 
 Ako ďalej zlepšovať algoritmy a čo ešte pridávať a podobne. 
 
