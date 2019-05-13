@@ -538,10 +538,23 @@ Popis, ktorý algoritmus a na aké konfigurácie a zmeny v rekonfiguráciách je
 % ------------------------------------------------------ 4 ------------------------------------------------------
 
 
+
+
+
+% ------------------------------------------------------ 5 ------------------------------------------------------
 \chapter{Záver}
 \label{sec:future}
-Rekapitulácia. 
-Ako ďalej zlepšovať algoritmy a čo ešte pridávať a podobne. 
+// Rekapitulácia. 
+
+// Ako ďalej zlepšovať algoritmy a čo ešte pridávať a podobne. 
+
+Navrhnuté algoritmy nie sú optimálne, ale sú navrhnuté tak, aby sa dali jednoducho modifikovať a optimalizovať. V prípade prvého algoritmu ide hlavne o samotný výpočet postupnosti krokov rekonfigurácie a jej optimalizáciu. 
+
+V súčasnej dobe je tento algoritmus implementovaný tak, že každý modul počíta rovnaké hodnoty a na základe nich sa následne vykonáva fyzická rekonfigurácia. Jedným z návrhov na zlepšenie tohto algoritmu je, že každý z modulov môže počítať postupnosť krokov rôznymi algoritmami a inými heuristikami. Okrem toho je prístup optimalizácie krokov greedy, a teda nemusí vždy nájsť optimálne riešenie. Teda ďalším zlepšením je riešenie optimalizácie iným spôsobom a vzájomnou komunikáciou sa dohodnú, či je lepšie pokračovať v hľadaní optimálnej postupnosti tento výpočet bude trvať dlho a prejdú na samotnú rekonfiguráciu za cenu dlhšej postupnosti. 
+
+Druhý algoritmus...
+
+% ------------------------------------------------------ 5 ------------------------------------------------------
 
 \printbibliography[heading=bibintoc] %% Print the bibliography.
 
