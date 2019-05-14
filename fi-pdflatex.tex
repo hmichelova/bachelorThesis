@@ -501,7 +501,14 @@ Druhý implementovaný algoritmus nepotrebuje znalosť celej konfigurácie RoFIb
 
 Súradnicový systém je zavedený podľa počiatočnej konfigurácie RoFIbota a viac sa nemení. Menia sa výhradne pozície modulov, ktoré si musia tieto vlastné súradnice prepočítavať. Spôsob zavedenia súradnicového systému a aj algoritmus na výpočet súradníc pre ostatné moduly je prevzatý z diplomovej práce \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. 
 
-Konceptuálne je súradnicový systém zavedený nasledovným spôsobom. Poloha side A modulu s najnižším id na začiatku konfigurácie definuje počiatok súradnicovej sústavy. Natočenie osí definuje následne side B spomínaného modulu, ktorého súradnice sú $[0, 0, 1]$. Súradnice ostatných modulov sú dopočítané na základe ich polohy vzhľadom k tomuto modulu. Na obrázku \ref{fig:moduleCoordinates} je uvedený príklad konfigurácie dvoch modulov a ich vypočítané súradnice. Podrobný popis výpočtov súradníc sa nachádza v spomínanej diplomovej práci. 
+Konceptuálne je súradnicový systém zavedený nasledovným spôsobom. Poloha strany A modulu s najnižším id na začiatku konfigurácie definuje počiatok súradnicovej sústavy. Natočenie osí definuje následne strana B spomínaného modulu, ktorého súradnice sú $[0, 0, 1]$. Súradnice ostatných modulov sú dopočítané na základe ich polohy vzhľadom k tomuto modulu. Na obrázku \ref{fig:moduleCoordinates} je uvedený príklad konfigurácie dvoch modulov a ich vypočítané súradnice. Podrobný popis výpočtov súradníc sa nachádza v spomínanej diplomovej práci. 
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{pictures/module_coordinates.pdf}
+    \caption[Ukážka súradnicového systému]{Príklad RoFIbota zasadeného do 3D súradnicového systému. Os y smeruje smerom od čitateľa. Poznámka: moduly sú spojené stranami B. }
+    \label{fig:moduleCoordinates}
+\end{figure}
 
 % ------------------------------------------------------ 2 ------------------------------------------------------
 
