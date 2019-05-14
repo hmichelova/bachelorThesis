@@ -107,21 +107,21 @@ RoFI je modulárna robotická platforma, ktorá vzniká na pôde Fakulty informa
 
 Primárnym cieľom platformy RoFI je vytvorenie modulárnych robotov, ktoré je možné využiť na rôzne úlohy. Príkladom sú úlohy ako prechádzanie cez úzke priestory, prekonávanie prekážok a podobne. 
 
-Ich dizajn je navrhovaný tak, aby bolo jednoduché a nie príliš finančne náročné ich fyzicky skonštruovať. Softvérové vybavenie pokrýva široké spektrum požiadaviek modulárnych robotov a je jednoduché na prácu aj menej skúseným užívateľom. 
+Ich dizajn je navrhovaný tak, aby bolo jednoduché a nie príliš finančne náročné ich fyzicky skonštruovať. Softvérové vybavenie pokrýva široké spektrum požiadaviek modulárnych robotov a má jednoduché použitie pre užívateľov na rôznych úrovniach. 
 
 Platforma je navrhnutá tak, aby bola ľahko rozšíriteľná o dodatočné periférie a pasívne prvky. Celý vývoj prebieha ako open-source projekt prístupný na \url{https://github.com/paradise-fi/RoFI}.  
 
 Základnou jednotkou platformy RoFI sú moduly \cite{mrazekMasterThesis}, ktoré sú schopné sa vzájomne fyzicky prepojiť a zároveň medzi sebou komunikovať \cite{rofiCom}. Okrem toho sa každý modul dokáže pripojiť aj na pasívne prvky. 
 
-Prepojenie viacerých modulov umožňuje vytvoriť tzv. RoFIbotov \cite{rofiWeb}, ktoré majú širšie spektrum funkcionalít ako samostatné moduly. Cieľom tejto práce je práve zamerať sa na RoFIbotov (popis v kapitole \ref{sec:rofibotSpec}) a ich schopnosť rekonfigurovať sa za špecifických podmienok (popis v kapitole \ref{sec:problemDesc}). 
+Prepojenie viacerých modulov umožňuje vytvoriť tzv. RoFIbotov \cite{rofiWeb}, ktoré majú širšie spektrum funkcionalít ako samostatné moduly. Cieľom tejto práce je práve zamerať sa na RoFIbotov a ich schopnosť rekonfigurovať sa za špecifických podmienok. 
 
-Pre účel tejto práce je v kapitole \ref{sec:moduleSpec} popísaná iba časť hardvérového vybavenia modulu a schopnosti prepájania modulov. Ďalšie rozšírenia, softvérové vybavenie a iné komponenty a návody sa nachádzajú na stránkach platformy \cite{rofiWeb}.
+Pre účel tejto práce je popísaná iba časť hardvérového vybavenia modulu a schopnosti prepájania modulov. Ďalšie rozšírenia, softvérové vybavenie a iné komponenty a návody sa nachádzajú na stránkach platformy \cite{rofiWeb}.
 
 \section{Popis modulu}
 \label{sec:moduleSpec}
 RoFIbota je možné umiestniť do 3D siete tak, že každý modul sa nachádza v práve dvoch políčkach siete (tzv. \textit{lattice type}). Toto rozdelenie je navrhnuté tak, že každá z jeho dvoch strán (side) sa nachádza v práve jednom políčku (popis tvaru modulu sa nachádza nižšie). 
 
-Toto umiestnenie do 3D mriežky spôsobuje, že tvar modulu je prispôsobený tak, aby pri pohybe zasahoval do najnižšieho možného počtu políčok siete (tzv. \textit{grid-awareness}\cite{mrazekMasterThesis}). 
+Toto umiestnenie do 3D mriežky spôsobuje, že tvar modulu je prispôsobený tak, aby pri pohybe zasahoval do najnižšieho možného počtu políčok siete (tzv. \textit{grid-awareness} \cite{mrazekMasterThesis}). 
 
 V súčasnej dobe je platforma RoFI prispôsobená na mriežku s veľkosťou 10\,cm. Podrobný popis vlastností modulu sa nachádza v diplomovej práci \textit{RoFI – Distributed Metamorphic Robots} \cite{mrazekMasterThesis}. 
 
@@ -132,7 +132,7 @@ V súčasnej dobe je platforma RoFI prispôsobená na mriežku s veľkosťou 10\
     \label{fig:module}
 \end{figure}
 
-Každý z modulov sa skladá z dvoch častí (\textit{side A} a \textit{side B}). Každá z nich sa delí na dve časti označené ako \textit{body} a \textit{shoe} (viď obrázok \ref{fig:module_parts}). 
+Každý z modulov sa skladá zo \textit{strany A} (\textit{side A}) a \textit{strany B} (\textit{side B}). Každá z nich sa delí na dve časti označené ako \textit{telo} (\textit{body}) a \textit{topánka} (\textit{shoe}) (viď obrázok \ref{fig:module_parts}). 
 
 \begin{figure}[hbt!]
     \centering
@@ -141,7 +141,7 @@ Každý z modulov sa skladá z dvoch častí (\textit{side A} a \textit{side B})
     \label{fig:module_parts}
 \end{figure}
 
-Moduly majú schopnosť pohybovať sa, a to vďaka až trom stupňom voľnosti. Prvé dva z nich umožňujú pohybovať so shoe časťou modulu. Konkrétne ide o pohyb okolo osí označovaných ako $\alpha$ a $\beta$  o uhol v rozsahu $\interval[{-90\degree, 90\degree}]$. Posledným stupňom voľnosti je pohyb okolo osi označovanej ako $\gamma$. Tento pohyb umožňuje otáčaním meniť vzájomnú polohu body častí modulu a jeho rozsah je $\interval({-180\degree, 180\degree}]$. 
+Moduly majú schopnosť pohybovať sa, a to vďaka až trom stupňom voľnosti. Prvé dva z nich umožňujú pohybovať s časťou modulu označenou ako topánka. Konkrétne ide o pohyb okolo osí označovaných ako $\alpha$ a $\beta$ o uhol v rozsahu $\interval[{-90\degree, 90\degree}]$. Posledným stupňom voľnosti je pohyb okolo osi označovanej ako $\gamma$. Tento pohyb umožňuje otáčaním meniť vzájomnú polohu častí tiel modulu a jeho rozsah je $\interval({-180\degree, 180\degree}]$. 
 
 \begin{figure}[hbt!]
     \centering
@@ -150,37 +150,38 @@ Moduly majú schopnosť pohybovať sa, a to vďaka až trom stupňom voľnosti. 
     \label{fig:module_angle}
 \end{figure}
 
-Ako bolo spomenuté vyššie, tak každý modul má schopnosť pripojiť sa k iným modulom (a vytvoriť tak RoFIbotov) alebo k pasívnym prvkom pomocou \textit{dock}ov. Dockovací systém platformy RoFI je navrhnutý ako tzv. \textit{genderless}, čo umožňuje vzájomné spojenie ľubovoľných dvoch dockov. 
+Ako bolo spomenuté vyššie, tak každý modul má schopnosť pripojiť sa k iným modulom (a vytvoriť tak RoFIbotov) alebo k pasívnym prvkom pomocou \textit{konetor}ov (\textit{dock}). Konektový systém platformy RoFI je navrhnutý ako tzv. \textit{genderless}, čo umožňuje vzájomné spojenie ľubovoľných dvoch konektorov. 
+
+Každý modul obsahuje práve šesť konektorov, ktoré sú rozmiestnené po tri na každej topánke modulu. Konektor je okrem svojej polohy na module definovaný aj orientačným vektorom (viď obrázok \ref{fig:dock_desc}). 
 
 \begin{figure}[hbt!]
     \centering
     \includegraphics[width=0.6\textwidth]{pictures/dock_desc.pdf}
-    \caption[Docky modulu]{Schéma umiestnení dockov na module a ich označenia. Šípky na dockoch znázorňujú orientačné vektory \cite{mrazekMasterThesis}.}
+    \caption[Docky modulu]{Schéma umiestnení konektorov na module a ich označenia. Šípky na konektoroch znázorňujú orientačné vektory \cite{mrazekMasterThesis}.}
     \label{fig:dock_desc}
 \end{figure}
 
-Každý modul obsahuje práve šesť dockov, ktoré sú rozmiestnené po tri na každej shoe časti modulu. Dock je okrem svojej polohy na module definovaný aj orientačným vektorom (viď obrázok \ref{fig:dock_desc}). 
+Prepojenie je definované vzájomnou polohou orientačných vektorov konektorov spojenia. Konštrukcia konektorov dovoľuje ich prepojenie až v štyroch rôznych polohách. 
 
-Prepojenie je definované vzájomnou polohou orientačných vektorov dockov spojenia. Konštrukcia dockov dovoľuje ich prepojenie až v štyroch rôznych polohách. 
-
-Vzájomná poloha orientačných vektorov dockov môže byť postupne $0\degree$, $90\degree$, $180\degree$ alebo $270\degree$ a tieto prepojenia sa označujú v tomto poradí ako \textit{North}, \textit{East}, \textit{South} a \textit{West} (viď obrázok \ref{fig:dock_orientation}). 
+Vzájomná poloha orientačných vektorov konektorov môže byť postupne $0\degree$, $90\degree$, $180\degree$ alebo $270\degree$ a tieto prepojenia sa označujú v tomto poradí ako \textit{North}, \textit{East}, \textit{South} a \textit{West} (viď obrázok \ref{fig:dock_orientation}). 
 
 \begin{figure}[hbt!]
     \centering
     \includegraphics[width=0.6\textwidth]{pictures/dock_orientation.pdf}
-    \caption[Poloha prepojenia dockov modulu]{Schéma vzájomnej polohy orientačných vektorov spojených dockov modulov. Červenou je označený dock modulu, z ktorého perspektívy spojenie označujeme. Modrá šípka je orientačný vektor druhého modulu. Poznámka: nezáleží na výbere docku, z ktorého perspektívy spojenie sledujeme \cite{mrazekMasterThesis}.}
+    \caption[Poloha prepojenia konektorov modulu]{Schéma vzájomnej polohy orientačných vektorov spojených konektorov modulov. Červenou je označený konektor modulu, z ktorého perspektívy spojenie označujeme. Modrá šípka je orientačný vektor druhého modulu. Poznámka: nezáleží na výbere konektoru, z ktorého perspektívy spojenie sledujeme \cite{mrazekMasterThesis}.}
     \label{fig:dock_orientation}
 \end{figure}
 
 \section{Popis RoFIbota}
 \label{sec:rofibotSpec}
-Vzájomné prepojenie modulov pomocou dockov vytvára RoFIbotov. Parametre RoFIbota, ktoré ho definujú, sa dajú rozdeliť do dvoch kategórií:   
+Vzájomné prepojenie modulov pomocou konektorov vytvára RoFIbotov. Parametre RoFIbota, ktoré ho definujú, sa dajú rozdeliť do dvoch kategórií:   
 \begin{enumerate}
-    \item tvar RoFIbota vzhľadom na jeho vnútornú štruktúru: 
+    \item tvar RoFIbota vzhľadom na jeho vnútornú štruktúru:
     \begin{itemize}[topsep=-5pt]
         \item množina modulov RoFIbota, 
         \item množina prepojení (hrán) modulov; 
     \end{itemize}
+    
     \item poloha RoFIbota vzhľadom k okolitému svetu: 
     \begin{itemize}[topsep=-5pt]
         \item natočenie celého RoFIbota vzhľadom na okolie, 
@@ -190,11 +191,9 @@ Vzájomné prepojenie modulov pomocou dockov vytvára RoFIbotov. Parametre RoFIb
 
 \textit{Konfigurácia} RoFIbota je tvar RoFIbota vzhľadom na jeho vnútornú štruktúru, teda množina modulov a ich prepojení. Každý modul v konfigurácii RoFIbota je definovaný jedinečným identifikátorom modulu a hodnotami všetkých troch stupňov voľnosti modulu. 
 
-Jednotlivé hrany (prepojenia) v konfigurácii RoFIbota sú definované identifikátormi spojených modulov a presným popisom dockov, ktorými sú prepojené, a vzájomnou polohou spojených dockov. 
+Jednotlivé hrany (prepojenia) v konfigurácii RoFIbota sú definované identifikátormi spojených modulov a presným popisom konektorov, ktorými sú prepojené, a vzájomnou polohou spojených konektorov. 
 
-Formálne značenie všetkých parametrov konfigurácie a ich rozsahy sú zavedené v kapitole \ref{sec:formalSpec}. 
-
-\textit{Rekonfigurácia} RoFIbota je postupnosť validných krokov (ich formálna definícia sa nachádza v kapitole \ref{sec:formalRecfg}), ktorá umožní zmeniť počiatočnú konfiguráciu RoFIbota na cieľovú konfiguráciu RoFIbota. 
+\textit{Rekonfigurácia} RoFIbota je postupnosť validných krokov, ktorá u\-mož\-ní zmeniť počiatočnú konfiguráciu RoFIbota na cieľovú konfiguráciu RoFIbota. 
 % ------------------------------------------------------ 1 ------------------------------------------------------
 
 
@@ -213,36 +212,36 @@ Fyzický stav modulu a konfigurácie RoFIbota je nutné popísať z formálneho 
 V prvom rade je nutné definovať \textit{stav modulu}, ktorý je tvorený nasledujúcimi údajmi: 
 \begin{itemize}
     \item \textit{id} -- unikátny identifikátor modulu, 
-    \item $\alpha$ -- uhol otočenia shoe A voči body A v rozsahu $\interval[{-90\degree, 90\degree}]$,
-    \item $\beta$ -- uhol otočenia shoe B voči body B v rozsahu $\interval[{-90\degree, 90\degree}]$,
-    \item $\gamma$ -- uhol otočenia body A voči body B v rozsahu $\interval({-180\degree, 180\degree}]$,
-    \item sedmice o každom prepojení, ktoré daný modul má. 
+    \item $\alpha$ -- uhol otočenia topánky A voči telu A v rozsahu $\interval[{-90\degree, 90\degree}]$,
+    \item $\beta$ -- uhol otočenia topánky B voči telu B v rozsahu $\interval[{-90\degree, 90\degree}]$,
+    \item $\gamma$ -- uhol otočenia tela A voči telu B v rozsahu $\interval({-180\degree, 180\degree}]$,
+    \item sedmica o každom prepojení, ktoré daný modul má. 
 \end{itemize} 
 
-Ako už bolo popísané v kapitole \ref{sec:moduleSpec}, tak spojenie definujú docky, ktorými sú moduly spojené, a ich vzájomná poloha. Formálne ide o nasledujúcu sedmicu: 
+Ako už bolo popísané, tak spojenie definujú konektory, ktorými sú moduly spojené, a ich vzájomná poloha. Formálne ide o nasledujúcu sedmicu: 
 \begin{itemize}
     \item \textit{id1} -- unikátny identifikátor prvého modulu, 
     \item \textit{side1} -- strana prvého modulu, ktorou je spojený s druhým modulom, 
-    \item \textit{dock1} -- dock prvého modulu, ktorý sa podieľa na prepojení,
-    \item \textit{ori} -- orientácia spojených dockov,
-    \item \textit{dock2} -- dock druhého modulu, ktorý sa podieľa na prepojení,
+    \item \textit{dock1} -- konektor prvého modulu, ktorý sa podieľa na prepojení,
+    \item \textit{ori} -- orientácia spojených konektorov,
+    \item \textit{dock2} -- konektor druhého modulu, ktorý sa podieľa na prepojení,
     \item \textit{side2} -- strana druhého modulu, ktorou je spojený s prvým modulom, 
     \item \textit{id2} -- unikátny identifikátor druhého modulu. 
 \end{itemize}
-Zároveň platí, že tieto hodnoty sú z množín: $side1, side2 \in \{A, B\}$; $dock1, dock2 \in \{X+, X-, Z-\}$; $ori \in \{N, E, S, W\}$.
+Zároveň platí, že tieto hodnoty sú z množín: $side1, side2 \in \{A, B\}$; $dock1, dock2 \in \{+X, -X, -Z\}$; $ori \in \{N, E, S, W\}$.
 
 \subsection{Konfigurácia}
 \label{sec:formalSpecCfg}
 Moduly sa spájajú do RoFIbotov a je nutné definovať si validitu konfigurácie. Konfigurácia RoFIbota je \textit{validná}, ak: 
 \begin{itemize}
     \item každé prepojenie je vzájomné,
-    \item každý dock každého modulu sa podieľa na maximálne jednom prepojení, 
-    \item všetky definované prepojenia je možné fyzicky vytvoriť, 
+    \item každý konektor každého modulu sa podieľa na maximálne jednom prepojení, 
+    \item všetky definované prepojenia je možné fyzicky vytvoriť (ich vzdialenosť dostatočne malá \cite{rofiCom}), 
     \item nesmie dochádzať k žiadnej fyzickej kolízii modulov. 
 \end{itemize}
 Formálny popis výpočtu kolízií v konfigurácii RoFIbota je podrobnejšie popísaný v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. 
 
-Keďže komunikácia medzi modulmi môže prebiehať po fyzickom spojení pomocou dockov, ale aj bezdrôtovo, tak si zadefinujeme spojitosť RoFIbota. 
+Keďže komunikácia medzi modulmi môže prebiehať po fyzickom spojení pomocou konektorov, ale aj bezdrôtovo, tak si zadefinujeme spojitosť RoFIbota. 
 
 RoFIbot je \textit{spojitý}, ak medzi akýmikoľvek jeho dvomi modulmi existuje cesta tvorená modulmi a prepojeniami. To značí, že komunikácia medzi akýmikoľvek dvomi modulmi spojitého RoFIbota môže prebiehať výhradne fyzickými spojeniami (viď príklad spojitej a nespojitej konfigurácie na obrázku \ref{fig:exampleCfg}). 
 
@@ -271,7 +270,7 @@ Atomickou zmenou v konfigurácii RoFIbota je \textit{akcia}, ktorá môže byť 
 Prvým typom akcií je \textit{akcia rotácie}, ktorá sa deje na jednom z modulov RoFIbota a ide o zmenu jedného z parametrov $\alpha$, $\beta$ alebo $\gamma$. Je definovaná nasledovnými parametrami: 
 \begin{itemize}
     \item \textit{id} -- id modulu, ktorý mení jeden z uhlov, 
-    \item \textit{joint} -- identifikácia stupňa voľnosti; $joint \in \{\alpha, \beta, \gamma\}$, 
+    \item \textit{joint} -- identifikácia stupňa voľnosti; $joint \in \{alfa, beta, gama\}$, 
     \item \textit{angle} -- orientovaný uhol, o ktorý sa daný joint bude otáčať. 
 \end{itemize}
 
@@ -284,7 +283,12 @@ Druhý typ akcie je \textit{akcia prepojenia}, ktorá definuje spojenie alebo ro
 Nie každú akciu je možné aplikovať na akúkoľvek konfiguráciu RoFIbota. \textit{Validná akcia} je akcia, ktorá spĺňa aj nasledujúce podmienky:
 \begin{itemize}
     \item akcia rotácie: nesmie dôjsť ku kolízii s inými modulmi (viď obrázok \ref{fig:rotationExample}), 
-    \item akcia prepojenia: docky, ktoré sa majú prepojiť, musia byť fyzicky schopné prepojenia (viď obrázok \ref{fig:reconnectionExample}). 
+    \item akcia prepojenia: 
+    \begin{itemize}[topsep=-5pt]
+        \item oba konektory sa musia podieľať na spojení (príklad na obrázku \ref{fig:reconnectionExample}), 
+        \item každý konektor sa podieľa na maximálne jednom spojení,
+        \item konektory, ktoré sa majú prepojiť, musia byť fyzicky schopné prepojenia.
+    \end{itemize}
 \end{itemize}
 
 \begin{figure}[hbt!]
@@ -357,13 +361,15 @@ Implementované algoritmy sú iba simuláciou reálnych rekonfigurácií RoFIbot
 
 To značí, že RoFIbot nemusí mať žiadne vnímanie okolitého sveta. Jedinými prekážkami v pohyboch sú moduly samotné (ich poloha) a tú si entity vedia zistiť pomocou posielania si správ. 
 
+Prínosom tejto práce je simulácia problému rekonfigurácie modulov v distribuovanom prostredí. Súčasťou evaluácie algoritmov je aj porovnanie dĺžky výpočtov a počtu krokov rekonfigurácie distribuovaných algoritmov voči sebe aj voči vybraným algoritmom z diplomovej práce \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. 
+
 \section{Popis algoritmov na rekonfiguráciu}
 \label{sec:algoDesc}
 V tejto práci sú navrhnuté a implementovaná dva algoritmy na rekonfiguráciu RoFIbotov, ktoré sa líšia hlavne prístupom k znalosti celej konfigurácie RoFIbota. 
 
-Prvý algoritmus využíva plnú znalosť celej konfigurácie RoFIbota. Zároveň využíva algoritmy na rekonfiguráciu navrhnuté a implementované v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. Výsledok výpočtu rekonfigurácie pomocou motion planning je následne distribuovaný medzi moduly. Podrobný popis sa nachádza v kapitole \ref{sec:motionPlanningAlgo}. 
+Prvý algoritmus využíva plnú znalosť celej konfigurácie RoFIbota. Zároveň využíva algoritmy na rekonfiguráciu navrhnuté a implementované v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. Výsledok výpočtu rekonfigurácie pomocou motion planning je následne distribuovaný medzi moduly. 
 
-Druhý algoritmus nevyžaduje znalosť celej konfigurácie, ale pomocou zasadenia RoFIbota do súradnicovej sústavy je RoFIbot schopný rekonfigurácie pomocou komunikácie medzi modulmi. Podrobný popis algoritmu sa nachádza v kapitole \ref{sec:distributedAlgo}. 
+Druhý algoritmus nevyžaduje znalosť celej konfigurácie, ale pomocou zasadenia RoFIbota do súradnicovej sústavy je RoFIbot schopný rekonfigurácie pomocou komunikácie medzi modulmi. 
 
 Pre oba algoritmy platí, že každý modul je reprezentovaný ako samostatná entita, ktorá má na začiatku znalosť o svojom počiatočnom a cieľovom stave. Zároveň má možnosť komunikovať s modulmi, s ktorými je fyzicky prepojený. 
 
@@ -377,17 +383,19 @@ Aby mal modul úplnú konfiguráciu RoFIbota, je nutné získať hodnoty stupňo
 
 Cieľom je, aby každý modul vypočítal rovnakú postupnosť krokov. To znamená, že z algoritmov implementovaných v spomínanej diplomovej práci je nutné vybrať deterministický algoritmus, ktorým je buď \textit{BFS} alebo \textit{A*} (algoritmus \textit{RRT} nie je deterministický). Výsledky porovnania týchto dvoch algoritmov v spomínanej diplomovej práci ukazujú, že algoritmus \textit{A*} je časovo rýchlejší ako algoritmus \textit{BFS}. Z tohto dôvodu budú moduly využívať algoritmus \textit{A*}. 
 
-Pre algoritmus \textit{A*} je nutné vybrať heuristiku (pre každý modul rovnakú). Pre účely tejto práce bola vybraná heuristika, ktorá počíta rozdiel v hodnotách všetkých jointov. Tento výber je vhodný hlavne kvôli optimalizácii krokov rekonfigurácie, ktorá je popísaná neskôr. Zároveň budú moduly počítať postupnosť krokov tak, aby sa v každom kroku udiala výhradne jedna validná akcia (ide o parameter -- maximálny počet akcií v jednom kroku -- algoritmu \textit{A*}). 
+Pre algoritmus \textit{A*} je nutné vybrať heuristiku (pre každý modul rovnakú). Pre účely tejto práce bola vybraná heuristika, ktorá počíta rozdiel v hodnotách všetkých uhlov voľnosti. Zároveň budú moduly počítať postupnosť krokov tak, aby sa v každom kroku udiala výhradne jedna validná akcia. Algoritmus \textit{A*} je implementovaný tak, aby bolo možné určiť koľko maximálne akcií je možné vykonať v jednom kroku rekonfigurácie. Obmedzenie na jednu akciu v kroku je vhodné hlavne kvôli optimalizácii krokov rekonfigurácie, ktorá je popísaná neskôr. 
 
-Po výpočte má každý modul napočítanú tú istú postupnosť krokov, ktoré sa majú vykonávať na to, aby sa RoFIbot mohol rekonfigurovať. 
+Po výpočte má každý modul napočítanú tú istú postupnosť krokov, ktoré sa majú vykonávať na to, aby sa RoFIbot mohol rekonfigurovať, alebo dokáže identifikovať, že rekonfigurácia nie je možná. 
 
-Ak nie je rekonfigurácia možná, tak táto postupnosť nebude ani dopočítaná v konečnom čase, a teda už v tejto fáze dokáže algoritmus implementovaný v tejto práci neskončí. 
+Ak nie je rekonfigurácia možná, tak tento fakt už identifikuje výpočet algoritmu \textit{A*}. Tým pádom aj výpočet algoritmu navrhnutého pre túto prácu túto skutočnosť dokáže identifikovať a vo výpočte už ďalej nepokračuje. e
 
 Ak je rekonfigurácia validná, tak následne budú moduly túto postupnosť optimalizovať. Optimalizácia je vhodná hlavne z dôvodu zrýchlenia fyzickej rekonfigurácie RoFIbota, čiže chceme, aby sa viacero krokov pôvodnej postupnosti vykonávalo v rovnakom čase. 
 
 Optimalizácia bude opäť iba heuristikou a nezaručuje nájdenie optimálneho riešenia (vzhľadom na počet krokov rekonfigurácie) paralelizácie krokov, ale zaručuje, že nájdené riešenie ostane validnou rekonfiguráciou RoFIbota. Táto optimalizácia spočíva v dvoch fázach, a to v spájaní krokov a v ich výmenách. Tieto optimalizácie je možné robiť výhradne na dvoch krokoch, ktoré po sebe nasledujú. 
 
-Zadefinujme si $\mathcal{C}_i$ ako konfiguráciu RoFIbota po $i$-tom kroku. Teda $\mathcal{C}_0$ je počiatočná konfigurácia. Ďalej si definujme $\mathcal{S}_i$ ako $i$-ty krok rekonfigurácie. Zároveň, nech je operátor \lstinline{<*>} definovaný ako aplikácia kroku $\mathcal{S}$ na konfiguráciu $\mathcal{C}$, teda platí $\mathcal{S}_{i + 1}$ \lstinline{<*>} $\mathcal{C}_i = \mathcal{C}_{i + 1}$. Nech $\mathcal{S}'_i$ je zjednotenie akcií v krokoch $\mathcal{S}_i$ a $\mathcal{S}_{i + 1}$. 
+Navrhnutá optimalizácia intuitívne prebieha tak, že pospája čo najviac krokov spolu a následne novovzniknuté kroky sa pokúsi povymieňať, aby bola postupnosť naďalej validná. Toto opakuje až kým spájanie nevykoná žiadnu zmenu. 
+
+Z formálneho hľadiska ide o tieto algoritmy. Pre lepšiu orientáciu si zadefinujme $\mathcal{C}_i$ ako konfiguráciu RoFIbota po $i$-tom kroku. Teda $\mathcal{C}_0$ je počiatočná konfigurácia. Ďalej si definujme $\mathcal{S}_i$ ako $i$-ty krok rekonfigurácie. Zároveň, nech je operátor \lstinline{<*>} definovaný ako aplikácia kroku $\mathcal{S}$ na konfiguráciu $\mathcal{C}$, teda platí $\mathcal{S}_{i + 1}$ \lstinline{<*>} $\mathcal{C}_i = \mathcal{C}_{i + 1}$. Nech $\mathcal{S}'_i$ je zjednotenie akcií v krokoch $\mathcal{S}_i$ a $\mathcal{S}_{i + 1}$. 
 
 \textit{Spojenie krokov} $\mathcal{S}_i$ a $\mathcal{S}_{i + 1}$ je možné iba v prípade ak platí, že $\mathcal{S}'_i$ je validný krok. Zároveň musí platiť, že ak zjednotenie krokov $\mathcal{S}_i$ a $\mathcal{S}_{i + 1}$ aplikujeme na konfiguráciu $\mathcal{C}_{i - 1}$, tak výsledok bude rovnaký, ako keby sme ich aplikovali postupne. To je ekvivalentne zapísané nasledovne: 
 \begin{align}
@@ -493,9 +501,7 @@ Druhý implementovaný algoritmus nepotrebuje znalosť celej konfigurácie RoFIb
 
 Súradnicový systém je zavedený podľa počiatočnej konfigurácie RoFIbota a viac sa nemení. Menia sa výhradne pozície modulov, ktoré si musia tieto vlastné súradnice prepočítavať. Spôsob zavedenia súradnicového systému a aj algoritmus na výpočet súradníc pre ostatné moduly je prevzatý z diplomovej práce \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. 
 
-Konceptuálne je súradnicový systém zavedený nasledovným spôsobom. Poloha side A modulu s najnižším id na začiatku konfigurácie definuje počiatok súradnicovej sústavy. Natočenie osí definuje následne side B spomínaného modulu, ktorého súradnice sú $[0, 1, 0]$. Súradnice ostatných modulov sú dopočítané na základe ich polohy vzhľadom k tomuto modulu. Na obrázku \ref{fig:moduleCoordinates} je uvedený príklad konfigurácie dvoch modulov a ich vypočítané súradnice. Podrobný popis výpočtov súradníc sa nachádza v spomínanej diplomovej práci. 
-
-//TODO; dodat obrazok so suradnicami pre 2 moduly
+Konceptuálne je súradnicový systém zavedený nasledovným spôsobom. Poloha side A modulu s najnižším id na začiatku konfigurácie definuje počiatok súradnicovej sústavy. Natočenie osí definuje následne side B spomínaného modulu, ktorého súradnice sú $[0, 0, 1]$. Súradnice ostatných modulov sú dopočítané na základe ich polohy vzhľadom k tomuto modulu. Na obrázku \ref{fig:moduleCoordinates} je uvedený príklad konfigurácie dvoch modulov a ich vypočítané súradnice. Podrobný popis výpočtov súradníc sa nachádza v spomínanej diplomovej práci. 
 
 % ------------------------------------------------------ 2 ------------------------------------------------------
 
@@ -562,7 +568,7 @@ Popis, ktorý algoritmus a na aké konfigurácie a zmeny v rekonfiguráciách je
 
 // Ako ďalej zlepšovať algoritmy a čo ešte pridávať a podobne. 
 
-Navrhnuté algoritmy nie sú optimálne, ale sú navrhnuté tak, aby sa dali jednoducho modifikovať a optimalizovať. V prípade prvého algoritmu ide hlavne o samotný výpočet postupnosti krokov rekonfigurácie a jej optimalizáciu. 
+Navrhnuté algoritmy nehľadajú optimálne riešenie a to hlavne z dôvodu časovej zložitosti výpočtov. Algoritmy sú, ale navrhnuté tak, aby sa dali jednoducho modifikovať a optimalizovať. V prípade prvého algoritmu ide hlavne o samotný výpočet postupnosti krokov rekonfigurácie a jej optimalizáciu. 
 
 V súčasnej dobe je tento algoritmus implementovaný tak, že každý modul počíta rovnaké hodnoty a na základe nich sa následne vykonáva fyzická rekonfigurácia. Jedným z návrhov na zlepšenie tohto algoritmu je, že každý z modulov môže počítať postupnosť krokov rôznymi algoritmami a inými heuristikami. Okrem toho je prístup optimalizácie krokov greedy, a teda nemusí vždy nájsť optimálne riešenie. Teda ďalším zlepšením je riešenie optimalizácie iným spôsobom a vzájomnou komunikáciou sa dohodnú, či je lepšie pokračovať v hľadaní optimálnej postupnosti tento výpočet bude trvať dlho a prejdú na samotnú rekonfiguráciu za cenu dlhšej postupnosti. 
 
