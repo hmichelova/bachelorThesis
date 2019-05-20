@@ -93,7 +93,7 @@
 \usepackage{enumitem}
 \setitemize{itemsep=-5pt,topsep=10pt,parsep=10pt,partopsep=10pt}
 \setenumerate{itemsep=-5pt,topsep=10pt,parsep=10pt,partopsep=10pt}
-\usepackage[slovak,linesnumbered,ruled]{algorithm2e}
+\usepackage[slovak,linesnumbered,ruled,vlined]{algorithm2e}
     
 \begin{document}
 \chapter*{Úvod}
@@ -387,7 +387,7 @@ Pre algoritmus \textit{A*} je nutné vybrať heuristiku (pre každý modul rovna
 
 Po výpočte má každý modul napočítanú tú istú postupnosť krokov, ktoré sa majú vykonávať na to, aby sa RoFIbot mohol rekonfigurovať, alebo dokáže identifikovať, že rekonfigurácia nie je možná. 
 
-Ak nie je rekonfigurácia možná, tak tento fakt identifikuje už výpočet algoritmu \textit{A*}. Tým pádom aj výpočet algoritmu navrhnutého pre túto prácu dokáže túto skutočnosť identifikovať a vo výpočte už ďalej nepokračuje. e
+Ak nie je rekonfigurácia možná, tak tento fakt identifikuje už výpočet algoritmu \textit{A*}. Tým pádom aj výpočet algoritmu navrhnutého pre túto prácu dokáže túto skutočnosť identifikovať a vo výpočte už ďalej nepokračuje. 
 
 Ak je rekonfigurácia validná, tak následne budú moduly túto postupnosť optimalizovať. Optimalizácia je vhodná hlavne z dôvodu zrýchlenia fyzickej rekonfigurácie RoFIbota, čiže chceme, aby sa viacero krokov pôvodnej postupnosti vykonávalo v rovnakom čase. 
 
@@ -448,7 +448,7 @@ Tieto výmeny prebiehajú nasledovne: Postupne sa prechádza každý index kroko
     
     \DontPrintSemicolon
     \SetKwInOut{Input}{vstup}\SetKwInOut{Output}{výstup}
-    \SetKwData{CurrIndex}{currentIndex}
+    \SetKwData{CurrIndex}{i}
     \SetKwData{NextIndex}{\CurrIndex + 1}
     \SetKwData{Cfg}{$\mathcal{C}_{\CurrIndex - 1}$}
     \Input{Postupnosť krokov rekonfigurácie.}
@@ -456,7 +456,7 @@ Tieto výmeny prebiehajú nasledovne: Postupne sa prechádza každý index kroko
     
     \CurrIndex $\leftarrow$ 1\;
     \While{\CurrIndex < počet krokov rekonfigurácie}{
-        \If{$\mathcal{S}_\CurrIndex$ \lstinline{<*>} ($\mathcal{S}_\NextIndex$ \lstinline{<*>} \Cfg) $=$ $\mathcal{S}_\NextIndex$ \lstinline{<*>} ($\mathcal{S}_\CurrIndex$ \lstinline{<*>} \Cfg) \\{\bf and} $\mathcal{S}_\NextIndex$ a $\mathcal{S}_\CurrIndex$ validné v tomto poradí}{
+        \If{\upshape $\mathcal{S}_\CurrIndex$ \lstinline{<*>} ($\mathcal{S}_\NextIndex$ \lstinline{<*>} \Cfg) $=$ $\mathcal{S}_\NextIndex$ \lstinline{<*>} ($\mathcal{S}_\CurrIndex$ \lstinline{<*>} \Cfg) \\ \hspace{12}{\bf and} $\mathcal{S}_\NextIndex$ a $\mathcal{S}_\CurrIndex$ \textit{validné v tomto poradí}}{
             vymeň $\mathcal{S}_\CurrIndex$ a $\mathcal{S}_\NextIndex$\;
         }
         
@@ -503,14 +503,74 @@ Ten je zavedený podľa počiatočnej konfigurácie RoFIbota a počas rekonfigur
 
 Konceptuálne je súradnicový systém zavedený nasledovným spôsobom. Poloha strany A modulu s najnižším id na začiatku konfigurácie definuje počiatok súradnicovej sústavy. Natočenie osí definuje následne strana B spomínaného modulu, ktorého súradnice sú $[0, 0, 1]$. Súradnice ostatných modulov sú dopočítané na základe ich polohy vzhľadom k tomuto modulu. Podrobný popis výpočtov súradníc sa nachádza v spomínanej diplomovej práci.  
 
-Obrázok \ref{fig:moduleCoordinates} je ukážkou jednoduchej počiatočnej konfigurácie, kde moduly sú spojené stranami B. Teda strana A žltého modulu je na súradniciach $[1, 0, 2]$. Os y je jednoznačne definovaná a to na základe pozícií konektorov. Konkrétne konektor $-Z$ je v smere osi $z$ v zápornom smere a konektory $-X$ a $+X$ na osi $x$ v zápornom a kladnom smere v tomto poradí. 
-
 \begin{figure}[hbt!]
     \centering
-    \includegraphics[width=0.6\textwidth]{pictures/module_coordinates.pdf}
+    \includegraphics[width=0.5\textwidth]{pictures/module_coordinates.pdf}
     \caption[Ukážka súradnicového systému]{Príklad RoFIbota zasadeného do 3D súradnicového systému. Os $y$ smeruje od čitateľa. }
     \label{fig:moduleCoordinates}
 \end{figure}
+
+Obrázok \ref{fig:moduleCoordinates} je ukážkou jednoduchej počiatočnej konfigurácie, kde moduly sú spojené stranami B. Teda strana A žltého modulu je na súradniciach $[1, 0, 2]$. Os y je jednoznačne definovaná a to na základe pozícií konektorov. Konkrétne konektor $-Z$ je v smere osi $z$ v zápornom smere a konektory $-X$ a $+X$ na osi $x$ v zápornom a kladnom smere v tomto poradí. 
+
+Algoritmus výpočtu súradníc v spomínanej diplomovej práci je založený na znalosti celej konfigurácie RoFIbota. Algoritmus na rekonfiguráciu popísaný v tejto kapitole je založený na tom, že žiaden modul nemá znalosť celej konfigurácie RoFIbota. Z tohto dôvodu je z algoritmu na výpočet súradníc použitá iba časť výpočtu matíc, z ktorých sa súradnice dajú získať. Zvyšok bol pozmenený nasledovným spôsobom. 
+
+Modul s najnižšou hodnotou id pozná svoje súradnice (popísané vyššie). Následne každý modul, ktorý pozná svoje koordináty, vypočíta súradnice aj všetkým modulom, ktorý sú s ním spojený hranou. Tento výpočet dokáže vykonať každý modul, nakoľko pozná hodnoty svojich uhlov voľnosti, polohu konektorov a svoje vlastné súradnice. Následne pošle každému modulu, ktorý je s ním spojený hranou správu o tom, aké súradnice má mať daný modul. Tento výpočet a rozposlanie správ sa deje výhradne jednorázovo nakoľko pri opakovaných výpočtoch a správach by došlo k cykleniu správ. Tento proces sa opakuje až kým nemá každý z modulov znalosť o svojich súradniciach. Tento popis je tiež znázornený v algoritme \ref{algorithm:coordinations}. 
+
+\begin{algorithm}
+    \caption{Výpočet súradníc modulov RoFIbota. }
+    \label{algorithm:coordinations}
+    
+    \DontPrintSemicolon
+    \SetKwInOut{Input}{vstup}\SetKwInOut{Output}{výstup}
+    \SetKwData{Id}{id}
+    \Input{Konfigurácia RoFIbota.}
+    \Output{Každý modul pozná svoje súradnice.}
+    
+    \If{\Id je najnižšie v RoFIbote}{
+        inicializuj počiatočné súradnice\;
+    }
+    \While{existuje modul, ktorý nepozná svoje súradnice}{
+        \If{modul má známe súradnice {\bf and} súradnice neboli zdieľané}{
+            vypočítaj súradnice modulov, s ktorými mám hranu\;
+            pošli im ich súradnice\;
+        }
+    }
+\end{algorithm}
+
+Po tomto kroku má každý z modulov uložené, aká je jeho aktuálna pozícia v priestore, a teda môže prebiehať samotná rekonfigurácia. Základná myšlienka tejto rekonfigurácie je zachytená v algoritme \ref{algorithm:algo2}. Slovne rekonfigurácia začína výberom modulu (označme ho ako $\mathcal{M}$) a akcie, ktorú sa pokúsi vykonať. Pred vykonaním samotnej akcie je nutné, aby pomocou komunikácie s ostatnými modulmi bolo zaručené, že danú akciu je možné bezpečne vykonať. Ak áno, tak sa vybraná akcia aj fyzicky vykoná, v opačnom prípade sa nevykoná žiadna zmena na konfigurácii. Tento postup sa opakuje až kým nenastane jedna z nasledujúcich podmienok. Práva z nich je, že každý modul je v cieľovom stave a druhá, že žiaden z modulov už nemôže vykonať žiadnu akciu. 
+
+\begin{algorithm}
+    \caption{Distribuovaná rekonfigurácia. }
+    \label{algorithm:algo2}
+    
+    \DontPrintSemicolon
+    \SetKwInOut{Input}{vstup}\SetKwInOut{Output}{výstup}
+    \SetKwData{Modul}{$\mathcal{M}$}
+    \SetKwData{Action}{action}
+    \Input{Každý modul je v počiatočnom stave.}
+    \Output{Každý modul je v cieľovom stave alebo v stave, ktorý vznikol rekonfigurovaním v zadanom čase.}
+    
+    \While{existuje modul, ktorý nie je v cieľovom stave}{
+        \Modul $\leftarrow$ vyber modul\;
+        \Action $\leftarrow$ vyber prístupnú akciu pre \Modul\;
+        \If{\Modul môže vykonať akciu \Action}{
+            \Modul vykoná akciu \Action\;
+        }
+    }
+\end{algorithm}
+
+Ostáva teda popísať spôsob výberu modulu, akcie daného modulu, a to akým spôsobom sa testuje, že je možné danú akciu bezpečne vykonať. Implementovaný algoritmus využíva na výber modulu ich hodnoty unikátneho identifikátoru. Moduly sú zoradené podľa hodnoty id od najnižšieho po najvyšší a algoritmus vyberá moduly v tomto poradí cyklicky. 
+
+Akcie sa vyberajú tak, že sa preferujú rotácie pred prepojeniami. V prípade, že modul má každý stupeň voľnosti správne natočený, tak nasledujú odpojenia a vytváranie nových hrán sa deje ako posledné v poradí. 
+
+Nakoľko žiaden modul nemá znalosť o celej konfigurácii RoFIbota, tak je nutné testovanie validity akcie nutné testovať pomocou vzájomnej komunikácie medzi modulmi. Moduly môžu vykonať iba rotáciu niektorého zo stupňov voľnosti, odpojenia alebo pripojenia medzi dvomi modulmi. 
+
+Validita rotácie akéhokoľvek stupňa voľnosti je definovaná výhradne tým, že nedôjde k stretu žiadnych dvoch modulov. K stretu dvoch modulov dôjde iba v prípade, ak vzdialenosť stredov dotknutých strán modulov je menšia ako $1$. Je nutné otestovať, že počas celej rotácie nedôjde k stretu žiadnych dvoch modulov. 
+
+Zadefinujme si množinu $\mathcal{R}$ ako množinu modulov, ktorej sa počas rotácie zmenia súradnice (budú premiestnené). Zvyšné moduly budú patriť do množiny, ktorú si označíme ako $\mathcal{S}$. Vykonávaním rotácie nesmie dôjsť ku kolízii, ale tú stačí definovať iba medzi modulmi z množiny $\mathcal{R}$ voči modulom z množiny $\mathcal{S}$. Kolízie medzi modulmi z množiny $\mathcal{S}$ nemôžu nastať, nakoľko sú všetky bez kolízií a ostávajú statické. V množine $\mathcal{R}$ sa súradnice modulov menia, ale ich vzájomná poloha ostáva nezmenená, a teda ku kolíziám nemôže dôjsť. 
+
+Testovanie voči kolíziám prebieha nasledovne. $\mathcal{M}$ si zistí pozície modulov v množine $\mathcal{R}$ a na základe nich dokáže vypočítať, ako sa budú pohybovať stredy strán všetkých modulov v $\mathcal{R}$. Tieto pozície $\mathcal{M}$ pošle všetkým modulom v množine $\mathcal{S}$. Každý modul v $\mathcal{S}$ na základe vlastnej polohy v priestore dokáže určiť, či bude kolidovať s niektorým z modulov v množine $\mathcal{R}$ počas rotácie. Túto skutočnosť následne správou pošlú späť $\mathcal{M}$. Z pozbieraných údajov o prípadných kolíziách dokáže $\mathcal{M}$ vyhodnotiť, či je rotácia bez kolízií. V prípade, že áno, tak vykoná rotáciu a modulom z množiny $\mathcal{R}$ na záver rozpošle ich nové pozície v priestore. 
+
 
 
 
@@ -522,7 +582,7 @@ Obrázok \ref{fig:moduleCoordinates} je ukážkou jednoduchej počiatočnej konf
 
 \chapter{Implementácia}
 \label{sec:implementation}
-Platforma RoFI, ako už bolo spomenuté v kapitole \ref{sec:platform}, je open-source projekt. Časť RoFILib\footnote{\url{https://github.com/paradise-fi/RoFI/tree/master/RoFILib}} sa zaoberá vývojom simulácií a vizualizácie, kde patrí aj implementačná časť tejto práce. 
+Platforma RoFI je open-source projekt. Časť RoFILib\footnote{\url{https://github.com/paradise-fi/RoFI/tree/master/RoFILib}} sa zaoberá vývojom simulácií a vizualizácie, kde patrí aj implementačná časť tejto práce. 
 
 RoFILib je knižnica naprogramovaná v jazyku C++. Táto knižnica poskytuje funkcie na simuláciu rekonfigurácie rôznymi algoritmami a z rôznych pohľadov na problém rekonfigurácie. V súčasnej dobe sú to algoritmy navrhnuté v rámci tejto práce a v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}.
 
