@@ -94,6 +94,12 @@
 \setitemize{itemsep=-5pt,topsep=10pt,parsep=10pt,partopsep=10pt}
 \setenumerate{itemsep=-5pt,topsep=10pt,parsep=10pt,partopsep=10pt}
 \usepackage[slovak,linesnumbered,ruled,vlined]{algorithm2e}
+\newtheorem{theorem}{Tvrdenie}
+
+\usepackage{color}
+\definecolor{modra}{rgb}{0,0,1}
+\definecolor{zlta}{rgb}{1,1,0}
+\definecolor{cervena}{rgb}{1,.2706,.2667}
     
 \begin{document}
 \chapter*{Úvod}
@@ -123,7 +129,7 @@ RoFIbota je možné umiestniť do 3D siete tak, že každý modul sa nachádza v
 
 Toto umiestnenie do 3D mriežky spôsobuje, že tvar modulu je prispôsobený tak, aby pri pohybe zasahoval do najnižšieho možného počtu políčok siete (tzv. \textit{grid-awareness} \cite{mrazekMasterThesis}). 
 
-V súčasnej dobe je platforma RoFI prispôsobená na mriežku s veľkosťou 10\,cm. Podrobný popis vlastností modulu sa nachádza v diplomovej práci \textit{RoFI – Distributed Metamorphic Robots} \cite{mrazekMasterThesis}. 
+V súčasnej dobe je platforma RoFI prispôsobená na mriežku s veľkosťou $10$\,cm. Podrobný popis vlastností modulu sa nachádza v diplomovej práci \textit{RoFI – Distributed Metamorphic Robots} \cite{mrazekMasterThesis}. 
 
 \begin{figure}[hbt!]
     \centering
@@ -269,7 +275,7 @@ Atomickou zmenou v konfigurácii RoFIbota je \textit{akcia}, ktorá môže byť 
 
 Prvým typom akcií je \textit{akcia rotácie}, ktorá sa deje na jednom z modulov RoFIbota a ide o zmenu jedného z parametrov $\alpha$, $\beta$ alebo $\gamma$. Je definovaná nasledovnými parametrami: 
 \begin{itemize}
-    \item \textit{id} -- id modulu, ktorý mení jeden z uhlov, 
+    \item \textit{id} -- \textit{id} modulu, ktorý mení jeden z uhlov; $id \in \mathbb{Z}_0^+$, 
     \item \textit{joint} -- identifikácia stupňa voľnosti; $joint \in \{alfa, beta, gama\}$, 
     \item \textit{angle} -- orientovaný uhol, o ktorý sa daný joint bude otáčať. 
 \end{itemize}
@@ -412,18 +418,19 @@ Toto spájanie prebieha nasledovne: Postupne sa prechádza každý index krokov 
     \label{algorithm:stepJoin}
     \DontPrintSemicolon
     \SetKwInOut{Input}{vstup}\SetKwInOut{Output}{výstup}
-    \SetKwData{CurrIndex}{currentIndex}
+    \SetKwData{CurrIndex}{i}
     \SetKwData{NextIndex}{\CurrIndex + 1}
     \SetKwData{JoinStep}{$\mathcal{S}'$}
     \SetKwData{Cfg}{$\mathcal{C}_{\CurrIndex - 1}$}
-    \Input{Postupnosť krokov rekonfigurácie.}
-    \Output{Postupnosť krokov rekonfigurácie taká, že už sa žiadne dva susedné kroky nedajú spojiť.}
+    \SetKwData{Steps}{stepVector}
+    \Input{\ \Steps\ -- postupnosť krokov rekonfigurácie.}
+    \Output{\ \Steps\ -- postupnosť krokov rekonfigurácie taká, že žiadne dva susedné kroky sa už nedajú spojiť.}
     
     \CurrIndex $\leftarrow$ 1\;
-    \While{\CurrIndex < počet krokov rekonfigurácie}{
+    \While{\CurrIndex < $|\Steps|$}{
         \JoinStep $\leftarrow \mathcal{S}_\CurrIndex$ $\cup$ $\mathcal{S}_\NextIndex$\;
         
-        \eIf{$\mathcal{S}_\NextIndex$ \lstinline{<*>} ($\mathcal{S}_\CurrIndex$ \lstinline{<*>} \Cfg) $=$ \JoinStep \lstinline{<*>} \Cfg {\bf and} \JoinStep je validný}{
+        \eIf{\upshape $\mathcal{S}_\NextIndex$ \lstinline{<*>} ($\mathcal{S}_\CurrIndex$ \lstinline{<*>} \Cfg) $=$ \JoinStep \lstinline{<*>} \Cfg\ {\bf and} \JoinStep \textit{je validný}}{
             vymaž $\mathcal{S}_\NextIndex$ a $\mathcal{S}_\CurrIndex$\;
             na index \CurrIndex vlož krok \JoinStep\;
         }{
@@ -450,17 +457,15 @@ Tieto výmeny prebiehajú nasledovne: Postupne sa prechádza každý index kroko
     \SetKwInOut{Input}{vstup}\SetKwInOut{Output}{výstup}
     \SetKwData{CurrIndex}{i}
     \SetKwData{NextIndex}{\CurrIndex + 1}
+    \SetKwData{Steps}{stepVector}
     \SetKwData{Cfg}{$\mathcal{C}_{\CurrIndex - 1}$}
-    \Input{Postupnosť krokov rekonfigurácie.}
-    \Output{Postupnosť krokov rekonfigurácie po navrhnutom validnom vymieňaní krokov.}
+    \Input{\ \Steps\ -- postupnosť krokov rekonfigurácie.}
+    \Output{\ \Steps\ -- postupnosť krokov rekonfigurácie po výmene krokov.}
     
-    \CurrIndex $\leftarrow$ 1\;
-    \While{\CurrIndex < počet krokov rekonfigurácie}{
+    \For{\CurrIndex $\leftarrow 1$ \KwTo $|\Steps|$}{
         \If{\upshape $\mathcal{S}_\CurrIndex$ \lstinline{<*>} ($\mathcal{S}_\NextIndex$ \lstinline{<*>} \Cfg) $=$ $\mathcal{S}_\NextIndex$ \lstinline{<*>} ($\mathcal{S}_\CurrIndex$ \lstinline{<*>} \Cfg) \\ \hspace{12}{\bf and} $\mathcal{S}_\NextIndex$ a $\mathcal{S}_\CurrIndex$ \textit{validné v tomto poradí}}{
             vymeň $\mathcal{S}_\CurrIndex$ a $\mathcal{S}_\NextIndex$\;
         }
-        
-        \CurrIndex $\leftarrow$ \NextIndex\;
     }
 \end{algorithm}
 
@@ -473,17 +478,18 @@ Celá optimalizácia prebieha nasledovným spôsobom: V prvom rade sa vykoná sp
     \DontPrintSemicolon
     \SetKwInOut{Input}{vstup}\SetKwInOut{Output}{výstup}
     \SetKwData{Steps}{stepVector}
-    \Input{\Steps\ -- postupnosť akcií na optimalizáciu.}
-    \Output{\Steps\ -- optimalizovaná postupnosť akcií.}
+    \SetKwRepeat{Do}{do}{while}
+    \Input{\ \Steps\ -- postupnosť krokov na optimalizáciu.}
+    \Output{\ \Steps\ -- optimalizovaná postupnosť krokov.}
     
-    \Steps $\leftarrow joinSteps(\Steps)$\;
-    \While{postupnosť sa zmenila po spojení krokov}{
-        \Steps $\leftarrow swapSteps(\Steps)$\;
-        \Steps $\leftarrow joinSteps(\Steps)$\;
+    \Steps $\leftarrow$ joinSteps(\Steps)\;
+    \Do{\Steps sa zmenil po spojení krokov}{
+        \Steps $\leftarrow$ swapSteps(\Steps)\;
+        \Steps $\leftarrow$ joinSteps(\Steps)\;
     }
 \end{algorithm}
 
-Vyššie popísaná optimalizácia vždy zastaví. Algoritmus \ref{algorithm:stepJoin} po každom cykle buď zvýši hodnotu aktuálneho indexu, alebo zníži celkový počet krokov, teda v každom prípade sa zníži hodnota rozdielu medzi celkovým počtom krokov a aktuálnym indexom. To znamená, že v konečnom čase sa dostane na hodnotu menšiu ako $1$, teda cyklus skončí. V algoritme \ref{algorithm:stepSwap} sa aktuálny index po každom priechode cyklom zvýši, a teda táto časť vždy skončí v konečnom čase. 
+Vyššie popísaná optimalizácia vždy zastaví. Algoritmus \ref{algorithm:stepJoin} po každom cykle buď zvýši hodnotu aktuálneho indexu, alebo zníži celkový počet krokov, teda v každom prípade sa zníži hodnota rozdielu medzi celkovým počtom krokov a aktuálnym indexom. To znamená, že v konečnom čase sa dostane na hodnotu menšiu ako $1$, teda cyklus skončí. V algoritme \ref{algorithm:stepSwap} je využitý cyklus $for$, ktorý zaručene skončí v konečnom čase. 
 
 Ostáva dokázať, že algoritmus \ref{algorithm:algo1} skončí. Cyklus je podmienený výhradne tým, či nastane zmena po spájaní krokov. Každým prechodom cyklu vieme, že sa počet krokov určite zmenšil (nastalo aspoň jedno spojenie), takže v konečnom čase sa buď spojenie neuskutoční alebo bude počet krokov rovný $1$, čo bude znamenať, že v nasledujúcom kroku sa nebude môcť vykonať spojenie krokov, čím sa ukončí cyklus. 
 
@@ -497,11 +503,29 @@ Tento algoritmus je navrhnutý tak, že ak niektorý z modulov z nejakého dôvo
 
 \subsection{Distribuovaný algoritmus}
 \label{sec:distributedAlgo}
-Druhý implementovaný algoritmus nepotrebuje znalosť celej konfigurácie RoFIbota. Z intuitívneho pohľadu algoritmus spočíva v tom, že sa v každom kroku vyberie modul, ktorý sa pokúsi priblížiť svoj stav bližšie k cieľovému stavu. Pod pojmom priblížiť sa rozumie buď otočenie niektorým zo stupňov voľnosti, odpojenie niektorej z aktuálnych hrán, ktoré v koncovom stave nie sú alebo pripojenie k modulu tak, aby tvorili hranu, ktorá je v koncovom stave modulu. Zároveň sa predpokladá, že moduly sú zasadené do 3D mriežky a pracujú so súradnicovým systémom.
+Druhý implementovaný algoritmus nepotrebuje znalosť celej konfigurácie RoFIbota. Z intuitívneho pohľadu algoritmus spočíva v tom, že sa v každom kroku vyberie modul, ktorý sa pokúsi priblížiť svoj stav bližšie k cieľovému stavu. Pod pojmom priblížiť sa rozumie buď otočenie niektorým zo stupňov voľnosti, odpojenie niektorej z aktuálnych hrán, ktoré v koncovom stave nie sú, alebo pripojenie k inému modulu tak, aby tvorili hranu, ktorá je v koncovom stave modulu. Nakoľko je RoFIbot vsadený do 3D mriežky, tak v tomto algoritme používame súradnicový systém s predpokladom, že veľkosť hrany mriežky je $1$\,cm. 
 
-Ten je zavedený podľa počiatočnej konfigurácie RoFIbota a počas rekonfigurácie ostáva fixovaný. Menia sa výhradne pozície modulov, ktoré si musia tieto vlastné súradnice prepočítavať. Spôsob zavedenia súradnicového systému a aj algoritmus na výpočet súradníc pre ostatné moduly je prevzatý z diplomovej práce \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. 
+Spôsob zavedenia súradnicového systému a aj algoritmus na výpočet súradníc pre ostatné moduly sú prevzaté z diplomovej práce \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. Základom je definovanie osí súradnicového systému, ktoré sú určené podľa strany A modulu s najnižším \textit{id}, tak ako je to zobrazené na obrázku \ref{fig:moduleAxis}. 
 
-Konceptuálne je súradnicový systém zavedený nasledovným spôsobom. Poloha strany A modulu s najnižším id na začiatku konfigurácie definuje počiatok súradnicovej sústavy. Natočenie osí definuje následne strana B spomínaného modulu, ktorého súradnice sú $[0, 0, 1]$. Súradnice ostatných modulov sú dopočítané na základe ich polohy vzhľadom k tomuto modulu. Podrobný popis výpočtov súradníc sa nachádza v spomínanej diplomovej práci.  
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}[b]{0.47\textwidth}
+        \includegraphics[width=\textwidth]{pictures/module_dock_identification.pdf}
+        \caption[Pohľad spredu]{Pohľad spredu.}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.47\textwidth}
+        \includegraphics[width=\textwidth]{pictures/module_dock_identification_bottom.pdf}
+        \caption[Pohľad zospodu]{Pohľad zospodu.}
+    \end{subfigure}
+    \caption[Definícia osí súradnicového systému]{Definícia osí súradnicového systému podľa polohy konektorov \textcolor{white}{\colorbox{modra}{$X+$}}, \colorbox{zlta}{$X-$} a \colorbox{cervena}{$Z-$} strany A v základnej pozícii. Ide o pravotočivý súradnicový systém. }
+    \label{fig:moduleAxis}
+\end{figure}
+
+Celý súradnicový systém je zavedený podľa počiatočnej konfigurácie RoFIbota a počas rekonfigurácie ostáva fixovaný. Menia sa výhradne pozície modulov, ktoré si musia tieto vlastné súradnice prepočítavať. 
+
+Konceptuálne je súradnicový systém zavedený nasledovným spôsobom: Poloha strany A modulu s najnižším \textit{id} na začiatku konfigurácie definuje počiatok súradnicovej sústavy. Smer osí definuje následne strana B spomínaného modulu, ktorej súradnice sú $[0, 0, 1]$. Súradnice ostatných strán modulov sú dopočítané na základe ich polohy vzhľadom k tomuto modulu. Podrobný popis výpočtov súradníc sa nachádza v spomínanej diplomovej práci.  
+
+Obrázok \ref{fig:moduleCoordinates} je ukážkou jednoduchej počiatočnej konfigurácie, kde sú moduly spojené stranami B. Teda strana A žltého modulu je na súradniciach $[1, 0, 2]$. Os $y$ je jednoznačne definovaná, a to na základe pozícií konektorov (viď obrázok \ref{fig:moduleAxis}). Konektor $Z-$ strany A modulu s najnižším \textit{id} je orientovaný v zápornom smere osi $z$ a konektory $X-$ a $X+$ na osi $x$ v zápornom a kladnom smere v tomto poradí. 
 
 \begin{figure}[hbt!]
     \centering
@@ -510,34 +534,34 @@ Konceptuálne je súradnicový systém zavedený nasledovným spôsobom. Poloha 
     \label{fig:moduleCoordinates}
 \end{figure}
 
-Obrázok \ref{fig:moduleCoordinates} je ukážkou jednoduchej počiatočnej konfigurácie, kde moduly sú spojené stranami B. Teda strana A žltého modulu je na súradniciach $[1, 0, 2]$. Os y je jednoznačne definovaná a to na základe pozícií konektorov. Konkrétne konektor $-Z$ je v smere osi $z$ v zápornom smere a konektory $-X$ a $+X$ na osi $x$ v zápornom a kladnom smere v tomto poradí. 
+Algoritmus výpočtu súradníc v spomínanej diplomovej práci je založený na znalosti celej konfigurácie RoFIbota. V porovnaní s tým algoritmus na rekonfiguráciu popísaný v tejto kapitole znalosť celej konfigurácie RoFIbota nemá. Z tohto dôvodu je z algoritmu na výpočet súradníc použitá iba časť výpočtu matíc, z ktorých sa dajú súradnice modulu získať. Zvyšok bol pozmenený nasledovným spôsobom. 
 
-Algoritmus výpočtu súradníc v spomínanej diplomovej práci je založený na znalosti celej konfigurácie RoFIbota. Algoritmus na rekonfiguráciu popísaný v tejto kapitole je založený na tom, že žiaden modul nemá znalosť celej konfigurácie RoFIbota. Z tohto dôvodu je z algoritmu na výpočet súradníc použitá iba časť výpočtu matíc, z ktorých sa súradnice dajú získať. Zvyšok bol pozmenený nasledovným spôsobom. 
-
-Modul s najnižšou hodnotou id pozná svoje súradnice (popísané vyššie). Následne každý modul, ktorý pozná svoje koordináty, vypočíta súradnice aj všetkým modulom, ktorý sú s ním spojený hranou. Tento výpočet dokáže vykonať každý modul, nakoľko pozná hodnoty svojich uhlov voľnosti, polohu konektorov a svoje vlastné súradnice. Následne pošle každému modulu, ktorý je s ním spojený hranou správu o tom, aké súradnice má mať daný modul. Tento výpočet a rozposlanie správ sa deje výhradne jednorázovo nakoľko pri opakovaných výpočtoch a správach by došlo k cykleniu správ. Tento proces sa opakuje až kým nemá každý z modulov znalosť o svojich súradniciach. Tento popis je tiež znázornený v algoritme \ref{algorithm:coordinations}. 
+Modul s najnižšou hodnotou \textit{id} pozná svoje súradnice (popísané vyššie). Následne každý modul, ktorý pozná svoje súradnice, vypočíta súradnice aj všetkým modulom, ktoré sú s ním spojený hranou. Tento výpočet dokáže vykonať každý modul, nakoľko pozná hodnoty svojich uhlov voľnosti, polohu konektorov a svoje vlastné súradnice. Následne pošle každému modulu, ktorý je s ním spojený hranou, správu o tom, aké súradnice má daný modul. Tento výpočet a rozposlanie správ sa dejú výhradne jednorázovo, nakoľko pri opakovaných výpočtoch a správach by došlo k cykleniu správ. Proces popísaný v tomto odseku sa opakuje, až kým nemá každý z modulov znalosť o svojich súradniciach. Algoritmus \ref{algorithm:coordinates} znázorňuje tento proces z pohľadu jedného modulu -- ide o program, ktorý má každý modul rovnaký. 
 
 \begin{algorithm}
     \caption{Výpočet súradníc modulov RoFIbota. }
-    \label{algorithm:coordinations}
+    \label{algorithm:coordinates}
     
     \DontPrintSemicolon
     \SetKwInOut{Input}{vstup}\SetKwInOut{Output}{výstup}
     \SetKwData{Id}{id}
-    \Input{Konfigurácia RoFIbota.}
+    \Input{Konfigurácia RoFIbota bez znalosti zasadenia do súradnicového systému.}
     \Output{Každý modul pozná svoje súradnice.}
     
-    \If{\Id je najnižšie v RoFIbote}{
+    \If{\Id je najnižšie v RoFIbotovi}{
         inicializuj počiatočné súradnice\;
     }
+    zdieľaj a príjmy, informácie o znalosti súradníc\;
     \While{existuje modul, ktorý nepozná svoje súradnice}{
-        \If{modul má známe súradnice {\bf and} súradnice neboli zdieľané}{
+        \If{modul má známe súradnice {\bf and} tieto súradnice neboli zdieľané}{
             vypočítaj súradnice modulov, s ktorými mám hranu\;
             pošli im ich súradnice\;
         }
+        zdieľaj a príjmy, informácie o znalosti súradníc\;
     }
 \end{algorithm}
 
-Po tomto kroku má každý z modulov uložené, aká je jeho aktuálna pozícia v priestore, a teda môže prebiehať samotná rekonfigurácia. Základná myšlienka tejto rekonfigurácie je zachytená v algoritme \ref{algorithm:algo2}. Slovne rekonfigurácia začína výberom modulu (označme ho ako $\mathcal{M}$) a akcie, ktorú sa pokúsi vykonať. Pred vykonaním samotnej akcie je nutné, aby pomocou komunikácie s ostatnými modulmi bolo zaručené, že danú akciu je možné bezpečne vykonať. Ak áno, tak sa vybraná akcia aj fyzicky vykoná, v opačnom prípade sa nevykoná žiadna zmena na konfigurácii. Tento postup sa opakuje až kým nenastane jedna z nasledujúcich podmienok. Práva z nich je, že každý modul je v cieľovom stave a druhá, že žiaden z modulov už nemôže vykonať žiadnu akciu. 
+Po tomto kroku má každý z modulov uložené, aká je jeho aktuálna pozícia v priestore, a teda môže prebiehať samotná rekonfigurácia. Základná myšlienka tejto rekonfigurácie je zachytená v algoritme \ref{algorithm:algo2}. Slovne, rekonfigurácia začína výberom modulu (označme ho ako $\mathcal{M}$) a akcie, ktorú sa pokúsi vykonať. Pred vykonaním samotnej akcie je nutné, aby pomocou komunikácie s ostatnými modulmi bolo zaručené, že danú akciu je možné bezpečne vykonať. Ak áno, tak sa vybraná akcia aj fyzicky vykoná, v opačnom prípade sa nevykoná žiadna zmena konfigurácie. Tento postup sa opakuje, až kým nenastane jedna z nasledujúcich podmienok: Prvá z nich je, že každý modul je v cieľovom stave a druhá, že žiaden z modulov už nemôže vykonať žiadnu akciu. 
 
 \begin{algorithm}
     \caption{Distribuovaná rekonfigurácia. }
@@ -548,28 +572,49 @@ Po tomto kroku má každý z modulov uložené, aká je jeho aktuálna pozícia 
     \SetKwData{Modul}{$\mathcal{M}$}
     \SetKwData{Action}{action}
     \Input{Každý modul je v počiatočnom stave.}
-    \Output{Každý modul je v cieľovom stave alebo v stave, ktorý vznikol rekonfigurovaním v zadanom čase.}
+    \Output{Každý modul je v cieľovom stave alebo žiaden z modulov už nedokáže vykonať žiadnu akciu.}
     
-    \While{existuje modul, ktorý nie je v cieľovom stave}{
+    \While{existuje modul, ktorý nie je v cieľovom stave \\ \hspace{35}{\bf or} žiaden modul nemôže vykonať žiadnu akciu}{
         \Modul $\leftarrow$ vyber modul\;
-        \Action $\leftarrow$ vyber prístupnú akciu pre \Modul\;
+        \Action $\leftarrow$ vyber prípustnú akciu pre \Modul\;
         \If{\Modul môže vykonať akciu \Action}{
             \Modul vykoná akciu \Action\;
         }
     }
 \end{algorithm}
 
-Ostáva teda popísať spôsob výberu modulu, akcie daného modulu, a to akým spôsobom sa testuje, že je možné danú akciu bezpečne vykonať. Implementovaný algoritmus využíva na výber modulu ich hodnoty unikátneho identifikátoru. Moduly sú zoradené podľa hodnoty id od najnižšieho po najvyšší a algoritmus vyberá moduly v tomto poradí cyklicky. 
+Ostáva teda popísať spôsob výberu modulu, akcie daného modulu, a to akým spôsobom sa testuje, že je možné danú akciu bezpečne vykonať. 
 
-Akcie sa vyberajú tak, že sa preferujú rotácie pred prepojeniami. V prípade, že modul má každý stupeň voľnosti správne natočený, tak nasledujú odpojenia a vytváranie nových hrán sa deje ako posledné v poradí. 
+Implementovaný algoritmus využíva na výber modulu ich hodnoty unikátneho identifikátoru. Moduly sú zoradené podľa hodnoty \textit{id} od najnižšieho po najvyšší a algoritmus vyberá moduly v tomto poradí cyklicky. 
 
-Nakoľko žiaden modul nemá znalosť o celej konfigurácii RoFIbota, tak je nutné testovanie validity akcie nutné testovať pomocou vzájomnej komunikácie medzi modulmi. Moduly môžu vykonať iba rotáciu niektorého zo stupňov voľnosti, odpojenia alebo pripojenia medzi dvomi modulmi. 
+Akcie sa vyberajú tak, že sa preferujú rotácie pred prepojeniami. V prípade, že má modul každý stupeň voľnosti správne natočený, tak nasledujú odpojenia a vytváranie nových hrán sa deje ako posledné v poradí. Každá akcia je definovaná tak, že sa z aktuálneho stavu zmení priamo do cieľového stavu. Pri vytváraní prepojení to je vytváranie prepojenia výhradne s modulmi, s ktorý je modul prepojený v cieľovom stave. Pri rotáciách ide o analógiu, teda rotácia z aktuálneho stavu uhla voľnosti do cieľového. Nakoľko žiaden modul nemá znalosť o celej konfigurácii RoFIbota, tak na testovanie validity akcie je nutné použiť výhradne vzájomnú komunikáciu medzi modulmi. 
 
 Validita rotácie akéhokoľvek stupňa voľnosti je definovaná výhradne tým, že nedôjde k stretu žiadnych dvoch modulov. K stretu dvoch modulov dôjde iba v prípade, ak vzdialenosť stredov dotknutých strán modulov je menšia ako $1$. Je nutné otestovať, že počas celej rotácie nedôjde k stretu žiadnych dvoch modulov. 
 
 Zadefinujme si množinu $\mathcal{R}$ ako množinu modulov, ktorej sa počas rotácie zmenia súradnice (budú premiestnené). Zvyšné moduly budú patriť do množiny, ktorú si označíme ako $\mathcal{S}$. Vykonávaním rotácie nesmie dôjsť ku kolízii, ale tú stačí definovať iba medzi modulmi z množiny $\mathcal{R}$ voči modulom z množiny $\mathcal{S}$. Kolízie medzi modulmi z množiny $\mathcal{S}$ nemôžu nastať, nakoľko sú všetky bez kolízií a ostávajú statické. V množine $\mathcal{R}$ sa súradnice modulov menia, ale ich vzájomná poloha ostáva nezmenená, a teda ku kolíziám nemôže dôjsť. 
 
-Testovanie voči kolíziám prebieha nasledovne. $\mathcal{M}$ si zistí pozície modulov v množine $\mathcal{R}$ a na základe nich dokáže vypočítať, ako sa budú pohybovať stredy strán všetkých modulov v $\mathcal{R}$. Tieto pozície $\mathcal{M}$ pošle všetkým modulom v množine $\mathcal{S}$. Každý modul v $\mathcal{S}$ na základe vlastnej polohy v priestore dokáže určiť, či bude kolidovať s niektorým z modulov v množine $\mathcal{R}$ počas rotácie. Túto skutočnosť následne správou pošlú späť $\mathcal{M}$. Z pozbieraných údajov o prípadných kolíziách dokáže $\mathcal{M}$ vyhodnotiť, či je rotácia bez kolízií. V prípade, že áno, tak vykoná rotáciu a modulom z množiny $\mathcal{R}$ na záver rozpošle ich nové pozície v priestore. 
+Testovanie voči kolíziám prebieha nasledovne: $\mathcal{M}$ (vybraný modul) si zistí pozície modulov v množine $\mathcal{R}$ a na základe nich dokáže vypočítať, ako sa budú pohybovať stredy strán všetkých modulov v $\mathcal{R}$. Tieto pozície pošle $\mathcal{M}$ všetkým modulom v množine $\mathcal{S}$. Každý modul v $\mathcal{S}$ na základe vlastnej polohy v priestore dokáže určiť, či bude kolidovať s niektorým z modulov v množine $\mathcal{R}$ počas rotácie. Následne túto skutočnosť pošlú späť správou modulu $\mathcal{M}$. Z pozbieraných údajov o prípadných kolíziách dokáže $\mathcal{M}$ vyhodnotiť, či je rotácia bez kolízií. V prípade, že ku kolízii skutočne nedôjde, tak vykoná rotáciu a modulom z množiny $\mathcal{R}$ na záver rozpošle ich nové pozície v priestore. 
+
+V porovnaní s rotáciou, je validita prepojenie modulov definovaná iba na dvoch moduloch, ktoré prepojenie tvoria. Označme si preto modul, ktorý je sa ako druhý podieľa na prepojení, ako $\mathcal{M}'$ a hranu, ktorá je vybraná na spojenie/rozpojenie ako $\mathcal{E}$. 
+
+Validita odpojenia modulov je definovaná výhradne spojitosťou RoFIbota po vykonaní akcie. Tá je definovaná tak, že existuje cesta fyzická cesta medzi každými dvomi modulmi. 
+
+\begin{theorem}
+\label{theorem:disconnection}
+RoFIbot ostane spojitý po odpojení práve vtedy a len vtedy, ak existuje cesta medzi modulmi $\mathcal{M}$ a $\mathcal{M}'$ taká, že neobsahuje hranu $\mathcal{E}$. 
+\end{theorem}
+
+Dôkaz tohto tvrdenia rozdelíme na dve časti. Prvá z nich je, že chceme dokázať, že ak existuje hrana s uvedenými podmienkami, tak RoFIbot ostane spojitý. Vezmime si ľubovoľné dva moduly a chceme ukázať, že medzi nimi existuje fyzická cesta aj po odpojení. Cesty medzi týmito dvomi modulmi sa dajú rozdeliť podľa toho, či obsahujú hranu $\mathcal{E}$. Existencia cesty v zmenenej konfigurácii je nasledovná:
+\begin{itemize}
+    \item neobsahovala $\mathcal{E}$ -- cestu z pôvodnej konfigurácie nie je nutné meniť nakoľko všetky hrany budú naďalej existovať, 
+    \item obsahovala $\mathcal{E}$ -- cestu z pôvodnej konfigurácie je nutné pozmení, a to tak, že namiesto hrany $\mathcal{E}$ sa na toto miesto v ceste vloží iná cesta medzi modulmi $\mathcal{M}$ a $\mathcal{M}'$.
+\end{itemize}
+
+Ostáva ukázať, že ak je RoFIbot spojitý aj po rozpojení, tak v pôvodnej konfigurácii existovala cesta z $\mathcal{M}$ do $\mathcal{M}'$ neobsahujúca hranu $\mathcal{E}$. Keďže je konfigurácia po zmene spojitá, tak z definície musí existovať cesta z $\mathcal{M}$ do $\mathcal{M}'$ a zároveň neobsahuje hranu $\mathcal{E}$, lebo táto hrana sa v zmenenej konfigurácii už nenachádza. Zároveň vieme, že sa iná zmena na konfigurácii neodohrala, takže táto cesta musí existovať aj v pôvodnej konfigurácií, čím sme dokázali tvrdenie. 
+
+Z toho vyplýva, že stačí zistiť, či existuje cesta popísaná v tvrdení~\ref{theorem:disconnection}. Modulu $\mathcal{M}$ všetky moduly pošlú s akými ostatnými modulmi sú prepojené. Z týchto údajov si modul $\mathcal{M}$ dokáže vytvoriť plenárny neorientovaný spojitý graf, kde každý modul je vrchol a prepojenie medzi modulmi je hrana v grafe. Zároveň je v grafe povolené mať aj viac násobné hrany medzi vrcholmi (maximálne však môžu existovať dve hrany medzi rovnakými vrcholmi). Hranu $\mathcal{E}$ do tohto grafu nepridáva. Následne pomocou \textit{BFS} z vrcholu ekvivalentnému modulu $\mathcal{M}$ vyhľadá, či cestu do vrcholu ekvivalentnému modulu $\mathcal{M}'$. Keďže je tento výpočet nad konečným grafom, tak výpočet zaručene skončí. Odpojenie môže vykonať výhradne v prípade, ak prehľadávanie do šírky nájde cestu požadovaného vrcholu (cesta existuje). 
+
+Posledným typom zmeny, ktorú môže vybraný modul vykonať je pripojenie k inému modulu. V tomto prípade je na validitu tejto akcie postačujúce, ak druhý modul spojenia (označme ho opäť ako $\mathcal{M}'$) je schopný zadaného prepojenia. Inak povedané, že sa nachádza na správnych súradniciach voči konektoru modulu $\mathcal{M}$, ktorý chce vykonať pripojenie a zároveň, že modul $\mathcal{M}'$ je správne natočený (správnym konektorom a jeho natočením voči konektoru modulu $\mathcal{M}$). Tieto súradnice a natočenia dokáže určiť modul $\mathcal{M}$ zo svojej polohy v priestore a hodnotami uhlov voľnosti. Stačí teda, aby prebehla komunikácia medzi $\mathcal{M}$ a $\mathcal{M}'$, či $\mathcal{M}'$ má požadovanú polohu v priestore a správne natočenie. V prípade, že je všetko podľa požiadaviek na spojenie, tak prebehne spojenie modulov. 
 
 
 
