@@ -95,6 +95,7 @@
 \setenumerate{itemsep=-5pt,topsep=10pt,parsep=10pt,partopsep=10pt}
 \usepackage[slovak,linesnumbered,ruled,vlined]{algorithm2e}
 \newtheorem{lemma}{Lemma}
+\usepackage{minted}
 
 \usepackage{color}
 \definecolor{modra}{rgb}{0,0,1}
@@ -659,6 +660,80 @@ Aby výstup tejto práce bol plne kompatibilný s vizualizérom RoFILib knižnic
 Keďže ide o simuláciu, tak je cieľom sa čo najviac podobať fyzickému modelu rekonfigurácie RoFIbota. To znamená, že algoritmy využívajú iba minimálnu sadu funkcií a možností knižnice OpenMPI, a to tie, ktoré je možné využiť vo fyzických moduloch. Príkladom tohto obmedzenia je, nevyužívanie zdieľanej pamäte, nakoľko fyzické moduly žiadnu zdieľanú pamäť nemajú. 
 
 \section{Použitie}
+Na praktické využitie knižnice k simulácií rekonfigurácie a vizualizácie je nutné mať predom nainštalované nasledujúce knižnice. Na samotný preklad na základe CMakeLists súborov je nutné mať cmake verzie aspoň 3.10 a C++ kompilátor, ktorý podporuje štandard aspoň C++17. Na výpočty rekonfigurácie je nutné mať knižnicu Armadillo, ktorá slúži na prácu s maticami a vektormi. Pre vizualizačný nástroj sú potrebné knižnice VTK, FFmpeg a grafický editor Inkscape. Na využívanie distribuovaných algoritmov je potrebná knižnica openMPI. Návody na ich inštaláciu sa nachádzajú v súbore README.md\footnote{\url{https://github.com/paradise-fi/RoFI/blob/master/RoFILib/README.md}} knižnice RoFILib. 
+
+Z pohľadu hardvérového vybavenia na využívanie knižnice RoFILib je obmedzenie výhradne na distribuovanú rekonfiguráciu. Nakoľko každý modul je reprezentovaný jedným procesom tak je nutné mať k hardvér, ktorý je schopný pustiť toľko procesov ako je počet modulov RoFIbota, ktorého rekonfiguráciu ideme simulovať. 
+
+Samotné spustenie algoritmov na rekonfiguráciu popísaných v tejto práci je možné buď ručným spustením, alebo využitím pripraveného skriptu. V prípade nevyužitia skriptu je nutné, aby vstup pre samotný algoritmus rekonfigurácie bol v špecifickom tvare. Ten je zhodný so súbormi, ktoré vytvára preprocessing. 
+
+Preprocessing slúži na to, aby z konfiguračných súborov kompatibilných s knižnicou RoFILib vytvoril súbory pre distribuovanú rekonfiguráciu. Na jeho výpočet je nutné zadať mu súbory s počiatočnou a cieľovou konfiguráciou RoFIbota a adresár, kde môže vytvárať pomocné súbory. Medzi nepovinné parametre patria názvy súborov pre počet modulov a slovník. 
+
+Výsledok preprocessingu je vytvorenie pre každý modul dva súbory, ktoré obsahujú výhradne jeho stav v počiatočnom stave (názor je daný ako \textit{id}.init) a cieľovom stave (súbor s názvom \textit{id}.goal). Okrem toho vytvorí aj súbor, ktorý obsahuje výhradne počet modulov v konfigurácii za predpokladu, že tento počet bol v počiatočnej a cieľovej konfigurácii zhodný (inak obsahuje hodnotu $-1$). Na záver ešte vytvorí slovník, ktorý slúži na to, aby bolo možné vrátiť zmenu označenia modulov do pôvodného stavu. Algoritmy navrhnuté v tejto práci predpokladajú, že moduly majú hodnoty \textit{id} z množiny $\interval[0, n - 1)$, kde $n$ je počet modulov. 
+
+Príklad spustenia preprocessingu, kde \mintinline{text}{init} a \mintinline{text}{goal} sú súbory obsahujúce počiatočnú a cieľovú konfiguráciu RoFIbota a \mintinline{text}{dir} je adresár, kde sa budú ukladať súbory:
+
+\begin{minted}{bash}
+./rofi-distribute-preprocessing -i init -g goal -d dir
+\end{minted}.
+
+Plný výpočet prepínačov preprocessingu, pričom platí, že prepínače na súbory počiatočnej a cieľovej konfigurácie RoFIbota sú povinné: 
+\begin{minted}{text}
+  -h, --help            Print help
+  -i, --input arg       Initial config file
+  -g, --goal arg        Goal config file
+  -d, --directory arg   Directory for module's configs
+  -c, --count arg       File name for module's count file
+  -t, --dictionary arg  File name for module's dictionary
+\end{minted}
+
+Ak sú vstupné súbory pripravené v tvare, ktorý vyžadujú algoritmy na rekonfiguráciu, tak je možné spustiť samotnú rekonfiguráciu. Samotný program vyžaduje adresár, v ktorom sa nachádzajú vyššie popísané súbory s počiatočným a cieľovým stavom každého modulu v samostatnom súbore. Okrem toho vyžaduje aj algoritmus, ktorý má použiť na výpočet rekonfigurácie. Prehľad algoritmov je nasledovný: 
+
+\begin{minted}{text}
+  full     Full configuration knowledge
+  partial  Patrial configuration knowledge 
+           - full distributed
+\end{minted}
+
+V prípade výberu algoritmu s plnou znalosťou konfigurácie je možné zvoliť aj heuristiku pre výpočet algoritmu \textit{A*}. Podrobný popis princípov heuristík je popísaný v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. Ich kompletný výpočet je: 
+
+\begin{minted}{text}
+  trivial  All configurations have value 1 (default)
+  dMatrix  Module matrices difference
+  dCenter  Module center difference
+  dJoint   Joint difference
+  dAction  Action difference
+\end{minted}
+
+Samotný algoritmus rekonfigurácie má definované nasledujúce prepínače: 
+
+\begin{minted}{text}
+  -h, --help           Print help
+  -d, --directory arg  Directory for module's configs
+  -a, --alg arg        Algorithm for reconfiguration: 
+                       full, partial
+  -e, --eval arg       Evaluation function for full 
+                       algorithm for A*: trivial, 
+                       dMatrix, dCenter, dJoint, dAction
+\end{minted}
+
+Samotný výpočet algoritmu na rekonfiguráciu však prebieha tak, že sa spustí viacero procesov naraz. Toto poskytuje knižnica OpenMPI a to pomocou príkazu \mintinline{bash}{mpirun} s vhodnými prepínačmi. Je nutné nastaviť počet procesov pomocou prepínača \mintinline{bash}{-np}. Zároveň je možné spúšťať tieto procesy plne distribuovane teda na viacerých strojoch naraz a tie sa špecifikujú prepínačom \mintinline{bash}{--hostfile} \cite{openMPIHostFile} s názvom súboru, ktorý obsahuje zoznam host strojov. 
+
+Príkaz
+
+\begin{minted}{bash}
+mpiexec --hostfile host-file -np 4 
+  ./distribute/rofi-distribute -d dir -a full -e trivial
+\end{minted}.
+
+je príklad spustenia algoritmu s plnou znalosťou konfigurácie RoFIbota na rekonfiruáciu $4$ modulov s triviálnou heuristikou. Pričom \mintinline{text}{host-file} je súbor so špecifikovanými hostiteľskými strojmi a \mintinline{text}{dir} je adresár, v ktorom sú súbory s počiatočnými a cieľovými stavmi modulov. 
+
+Výstup algoritmu je vypisuvaný na štandardný výstup. Jeho formát je ... to be continued ...
+
+
+
+
+
+
 
 % ------------------------------------------------------ 3 ------------------------------------------------------
 
