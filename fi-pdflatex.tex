@@ -94,7 +94,7 @@
 \setitemize{itemsep=-5pt,topsep=10pt,parsep=10pt,partopsep=10pt}
 \setenumerate{itemsep=-5pt,topsep=10pt,parsep=10pt,partopsep=10pt}
 \usepackage[slovak,linesnumbered,ruled,vlined]{algorithm2e}
-\newtheorem{theorem}{Tvrdenie}
+\newtheorem{lemma}{Lemma}
 
 \usepackage{color}
 \definecolor{modra}{rgb}{0,0,1}
@@ -115,7 +115,7 @@ Primárnym cieľom platformy RoFI je vytvorenie modulárnych robotov, ktoré je 
 
 Ich dizajn je navrhovaný tak, aby bolo jednoduché a nie príliš finančne náročné ich fyzicky skonštruovať. Softvérové vybavenie pokrýva široké spektrum požiadaviek modulárnych robotov a má jednoduché použitie pre užívateľov na rôznych úrovniach. 
 
-Platforma je navrhnutá tak, aby bola ľahko rozšíriteľná o dodatočné periférie a pasívne prvky. Celý vývoj prebieha ako open-source projekt prístupný na \url{https://github.com/paradise-fi/RoFI}.  
+Platforma je navrhnutá tak, aby bola ľahko rozšíriteľná o dodatočné periférie a pasívne prvky. Celý vývoj prebieha ako open-source projekt \cite{rofiGit}. 
 
 Základnou jednotkou platformy RoFI sú moduly \cite{mrazekMasterThesis}, ktoré sú schopné sa vzájomne fyzicky prepojiť a zároveň medzi sebou komunikovať \cite{rofiCom}. Okrem toho sa každý modul dokáže pripojiť aj na pasívne prvky. 
 
@@ -536,7 +536,7 @@ Obrázok \ref{fig:moduleCoordinates} je ukážkou jednoduchej počiatočnej konf
 
 Algoritmus výpočtu súradníc v spomínanej diplomovej práci je založený na znalosti celej konfigurácie RoFIbota. V porovnaní s tým algoritmus na rekonfiguráciu popísaný v tejto kapitole znalosť celej konfigurácie RoFIbota nemá. Z tohto dôvodu je z algoritmu na výpočet súradníc použitá iba časť výpočtu matíc, z ktorých sa dajú súradnice modulu získať. Zvyšok bol pozmenený nasledovným spôsobom. 
 
-Modul s najnižšou hodnotou \textit{id} pozná svoje súradnice (popísané vyššie). Následne každý modul, ktorý pozná svoje súradnice, vypočíta súradnice aj všetkým modulom, ktoré sú s ním spojený hranou. Tento výpočet dokáže vykonať každý modul, nakoľko pozná hodnoty svojich uhlov voľnosti, polohu konektorov a svoje vlastné súradnice. Následne pošle každému modulu, ktorý je s ním spojený hranou, správu o tom, aké súradnice má daný modul. Tento výpočet a rozposlanie správ sa dejú výhradne jednorázovo, nakoľko pri opakovaných výpočtoch a správach by došlo k cykleniu správ. Proces popísaný v tomto odseku sa opakuje, až kým nemá každý z modulov znalosť o svojich súradniciach. Algoritmus \ref{algorithm:coordinates} znázorňuje tento proces z pohľadu jedného modulu -- ide o program, ktorý má každý modul rovnaký. 
+Modul s najnižšou hodnotou \textit{id} pozná svoje súradnice (popísané vyššie). Následne každý modul, ktorý pozná svoje súradnice, vypočíta súradnice aj všetkým modulom, ktoré sú s ním spojený hranou. Tento výpočet dokáže vykonať každý modul, nakoľko pozná hodnoty svojich uhlov voľnosti, polohu konektorov a svoje vlastné súradnice. Následne pošle každému modulu, ktorý je s ním spojený hranou, správu o tom, aké súradnice má daný modul. Tento výpočet a rozposlanie správ sa dejú výhradne jednorázovo, nakoľko pri opakovaných výpočtoch a správach by došlo k cykleniu správ. Proces popísaný v tomto odseku sa opakuje, až kým nemá každý z modulov znalosť o svojich súradniciach. Algoritmus \ref{algorithm:coordinates} znázorňuje tento proces z pohľadu jedného modulu -- ide o program, ktorý má každý modul rovnaký. V tomto algoritme je v popise vstupu a výstupu invariant algoritmu pred a po spustení. 
 
 \begin{algorithm}
     \caption{Výpočet súradníc modulov RoFIbota. }
@@ -545,7 +545,7 @@ Modul s najnižšou hodnotou \textit{id} pozná svoje súradnice (popísané vy�
     \DontPrintSemicolon
     \SetKwInOut{Input}{vstup}\SetKwInOut{Output}{výstup}
     \SetKwData{Id}{id}
-    \Input{Konfigurácia RoFIbota bez znalosti zasadenia do súradnicového systému.}
+    \Input{Konfigurácia RoFIbota bez znalosti zasadenia do~súradnicového systému.}
     \Output{Každý modul pozná svoje súradnice.}
     
     \If{\Id je najnižšie v RoFIbotovi}{
@@ -561,7 +561,9 @@ Modul s najnižšou hodnotou \textit{id} pozná svoje súradnice (popísané vy�
     }
 \end{algorithm}
 
-Po tomto kroku má každý z modulov uložené, aká je jeho aktuálna pozícia v priestore, a teda môže prebiehať samotná rekonfigurácia. Základná myšlienka tejto rekonfigurácie je zachytená v algoritme \ref{algorithm:algo2}. Slovne, rekonfigurácia začína výberom modulu (označme ho ako $\mathcal{M}$) a akcie, ktorú sa pokúsi vykonať. Pred vykonaním samotnej akcie je nutné, aby pomocou komunikácie s ostatnými modulmi bolo zaručené, že danú akciu je možné bezpečne vykonať. Ak áno, tak sa vybraná akcia aj fyzicky vykoná, v opačnom prípade sa nevykoná žiadna zmena konfigurácie. Tento postup sa opakuje, až kým nenastane jedna z nasledujúcich podmienok: Prvá z nich je, že každý modul je v cieľovom stave a druhá, že žiaden z modulov už nemôže vykonať žiadnu akciu. 
+Po tomto kroku má každý z modulov uložené, aká je jeho aktuálna pozícia v priestore, a teda môže prebiehať samotná rekonfigurácia. Základná myšlienka tejto rekonfigurácie je zachytená v algoritme \ref{algorithm:algo2}. 
+
+Slovne, rekonfigurácia začína výberom modulu (označme ho ako $\mathcal{M}$) a akcie, ktorú sa pokúsi vykonať. Pred vykonaním samotnej akcie je nutné, aby pomocou komunikácie s ostatnými modulmi bolo zaručené, že danú akciu je možné bezpečne vykonať. Ak áno, tak sa vybraná akcia aj fyzicky vykoná, v opačnom prípade sa nevykoná žiadna zmena konfigurácie. Tento postup sa opakuje, až kým nenastane jedna z nasledujúcich podmienok: Prvá z nich je, že každý modul je v cieľovom stave, a druhá, že žiaden z modulov už nemôže vykonať žiadnu akciu. 
 
 \begin{algorithm}
     \caption{Distribuovaná rekonfigurácia. }
@@ -574,7 +576,7 @@ Po tomto kroku má každý z modulov uložené, aká je jeho aktuálna pozícia 
     \Input{Každý modul je v počiatočnom stave.}
     \Output{Každý modul je v cieľovom stave alebo žiaden z modulov už nedokáže vykonať žiadnu akciu.}
     
-    \While{existuje modul, ktorý nie je v cieľovom stave \\ \hspace{35}{\bf or} žiaden modul nemôže vykonať žiadnu akciu}{
+    \While{existuje modul, ktorý nie je v cieľovom stave \\ \hspace{35}{\bf and} existuje modul, ktorý môže vykonať nejakú akciu}{
         \Modul $\leftarrow$ vyber modul\;
         \Action $\leftarrow$ vyber prípustnú akciu pre \Modul\;
         \If{\Modul môže vykonať akciu \Action}{
@@ -583,11 +585,11 @@ Po tomto kroku má každý z modulov uložené, aká je jeho aktuálna pozícia 
     }
 \end{algorithm}
 
-Ostáva teda popísať spôsob výberu modulu, akcie daného modulu, a to akým spôsobom sa testuje, že je možné danú akciu bezpečne vykonať. 
+Ostáva teda popísať spôsob výberu modulu, akcie daného modulu, a to, akým spôsobom sa testuje, že je možné danú akciu bezpečne vykonať. 
 
-Implementovaný algoritmus využíva na výber modulu ich hodnoty unikátneho identifikátoru. Moduly sú zoradené podľa hodnoty \textit{id} od najnižšieho po najvyšší a algoritmus vyberá moduly v tomto poradí cyklicky. 
+Implementovaný algoritmus využíva na výber modulu hodnoty unikátnych identifikátorov modulov. Moduly sú zoradené podľa hodnoty \textit{id} od najnižšieho po najvyšší a algoritmus vyberá moduly v tomto poradí cyklicky. 
 
-Akcie sa vyberajú tak, že sa preferujú rotácie pred prepojeniami. V prípade, že má modul každý stupeň voľnosti správne natočený, tak nasledujú odpojenia a vytváranie nových hrán sa deje ako posledné v poradí. Každá akcia je definovaná tak, že sa z aktuálneho stavu zmení priamo do cieľového stavu. Pri vytváraní prepojení to je vytváranie prepojenia výhradne s modulmi, s ktorý je modul prepojený v cieľovom stave. Pri rotáciách ide o analógiu, teda rotácia z aktuálneho stavu uhla voľnosti do cieľového. Nakoľko žiaden modul nemá znalosť o celej konfigurácii RoFIbota, tak na testovanie validity akcie je nutné použiť výhradne vzájomnú komunikáciu medzi modulmi. 
+Akcie sa vyberajú tak, že sa preferujú rotácie pred prepojeniami. V prípade, že má modul každý stupeň voľnosti správne natočený, tak nasledujú odpojenia a vytváranie nových hrán sa deje ako posledné v poradí. Každá akcia je definovaná tak, že sa daný atribút zmení z aktuálneho stavu priamo do cieľového stavu. Pri vytváraní prepojení to je vytváranie prepojenia výhradne s modulmi, s ktorými je modul prepojený v cieľovom stave. Pri rotáciách ide o analógiu, teda rotácia z aktuálneho stavu uhla voľnosti do cieľového. Nakoľko žiaden modul nemá znalosť o celej konfigurácii RoFIbota, tak na testovanie validity akcie je nutné použiť výhradne vzájomnú komunikáciu medzi modulmi. 
 
 Validita rotácie akéhokoľvek stupňa voľnosti je definovaná výhradne tým, že nedôjde k stretu žiadnych dvoch modulov. K stretu dvoch modulov dôjde iba v prípade, ak vzdialenosť stredov dotknutých strán modulov je menšia ako $1$. Je nutné otestovať, že počas celej rotácie nedôjde k stretu žiadnych dvoch modulov. 
 
@@ -595,26 +597,29 @@ Zadefinujme si množinu $\mathcal{R}$ ako množinu modulov, ktorej sa počas rot
 
 Testovanie voči kolíziám prebieha nasledovne: $\mathcal{M}$ (vybraný modul) si zistí pozície modulov v množine $\mathcal{R}$ a na základe nich dokáže vypočítať, ako sa budú pohybovať stredy strán všetkých modulov v $\mathcal{R}$. Tieto pozície pošle $\mathcal{M}$ všetkým modulom v množine $\mathcal{S}$. Každý modul v $\mathcal{S}$ na základe vlastnej polohy v priestore dokáže určiť, či bude kolidovať s niektorým z modulov v množine $\mathcal{R}$ počas rotácie. Následne túto skutočnosť pošlú späť správou modulu $\mathcal{M}$. Z pozbieraných údajov o prípadných kolíziách dokáže $\mathcal{M}$ vyhodnotiť, či je rotácia bez kolízií. V prípade, že ku kolízii skutočne nedôjde, tak vykoná rotáciu a modulom z množiny $\mathcal{R}$ na záver rozpošle ich nové pozície v priestore. 
 
-V porovnaní s rotáciou, je validita prepojenie modulov definovaná iba na dvoch moduloch, ktoré prepojenie tvoria. Označme si preto modul, ktorý je sa ako druhý podieľa na prepojení, ako $\mathcal{M}'$ a hranu, ktorá je vybraná na spojenie/rozpojenie ako $\mathcal{E}$. 
+V porovnaní s rotáciou je validita prepojenie modulov definovaná iba na dvoch moduloch, ktoré prepojenie tvoria. Označme si preto modul, ktorý sa podieľa na prepojení ako druhý, ako $\mathcal{M}'$ a hranu, ktorá je vybraná na spojenie/odpojenie, ako $\mathcal{E}$. 
 
-Validita odpojenia modulov je definovaná výhradne spojitosťou RoFIbota po vykonaní akcie. Tá je definovaná tak, že existuje cesta fyzická cesta medzi každými dvomi modulmi. 
+Validita akcie odpojenia dvoch modulov je definovaná výhradne spojitosťou RoFIbota po vykonaní akcie. Tá je definovaná tak, že existuje fyzická cesta medzi každými dvomi modulmi. 
 
-\begin{theorem}
-\label{theorem:disconnection}
-RoFIbot ostane spojitý po odpojení práve vtedy a len vtedy, ak existuje cesta medzi modulmi $\mathcal{M}$ a $\mathcal{M}'$ taká, že neobsahuje hranu $\mathcal{E}$. 
-\end{theorem}
+\begin{lemma}
+\label{lemma:disconnection}
+RoFIbot zostane spojitý po odpojení hrany $\mathcal{E}$ práve vtedy, keď existuje cesta medzi modulmi $\mathcal{M}$ a $\mathcal{M}'$ taká, že neobsahuje túto hranu. 
+\end{lemma}
 
-Dôkaz tohto tvrdenia rozdelíme na dve časti. Prvá z nich je, že chceme dokázať, že ak existuje hrana s uvedenými podmienkami, tak RoFIbot ostane spojitý. Vezmime si ľubovoľné dva moduly a chceme ukázať, že medzi nimi existuje fyzická cesta aj po odpojení. Cesty medzi týmito dvomi modulmi sa dajú rozdeliť podľa toho, či obsahujú hranu $\mathcal{E}$. Existencia cesty v zmenenej konfigurácii je nasledovná:
+\begin{proof}
+Dôkaz lemmy \ref{lemma:disconnection} rozdelíme na dve časti. Prvá z nich je, že chceme dokázať, že ak existuje hrana s uvedenými podmienkami, tak RoFIbot ostane spojitý. Vezmeme si ľubovoľné dva moduly a chceme ukázať, že medzi nimi existuje fyzická cesta aj po odpojení. Cesty medzi týmito dvomi modulmi sa dajú rozdeliť podľa toho, či obsahujú alebo neobsahujú hranu $\mathcal{E}$: 
 \begin{itemize}
-    \item neobsahovala $\mathcal{E}$ -- cestu z pôvodnej konfigurácie nie je nutné meniť nakoľko všetky hrany budú naďalej existovať, 
-    \item obsahovala $\mathcal{E}$ -- cestu z pôvodnej konfigurácie je nutné pozmení, a to tak, že namiesto hrany $\mathcal{E}$ sa na toto miesto v ceste vloží iná cesta medzi modulmi $\mathcal{M}$ a $\mathcal{M}'$.
+    \item obsahuje -- cestu z pôvodnej konfigurácie je nutné pozmeniť, a to tak, že namiesto hrany $\mathcal{E}$ sa na toto miesto v ceste vloží iná cesta medzi modulmi $\mathcal{M}$ a $\mathcal{M}'$, 
+    \item neobsahuje -- cestu z pôvodnej konfigurácie nie je nutné meniť, nakoľko všetky hrany budú naďalej existovať.
 \end{itemize}
 
-Ostáva ukázať, že ak je RoFIbot spojitý aj po rozpojení, tak v pôvodnej konfigurácii existovala cesta z $\mathcal{M}$ do $\mathcal{M}'$ neobsahujúca hranu $\mathcal{E}$. Keďže je konfigurácia po zmene spojitá, tak z definície musí existovať cesta z $\mathcal{M}$ do $\mathcal{M}'$ a zároveň neobsahuje hranu $\mathcal{E}$, lebo táto hrana sa v zmenenej konfigurácii už nenachádza. Zároveň vieme, že sa iná zmena na konfigurácii neodohrala, takže táto cesta musí existovať aj v pôvodnej konfigurácií, čím sme dokázali tvrdenie. 
+Ostáva ukázať, že ak je RoFIbot spojitý aj po rozpojení, tak v pôvodnej konfigurácii existovala cesta z $\mathcal{M}$ do $\mathcal{M}'$ neobsahujúca hranu $\mathcal{E}$. Keďže je konfigurácia po zmene spojitá, tak z definície musí existovať cesta z $\mathcal{M}$ do $\mathcal{M}'$ a zároveň neobsahuje hranu $\mathcal{E}$, lebo táto hrana sa v zmenenej konfigurácii už nenachádza. Zároveň vieme, že sa konfigurácia inak nezmenila, takže táto cesta musí existovať aj v pôvodnej konfigurácii, čím sme dokázali lemmu. 
 
-Z toho vyplýva, že stačí zistiť, či existuje cesta popísaná v tvrdení~\ref{theorem:disconnection}. Modulu $\mathcal{M}$ všetky moduly pošlú s akými ostatnými modulmi sú prepojené. Z týchto údajov si modul $\mathcal{M}$ dokáže vytvoriť plenárny neorientovaný spojitý graf, kde každý modul je vrchol a prepojenie medzi modulmi je hrana v grafe. Zároveň je v grafe povolené mať aj viac násobné hrany medzi vrcholmi (maximálne však môžu existovať dve hrany medzi rovnakými vrcholmi). Hranu $\mathcal{E}$ do tohto grafu nepridáva. Následne pomocou \textit{BFS} z vrcholu ekvivalentnému modulu $\mathcal{M}$ vyhľadá, či cestu do vrcholu ekvivalentnému modulu $\mathcal{M}'$. Keďže je tento výpočet nad konečným grafom, tak výpočet zaručene skončí. Odpojenie môže vykonať výhradne v prípade, ak prehľadávanie do šírky nájde cestu požadovaného vrcholu (cesta existuje). 
+\end{proof}
 
-Posledným typom zmeny, ktorú môže vybraný modul vykonať je pripojenie k inému modulu. V tomto prípade je na validitu tejto akcie postačujúce, ak druhý modul spojenia (označme ho opäť ako $\mathcal{M}'$) je schopný zadaného prepojenia. Inak povedané, že sa nachádza na správnych súradniciach voči konektoru modulu $\mathcal{M}$, ktorý chce vykonať pripojenie a zároveň, že modul $\mathcal{M}'$ je správne natočený (správnym konektorom a jeho natočením voči konektoru modulu $\mathcal{M}$). Tieto súradnice a natočenia dokáže určiť modul $\mathcal{M}$ zo svojej polohy v priestore a hodnotami uhlov voľnosti. Stačí teda, aby prebehla komunikácia medzi $\mathcal{M}$ a $\mathcal{M}'$, či $\mathcal{M}'$ má požadovanú polohu v priestore a správne natočenie. V prípade, že je všetko podľa požiadaviek na spojenie, tak prebehne spojenie modulov. 
+Z toho vyplýva, že stačí zistiť, či existuje cesta popísaná v lemme~\ref{lemma:disconnection}. Modulu $\mathcal{M}$ pošlú všetky moduly informáciu, s akými ostatnými modulmi sú prepojené. Z týchto údajov si modul $\mathcal{M}$ dokáže vytvoriť neorientovaný súvislý graf, kde každý modul je vrcholom a prepojenie medzi modulmi je hranou v grafe. Zároveň je v grafe povolené mať aj viacnásobné hrany medzi vrcholmi (maximálne však môžu existovať dve hrany medzi rovnakými vrcholmi). Hranu $\mathcal{E}$ do tohto grafu nepridávame (je to graf reprezentujúci konfiguráciu po odpojení). Následne pomocou \textit{BFS} z vrcholu ekvivalentnému modulu $\mathcal{M}$ vyhľadáme cestu do vrcholu ekvivalentnému modulu $\mathcal{M}'$. Keďže tento výpočet prebieha nad konečným grafom, tak zaručene skončí. Odpojenie môžeme vykonať iba v prípade, ak prehľadávanie do šírky nájde cestu do požadovaného vrcholu. 
+
+Posledným typom akcie, ktorú môže vybraný modul vykonať, je pripojenie k inému modulu. V tomto prípade je pre validitu tejto akcie postačujúce, ak druhý modul spojenia (označme ho opäť ako $\mathcal{M}'$) je schopný zadaného prepojenia. Inak povedané, nachádza sa na správnych súradniciach a zároveň je správne natočený (správnym konektorom a jeho natočením voči konektoru modulu $\mathcal{M}$). Tieto súradnice a natočenia dokáže určiť modul $\mathcal{M}$ zo svojej polohy v priestore a z hodnôt uhlov voľnosti. Stačí teda, aby prebehla komunikácia medzi $\mathcal{M}$ a $\mathcal{M}'$, či $\mathcal{M}'$ má požadovanú polohu v priestore a správne natočenie. V prípade, že je všetko podľa požiadaviek na spojenie, prebehne spojenie modulov. 
 
 
 
@@ -627,33 +632,33 @@ Posledným typom zmeny, ktorú môže vybraný modul vykonať je pripojenie k in
 
 \chapter{Implementácia}
 \label{sec:implementation}
-Platforma RoFI je open-source projekt. Časť RoFILib\footnote{\url{https://github.com/paradise-fi/RoFI/tree/master/RoFILib}} sa zaoberá vývojom simulácií a vizualizácie, kde patrí aj implementačná časť tejto práce. 
+Keďže platform RoFI je open-source projekt a jej súčasťou je vývoj rôznych častí tejto platformy. Implementačná časť tejto práce je súčasťou časti RoFILib\footnote{\url{https://github.com/paradise-fi/RoFI/tree/master/RoFILib}}, ktorá sa zaoberá vývojom simulácií a vizualizácie. 
 
 RoFILib je knižnica naprogramovaná v jazyku C++. Táto knižnica poskytuje funkcie na simuláciu rekonfigurácie rôznymi algoritmami a z rôznych pohľadov na problém rekonfigurácie. V súčasnej dobe sú to algoritmy navrhnuté v rámci tejto práce a v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}.
 
-Knižnica zároveň poskytuje možnosť vizualizácie konfigurácií a rekonfigurácií RoFIbotov. Vizualizér vznikol ako bakalárska práca \textit{Vizualizace pro robotickou platformu RoFI} \cite{nausovaBachelorThesis} a dokáže produkovať obrázky konfigurácie alebo videá rekonfigurácie. Obrázky v tejto práci sú výstupom vizualizéru. 
+Knižnica zároveň poskytuje možnosť vizualizácie konfigurácií a rekonfigurácií RoFIbotov. Vizualizér vznikol ako bakalárska práca \textit{Vizualizace pro robotickou platformu RoFI} \cite{nausovaBachelorThesis} a dokáže produkovať obrázky konfigurácie alebo videá rekonfigurácie. Väčšina obrázkov, ktoré sú súčasťou tejto práce a jej príloh sú výstupom vizualizéru. 
 
 \section{Technická špecifikácia a využité knižnice}
 \label{sec:libraries}
-Problémy majú nasledujúce vstupy a výstupy: Na vstupe sa nachádzajú dva súbory, ktoré popisujú počiatočnú a cieľovú konfiguráciu RoFIbota, ktorý sa má rekonfigurovať. Výstupom je súbor, ktorý obsahuje zoznam konfigurácií RoFIbota takých, ktoré vznikli po každom kroku rekonfigurácie. 
+Problémy, ktoré riešia spomínané práce na rekonfiguráciu, majú jednotné vstupy a výstupy: Na vstupe sa nachádzajú dva súbory, ktoré popisujú počiatočnú a cieľovú konfiguráciu RoFIbota, ktorý sa má rekonfigurovať. Výstupom je súbor, ktorý obsahuje zoznam konfigurácií RoFIbota, ktoré vznikli po každom kroku rekonfigurácie. 
 
-Podrobný popis vstupných a výstupných súborov sa nachádza v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. Tieto súbory sú zároveň kompatibilné s vizualizérom. 
+Podrobný popis vstupných a výstupných súborov sa nachádza v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. Keďže definícia vstupov a výstupov pre rekonfiguračné problémy je jednotná, tak je zaručená kompatibilita aj s vizualizačným programom knižnice RoFILib. 
 
 Vstupné a výstupné súbory obsahujú celú konfiguráciu RoFIbota, ktorej celková znalosť na vstupe simulácie ľubovoľného modulu nie je pre túto prácu možná. Tým pádom z dôvodu kompatibility so zvyškom knižnice je implementovaný aj preprocessing a postprocessing, ktorý obaľuje implementované algoritmy. 
 
-Algoritmy v tejto práci sú navrhnuté tak, aby každý modul RoFIbota fungoval ako samostatná entita. Komunikácia medzi entitami je možná výhradne pomocou správ. V softvéri fyzických modulov je implementovaný protokol MPI\footnote{Message Passing Interface}. 
+Táto práca je zameraná na distribuované algoritmy a tie sú navrhnuté tak, aby každý modul RoFIbota fungoval ako samostatná entita. Komunikácia medzi entitami je možná výhradne pomocou správ, ktorá je vo fyzických modulov uskutočnená pomocou protokolu MPI\footnote{Message Passing Interface}. 
 
 Z týchto dôvodov je implementácia navrhnutých algoritmov v jazyku C++ s využitím knižnice OpenMPI \cite{openMPILibrary}. 
 
-Knižnica OpenMPI umožňuje spustiť zadaný počet procesov s rovnakým programom a unikátnou identifikáciou pre každý z nich. Zároveň poskytuje komunikačnú vrstvu medzi zadanými procesmi (príkladom je posielanie správ medzi dvomi konkrétnymi procesmi, broadcast alebo all-to-all komunikácia). 
+OpenMPI je open-source knižnica \cite{openMPIGit}, ktorá umožňuje bezpečný vývoj multiprocesových aplikácií v distribuovanom prostredí. Keďže je táto knižnica viacúčelová, tak v tejto práci sú využité nasledujúce súčasti knižnice: Spustenie zadaného početu procesov s rovnakým programom s unikátnou identifikáciou. Bezpečná komunikácia medzi zadanými procesmi (napríklad posielanie správ medzi dvomi konkrétnymi procesmi, broadcast alebo all-to-all komunikácia). 
 
-Simulácia v tejto práci prebieha tak, že každý modul je samostatný proces, ktorý dostane na vstup vstupné informácie (svoj počiatočný a cieľový stav). 
+Simulácia prebieha tak, že každý modul je samostatný proces, ktorý dostane na vstup vstupné informácie (svoj počiatočný a cieľový stav). Spustené procesy si následne vymieňajú správ medzi sebou a na základe tejto komunikácie prebiehajú výpočty a validné akcie tak, aby sa každý modul rekonfiguroval z počiatočného stavu do cieľového stavu. 
 
-Spustený program následne dokáže pomocou posielania správ medzi procesmi vykonať validné akcie tak, aby sa každý modul rekonfiguroval z počiatočného stavu do cieľového stavu. 
+Aby výstup tejto práce bol plne kompatibilný s vizualizérom RoFILib knižnice, tak sú jednotlivé vykonané akcie zapísané do logu. Na tie sa po skončení rekonfigurácie sputí postprocessing, ktorý vytvorí kompatibilný výstup so zvyškom knižnice. 
 
-Každú vykonanú akciu sú procesy schopné zapísať do logu. Z logov je následne možné vytvoriť súbor kompatibilný s vizualizérom. 
+Keďže ide o simuláciu, tak je cieľom sa čo najviac podobať fyzickému modelu rekonfigurácie RoFIbota. To znamená, že algoritmy využívajú iba minimálnu sadu funkcií a možností knižnice OpenMPI, a to tie, ktoré je možné využiť vo fyzických moduloch. Príkladom tohto obmedzenia je, nevyužívanie zdieľanej pamäte, nakoľko fyzické moduly žiadnu zdieľanú pamäť nemajú. 
 
-Simulácia sa má čo najviac podobať fyzickému modelu rekonfigurácie RoFIbota. To znamená, že algoritmy využívajú iba minimálnu sadu funkcií a možností knižnice OpenMPI, a to tie, ktoré je možné využiť vo fyzických moduloch. Príkladom tohto obmedzenia je, že algoritmy nevyužívajú zdieľanú pamäť, lebo fyzické moduly nemajú žiadnu zdieľanú pamäť. 
+\section{Použitie}
 
 % ------------------------------------------------------ 3 ------------------------------------------------------
 
