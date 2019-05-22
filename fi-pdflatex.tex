@@ -537,7 +537,7 @@ Obrázok \ref{fig:moduleCoordinates} je ukážkou jednoduchej počiatočnej konf
 
 Algoritmus výpočtu súradníc v spomínanej diplomovej práci je založený na znalosti celej konfigurácie RoFIbota. V porovnaní s tým algoritmus na rekonfiguráciu popísaný v tejto kapitole znalosť celej konfigurácie RoFIbota nemá. Z tohto dôvodu je z algoritmu na výpočet súradníc použitá iba časť výpočtu matíc, z ktorých sa dajú súradnice modulu získať. Zvyšok bol pozmenený nasledovným spôsobom. 
 
-Modul s najnižšou hodnotou \textit{id} pozná svoje súradnice (popísané vyššie). Následne každý modul, ktorý pozná svoje súradnice, vypočíta súradnice aj všetkým modulom, ktoré sú s ním spojený hranou. Tento výpočet dokáže vykonať každý modul, nakoľko pozná hodnoty svojich uhlov voľnosti, polohu konektorov a svoje vlastné súradnice. Následne pošle každému modulu, ktorý je s ním spojený hranou, správu o tom, aké súradnice má daný modul. Tento výpočet a rozposlanie správ sa dejú výhradne jednorázovo, nakoľko pri opakovaných výpočtoch a správach by došlo k cykleniu správ. Proces popísaný v tomto odseku sa opakuje, až kým nemá každý z modulov znalosť o svojich súradniciach. Algoritmus \ref{algorithm:coordinates} znázorňuje tento proces z pohľadu jedného modulu -- ide o program, ktorý má každý modul rovnaký. V tomto algoritme je v popise vstupu a výstupu invariant algoritmu pred a po spustení. 
+Modul s najnižšou hodnotou \textit{id} pozná svoje súradnice (popísané vyššie). Následne každý modul, ktorý pozná svoje súradnice, vypočíta súradnice aj všetkým modulom, ktoré sú s ním spojený hranou. Tento výpočet dokáže vykonať každý modul, nakoľko pozná hodnoty svojich uhlov voľnosti, polohu konektorov a svoje vlastné súradnice. Následne pošle každému modulu, ktorý je s ním spojený hranou, správu o tom, aké súradnice má daný modul. Tento výpočet a rozposlanie správ sa dejú výhradne jednorázovo, nakoľko pri opakovaných výpočtoch a správach by došlo k cykleniu správ. Proces popísaný v tomto odseku sa opakuje, až kým nemá každý z modulov znalosť o svojich súradniciach. Algoritmus \ref{algorithm:coordinates} znázorňuje tento proces z pohľadu jedného modulu -- ide o program, ktorý má každý modul rovnaký. V tomto algoritme je v popise vstupu a výstupu stav algoritmu pred a po spustení. 
 
 \begin{algorithm}
     \caption{Výpočet súradníc modulov RoFIbota. }
@@ -552,13 +552,13 @@ Modul s najnižšou hodnotou \textit{id} pozná svoje súradnice (popísané vy�
     \If{\Id je najnižšie v RoFIbotovi}{
         inicializuj počiatočné súradnice\;
     }
-    zdieľaj a príjmy, informácie o znalosti súradníc\;
+    zdieľaj a príjmi informácie o znalosti súradníc\;
     \While{existuje modul, ktorý nepozná svoje súradnice}{
         \If{modul má známe súradnice {\bf and} tieto súradnice neboli zdieľané}{
             vypočítaj súradnice modulov, s ktorými mám hranu\;
             pošli im ich súradnice\;
         }
-        zdieľaj a príjmy, informácie o znalosti súradníc\;
+        zdieľaj a príjmi informácie o znalosti súradníc\;
     }
 \end{algorithm}
 
@@ -622,9 +622,6 @@ Z toho vyplýva, že stačí zistiť, či existuje cesta popísaná v lemme~\ref
 
 Posledným typom akcie, ktorú môže vybraný modul vykonať, je pripojenie k inému modulu. V tomto prípade je pre validitu tejto akcie postačujúce, ak druhý modul spojenia (označme ho opäť ako $\mathcal{M}'$) je schopný zadaného prepojenia. Inak povedané, nachádza sa na správnych súradniciach a zároveň je správne natočený (správnym konektorom a jeho natočením voči konektoru modulu $\mathcal{M}$). Tieto súradnice a natočenia dokáže určiť modul $\mathcal{M}$ zo svojej polohy v priestore a z hodnôt uhlov voľnosti. Stačí teda, aby prebehla komunikácia medzi $\mathcal{M}$ a $\mathcal{M}'$, či $\mathcal{M}'$ má požadovanú polohu v priestore a správne natočenie. V prípade, že je všetko podľa požiadaviek na spojenie, prebehne spojenie modulov. 
 
-
-
-
 % ------------------------------------------------------ 2 ------------------------------------------------------
 
 
@@ -633,34 +630,34 @@ Posledným typom akcie, ktorú môže vybraný modul vykonať, je pripojenie k i
 
 \chapter{Implementácia}
 \label{sec:implementation}
-Keďže platform RoFI je open-source projekt a jej súčasťou je vývoj rôznych častí tejto platformy. Implementačná časť tejto práce je súčasťou časti RoFILib\footnote{\url{https://github.com/paradise-fi/RoFI/tree/master/RoFILib}}, ktorá sa zaoberá vývojom simulácií a vizualizácie. 
+Platforma RoFI je open-source projekt. Implementačná časť tejto práce je súčasťou knižnice RoFILib\footnote{\url{https://github.com/paradise-fi/RoFI/tree/master/RoFILib}}, ktorá sa zaoberá vývojom simulácií a vizualizácie. 
 
-RoFILib je knižnica naprogramovaná v jazyku C++. Táto knižnica poskytuje funkcie na simuláciu rekonfigurácie rôznymi algoritmami a z rôznych pohľadov na problém rekonfigurácie. V súčasnej dobe sú to algoritmy navrhnuté v rámci tejto práce a v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}.
+RoFILib je knižnica naprogramovaná v jazyku C++. Táto knižnica poskytuje funkcie na simuláciu rekonfigurácie rôznymi algoritmami a z rôznych pohľadov (centralizovaný a distribuovaný) na problém rekonfigurácie. V súčasnej dobe sú to algoritmy navrhnuté v rámci tejto práce a v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}.
 
-Knižnica zároveň poskytuje možnosť vizualizácie konfigurácií a rekonfigurácií RoFIbotov. Vizualizér vznikol ako bakalárska práca \textit{Vizualizace pro robotickou platformu RoFI} \cite{nausovaBachelorThesis} a dokáže produkovať obrázky konfigurácie alebo videá rekonfigurácie. Väčšina obrázkov, ktoré sú súčasťou tejto práce a jej príloh sú výstupom vizualizéru. 
+Knižnica zároveň poskytuje možnosť vizualizácie konfigurácií a rekonfigurácií RoFIbotov. Vizualizér vznikol ako bakalárska práca \textit{Vizualizace pro robotickou platformu RoFI} \cite{nausovaBachelorThesis} a dokáže produkovať obrázky konfigurácie alebo videá rekonfigurácie. Väčšina obrázkov, ktoré sú súčasťou tejto práce a jej príloh, sú výstupom vizualizéru. 
 
 \section{Technická špecifikácia a využité knižnice}
 \label{sec:libraries}
-Problémy, ktoré riešia spomínané práce na rekonfiguráciu, majú jednotné vstupy a výstupy: Na vstupe sa nachádzajú dva súbory, ktoré popisujú počiatočnú a cieľovú konfiguráciu RoFIbota, ktorý sa má rekonfigurovať. Výstupom je súbor, ktorý obsahuje zoznam konfigurácií RoFIbota, ktoré vznikli po každom kroku rekonfigurácie. 
+Problémy rekonfigurácie, ktoré riešia spomínané práce, majú jednotné vstupy a výstupy: Na vstupe sa nachádzajú dva súbory, ktoré popisujú počiatočnú a cieľovú konfiguráciu RoFIbota, ktorý sa má rekonfigurovať. Výstupom je súbor, ktorý obsahuje zoznam konfigurácií RoFIbota, ktoré vznikli po každom kroku rekonfigurácie. 
 
 Podrobný popis vstupných a výstupných súborov sa nachádza v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. Keďže definícia vstupov a výstupov pre rekonfiguračné problémy je jednotná, tak je zaručená kompatibilita aj s vizualizačným programom knižnice RoFILib. 
 
-Vstupné a výstupné súbory obsahujú celú konfiguráciu RoFIbota, ktorej celková znalosť na vstupe simulácie ľubovoľného modulu nie je pre túto prácu možná. Tým pádom z dôvodu kompatibility so zvyškom knižnice je implementovaný aj preprocessing a postprocessing, ktorý obaľuje implementované algoritmy. 
+Vstupné a výstupné súbory obsahujú celú konfiguráciu RoFIbota, ktorej celková znalosť na vstupe simulácie ľubovoľného modulu nie je pre túto prácu možná. Tým pádom je z dôvodu kompatibility so zvyškom knižnice implementovaný aj preprocessing a postprocessing, ktorý obaľuje tu implementované algoritmy. 
 
 Táto práca je zameraná na distribuované algoritmy a tie sú navrhnuté tak, aby každý modul RoFIbota fungoval ako samostatná entita. Komunikácia medzi entitami je možná výhradne pomocou správ, ktorá je vo fyzických modulov uskutočnená pomocou protokolu MPI\footnote{Message Passing Interface}. 
 
-Z týchto dôvodov je implementácia navrhnutých algoritmov v jazyku C++ s využitím knižnice OpenMPI \cite{openMPILibrary}. 
+Z týchto dôvodov je implementácia navrhnutých algoritmov napísaná v jazyku C++ s využitím knižnice OpenMPI \cite{openMPILibrary}. 
 
-OpenMPI je open-source knižnica \cite{openMPIGit}, ktorá umožňuje bezpečný vývoj multiprocesových aplikácií v distribuovanom prostredí. Keďže je táto knižnica viacúčelová, tak v tejto práci sú využité nasledujúce súčasti knižnice: Spustenie zadaného početu procesov s rovnakým programom s unikátnou identifikáciou. Bezpečná komunikácia medzi zadanými procesmi (napríklad posielanie správ medzi dvomi konkrétnymi procesmi, broadcast alebo all-to-all komunikácia). 
+OpenMPI je open-source knižnica \cite{openMPIGit}, ktorá umožňuje bezpečný vývoj multiprocesových aplikácií v distribuovanom prostredí. Keďže je táto knižnica viacúčelová, tak sú v tejto práci využité nasledujúce súčasti knižnice: Spustenie zadaného počtu procesov s rovnakým programom s unikátnou identifikáciou. Bezpečná komunikácia medzi zadanými procesmi (napríklad posielanie správ medzi dvomi konkrétnymi procesmi, broadcast alebo all-to-all komunikácia). 
 
-Simulácia prebieha tak, že každý modul je samostatný proces, ktorý dostane na vstup vstupné informácie (svoj počiatočný a cieľový stav). Spustené procesy si následne vymieňajú správ medzi sebou a na základe tejto komunikácie prebiehajú výpočty a validné akcie tak, aby sa každý modul rekonfiguroval z počiatočného stavu do cieľového stavu. 
+Simulácia prebieha tak, že každý modul je samostatný proces, ktorý dostane na vstup vstupné informácie (svoj počiatočný a cieľový stav). Spustené procesy si následne medzi sebou vymieňajú správy na základe tejto komunikácie prebiehajú výpočty a validné akcie tak, aby sa každý modul rekonfiguroval z počiatočného stavu do cieľového stavu. 
 
-Aby výstup tejto práce bol plne kompatibilný s vizualizérom RoFILib knižnice, tak sú jednotlivé vykonané akcie zapísané do logu. Na tie sa po skončení rekonfigurácie sputí postprocessing, ktorý vytvorí kompatibilný výstup so zvyškom knižnice. 
+Aby bol výstup tejto práce plne kompatibilný s vizualizérom knižnice RoFILib, tak sú jednotlivé vykonané akcie zapísané do logu. Na tie sa po skončení rekonfigurácie spustí postprocessing, ktorý vytvorí výstup kompatibilný so zvyškom knižnice. 
 
-Keďže ide o simuláciu, tak je cieľom sa čo najviac podobať fyzickému modelu rekonfigurácie RoFIbota. To znamená, že algoritmy využívajú iba minimálnu sadu funkcií a možností knižnice OpenMPI, a to tie, ktoré je možné využiť vo fyzických moduloch. Príkladom tohto obmedzenia je, nevyužívanie zdieľanej pamäte, nakoľko fyzické moduly žiadnu zdieľanú pamäť nemajú. 
+Keďže ide o simuláciu, tak jej cieľom je priblížiť sa čo najviac fyzickému modelu rekonfigurácie RoFIbota. To znamená, že algoritmy využívajú iba minimálnu sadu funkcií a možností knižnice OpenMPI, a to tie, ktoré je možné využiť vo fyzických moduloch. Príkladom tohto obmedzenia je nevyužívanie zdieľanej pamäte, nakoľko fyzické moduly žiadnu zdieľanú pamäť nemajú. 
 
 \section{Použitie}
-Na praktické využitie knižnice k simulácií rekonfigurácie a vizualizácie je nutné mať predom nainštalované nasledujúce knižnice. Na samotný preklad na základe CMakeLists súborov je nutné mať cmake verzie aspoň 3.10 a C++ kompilátor, ktorý podporuje štandard aspoň C++17. Na výpočty rekonfigurácie je nutné mať knižnicu Armadillo, ktorá slúži na prácu s maticami a vektormi. Pre vizualizačný nástroj sú potrebné knižnice VTK, FFmpeg a grafický editor Inkscape. Na využívanie distribuovaných algoritmov je potrebná knižnica openMPI. Návody na ich inštaláciu sa nachádzajú v súbore README.md\footnote{\url{https://github.com/paradise-fi/RoFI/blob/master/RoFILib/README.md}} knižnice RoFILib. 
+Na praktické využitie knižnice k simulácii rekonfigurácie a vizualizácie je nutné mať nainštalované nasledujúce knižnice: Na samotný preklad na základe súborov CMakeLists je nutné mať cmake verzie aspoň 3.10 a C++ kompilátor, ktorý podporuje štandard aspoň C++17. Na výpočty rekonfigurácie je nutné mať knižnicu Armadillo, ktorá slúži na prácu s maticami a vektormi. Pre vizualizačný nástroj sú potrebné knižnice VTK, FFmpeg a grafický editor Inkscape. Na využívanie distribuovaných algoritmov je potrebná knižnica openMPI. Návody na ich inštaláciu sa nachádzajú v súbore README.md\footnote{\url{https://github.com/paradise-fi/RoFI/blob/master/RoFILib/README.md}} knižnice RoFILib. 
 
 Z pohľadu hardvérového vybavenia na využívanie knižnice RoFILib je obmedzenie výhradne na distribuovanú rekonfiguráciu. Nakoľko každý modul je reprezentovaný jedným procesom tak je nutné mať k hardvér, ktorý je schopný pustiť toľko procesov ako je počet modulov RoFIbota, ktorého rekonfiguráciu ideme simulovať. 
 
@@ -727,8 +724,31 @@ mpiexec --hostfile host-file -np 4
 
 je príklad spustenia algoritmu s plnou znalosťou konfigurácie RoFIbota na rekonfiruáciu $4$ modulov s triviálnou heuristikou. Pričom \mintinline{text}{host-file} je súbor so špecifikovanými hostiteľskými strojmi a \mintinline{text}{dir} je adresár, v ktorom sú súbory s počiatočnými a cieľovými stavmi modulov. 
 
-Výstup algoritmu je vypisuvaný na štandardný výstup. Jeho formát je ... to be continued ...
+Výstup algoritmu je vypísaný na štandardný výstup. Jeho formát je nasledovný: Na úplnom začiatku je uvedená počiatočná konfigurácia RoFIbota tak, že každý riadok konfigurácie obsahuje prefix $0$. Nakoľko program nemá plnú znalosť konfigurácie, tak ho vytvorí tak, že každý modul vypíše svoj stav. Nasledujúce riadky obsahujú vykonané akcie, ktoré sa vykonávajú a ich poradie nemusí byť zhodné s poradím, v akom sa dané akcie vykonávali. Preto má každá akcia na začiatku svojho zápisu kladný celočíselný prefix, ktorý hovorí o poradovom čísle kroku, v ktorom sa daná akcia vykonala. Zároveň sa predpokladá, že výstup obsahuje všetky poradové čísla krokov (teda v každom kroku sa vykoná vždy aspoň jedna akcia). Ak je použitý druhý algoritmus a nastane prípad, že nie je možné už vykonať žiadnu akciu, ale aspoň jeden modul nie je v cieľovej konfigurácii, tak na konci výstupu je poznámka o skutočnosti, že sa nejedná o cieľový stav RoFIbota. 
 
+Tento výstup však nie je kompatibilný so zvyšnými časťami knižnice RoFILib. Na to, aby zaručená kompatibilita, tak je možné využiť časť postprocessing. 
+
+Cieľom postprocessingu je vytvoriť zo súboru, kde je časovými známkami označená počiatočná konfigurácia a akcie, ktoré sa na danej konfigurácii majú vykonávať, vytvoriť súbor, ktorý obsahuje postupnosť konfigurácií rekonfigurácie RoFIbota. Teda postprocessing vezme súbor s akciami a postupne ich podľa známok aplikuje na počiatočnú konfiguráciu. Zároveň aj premenuje späť identifikátory modulov podľa zadaného slovníka, ktorý bol vytvorený napríklad ako produkt preprocessingu. 
+
+Príkaz 
+
+\begin{minted}{bash}
+./rofi-distribute-postprocessing -i file -t dictionary
+\end{minted}
+
+ spustí postprocessing, kde \mintinline{text}{file} je súbor, ktorý obsahuje hodnoty, ktoré sú zhodné s popisom výstupu rekonfiguračného algoritmu a \mintinline{text}{dictionary} je súbor, v ktorom je uvedený slovník zmien unikátnych identifikátorov modulov. 
+ 
+ Oba prepínače sú povinné a toto je prehľad všetkých prepínačov pre postprocessing: 
+
+\begin{minted}{text}
+  -h, --help            Print help
+  -t, --dictionary arg  Dictionary file
+  -i, --input arg       File with time marked actions 
+\end{minted}
+
+Toto je kompletné využitie časti \textit{distribute} knižnice RoFILib, ktorá vznikla ako implementačná časť tento bakalárskej práce. Nakoľko je z dôvodu kompatibility s knižnicou nutné spúšťať preprocessing a postprocessing, tak je pripravený aj skript, ktorý túto sekvenciu spúšťania všetky časti automaticky. 
+
+Popis použitia skriptu ... to be continued ...
 
 
 
