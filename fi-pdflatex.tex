@@ -17,7 +17,7 @@
            %% if you don’t have access to a double-sided printer,
            %% or if one-sided typesetting is a formal requirement
            %% at your faculty.
-  table,   %% This option causes the coloring of tables. Replace
+  notable,   %% This option causes the coloring of tables. Replace
            %% with `notable` to restore plain LaTeX tables.
   lof,     %% This option prints the List of Figures. Replace with
            %% `nolof` to hide the List of Figures.
@@ -85,8 +85,12 @@
   keywordstyle    = {[3]\color{olive}},%
   stringstyle     = \color{teal},%
   commentstyle    = \itshape\color{magenta}}
-\usepackage{floatrow} %% Putting captions above tables
-\floatsetup[table]{capposition=top}
+  
+\usepackage{multirow}
+\usepackage{lscape}
+\usepackage{longtable}
+%\usepackage{floatrow} %% Putting captions above tables
+%\floatsetup[table]{capposition=top}
 
 \usepackage{enumitem}
 \setitemize{itemsep=-5pt,topsep=10pt,parsep=10pt,partopsep=10pt}
@@ -634,32 +638,38 @@ RoFILib je knižnica naprogramovaná v jazyku C++. Táto knižnica poskytuje fun
 
 Knižnica zároveň poskytuje možnosť vizualizácie konfigurácií a rekonfigurácií RoFIbotov. Vizualizér vznikol ako bakalárska práca \textit{Vizualizace pro robotickou platformu RoFI} \cite{nausovaBachelorThesis} a dokáže produkovať obrázky konfigurácie alebo videá rekonfigurácie. Väčšina obrázkov, ktoré sú súčasťou tejto práce a jej príloh, sú výstupom vizualizéru. 
 
-\section{Technická špecifikácia a využité knižnice}
-\label{sec:libraries}
+\section{Návrh implementácie}
 Problémy rekonfigurácie, ktoré riešia spomínané práce, majú jednotné vstupy a výstupy: Na vstupe sa nachádzajú dva súbory, ktoré popisujú počiatočnú a cieľovú konfiguráciu RoFIbota, ktorý sa má rekonfigurovať. Výstupom je súbor, ktorý obsahuje zoznam konfigurácií RoFIbota, ktoré vznikli po každom kroku rekonfigurácie. 
 
-Podrobný popis vstupných a výstupných súborov sa nachádza v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. Keďže definícia vstupov a výstupov pre rekonfiguračné problémy je jednotná, tak je zaručená kompatibilita aj s vizualizačným programom knižnice RoFILib. 
+Podrobný popis vstupných a výstupných súborov sa nachádza v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis} a ukážka v prílohe \ref{sec:inOutFiles}. Keďže je definícia vstupov a výstupov pre rekonfiguračné problémy jednotná pre celú knižnicu RoFILib, tak je zaručená kompatibilita aj s vizualizačným programom spomínanej knižnice. 
 
 Vstupné a výstupné súbory obsahujú celú konfiguráciu RoFIbota, ktorej celková znalosť na vstupe simulácie ľubovoľného modulu nie je pre túto prácu možná. Tým pádom je z dôvodu kompatibility so zvyškom knižnice implementovaný aj preprocessing a postprocessing, ktorý obaľuje tu implementované algoritmy. 
 
-Táto práca je zameraná na distribuované algoritmy a tie sú navrhnuté tak, aby každý modul RoFIbota fungoval ako samostatná entita. Komunikácia medzi entitami je možná výhradne pomocou správ, ktorá je vo fyzických modulov uskutočnená pomocou protokolu MPI\footnote{Message Passing Interface}. 
+Výpočet rekonfigurácie prebieha tak, že každý modul je samostatný proces, ktorý dostane na vstup vstupné informácie (svoj počiatočný a cieľový stav). Spustené procesy si následne medzi sebou vymieňajú správy a na základe tejto komunikácie prebiehajú výpočty a validné akcie tak, aby sa každý modul rekonfiguroval z počiatočného stavu do cieľového stavu. 
 
-Z týchto dôvodov je implementácia navrhnutých algoritmov napísaná v jazyku C++ s využitím knižnice OpenMPI \cite{openMPILibrary}. 
+Aby bol výstup tejto práce plne kompatibilný s vizualizérom knižnice RoFILib, tak sú jednotlivé vykonané akcie zapísané do logu (príklad logu je v príloha \ref{sec:log}). Na tie sa po skončení rekonfigurácie spustí postprocessing, ktorý vytvorí výstup kompatibilný so zvyškom knižnice. 
 
-OpenMPI je open-source knižnica \cite{openMPIGit}, ktorá uľahčuje vývoj multiprocesových aplikácií v distribuovanom prostredí. Keďže je táto knižnica viacúčelová, tak sú v tejto práci využité napríklad aj nasledujúce súčasti: Spustenie zadaného počtu procesov s rovnakým programom s unikátnou identifikáciou (tzv. \textit{rank} procesu). Komunikácia medzi zadanými procesmi (napríklad posielanie správ medzi dvomi konkrétnymi procesmi, broadcast alebo all-to-all komunikácia). 
+\section{Využité knižnice}
+\label{sec:libraries}
+Táto práca je zameraná na distribuované algoritmy a tie sú navrhnuté tak, aby každý modul RoFIbota fungoval ako samostatná entita. Komunikácia medzi entitami je možná výhradne pomocou správ, ktorá je vo fyzických modulov uskutočnená pomocou protokolu MPI\footnote{Message Passing Interface}. Z tohto dôvod implementácia navrhnutých algoritmov využíva knižnicu OpenMPI \cite{openMPILibrary}. Je to open-source knižnica \cite{openMPIGit}, ktorá uľahčuje vývoj multiprocesových aplikácií v distribuovanom prostredí. 
 
-Simulácia prebieha tak, že každý modul je samostatný proces, ktorý dostane na vstup vstupné informácie (svoj počiatočný a cieľový stav). Spustené procesy si následne medzi sebou vymieňajú správy na základe tejto komunikácie prebiehajú výpočty a validné akcie tak, aby sa každý modul rekonfiguroval z počiatočného stavu do cieľového stavu. 
+Keďže navrhnuté algoritmy majú simulovať výpočty rekonfigurácie fyzických modulov, tak ich cieľom sa čo najviac priblížiť fyzickému modelu. To znamená, že algoritmy využívajú iba minimálnu sadu funkcií a možností knižnice OpenMPI, a to tie, ktoré je možné využiť vo fyzických moduloch. V implementácii sú využité nasledujúce súčasti knižnice OpenMPI: 
+\begin{itemize}
+    \item každý proces je unikátne identifikovaný tzv. \textit{rank} procesu, 
+    \item komunikácia medzi dvomi procesmi \textit{send} a \textit{recv} (jednosmerné posielanie dát) resp. \textit{sendrecv} (obojsmerné posielanie dát), 
+    \item jednosmerné posielanie dát všetkým procesom \textit{bcast} (broadcast), 
+    \item jednosmerné posielanie dát jednému procesu \textit{gather}, 
+    \item zdieľanie dát každý s každým \textit{alltoall}. 
+\end{itemize}
 
-Aby bol výstup tejto práce plne kompatibilný s vizualizérom knižnice RoFILib, tak sú jednotlivé vykonané akcie zapísané do logu. Na tie sa po skončení rekonfigurácie spustí postprocessing, ktorý vytvorí výstup kompatibilný so zvyškom knižnice. 
-
-Keďže ide o simuláciu, tak jej cieľom je priblížiť sa čo najviac fyzickému modelu rekonfigurácie RoFIbota. To znamená, že algoritmy využívajú iba minimálnu sadu funkcií a možností knižnice OpenMPI, a to tie, ktoré je možné využiť vo fyzických moduloch. Príkladom tohto obmedzenia je nevyužívanie zdieľanej pamäte, nakoľko fyzické moduly žiadnu zdieľanú pamäť nemajú. 
+Na druhú stranu bol návrh vytvorený tak, aby nepoužíval možnosti knižnice OpenMPI, ktoré sa nedajú využívať na fyzických moduloch. Príkladom tohto obmedzenia je nevyužívanie zdieľanej pamäte, nakoľko fyzické moduly žiadnu zdieľanú pamäť nemajú. 
 
 Na praktické využitie knižnice na simuláciu rekonfigurácie a vizualizácie je nutné mať nainštalované nasledujúce knižnice: 
 \begin{itemize}
-    \item C++ kompilátor, ktorý podporuje štandard aspoň C++17, 
+    \item kompilátor C++, ktorý podporuje štandard aspoň C++17, 
     \item \texttt{cmake} verzie aspoň 3.10 -- v prípade prekladu na základe súborov CMakeLists, 
     \item knižnica \texttt{Armadillo} -- slúži na prácu s maticami a vektormi, ktoré sú potrebné na výpočty rekonfigurácie,  
-    \item knižnice \texttt{VTK}, \texttt{FFmpeg} a grafický editor \texttt{Inkscape} -- pre správne fungovanie vizualizačného nástroja, 
+    \item knižnice \texttt{VTK}, \texttt{FFmpeg} a grafický editor \texttt{Inkscape} -- závislosti vizualizačného nástroja, 
     \item knižnica \texttt{openMPI} -- na kompiláciu a spustenie distribuovaných algoritmov. 
 \end{itemize}
 
@@ -668,34 +678,32 @@ Na praktické využitie knižnice na simuláciu rekonfigurácie a vizualizácie 
 Knižnica openMPI spúšťa procesy tak, aby každý z nich mal k dispozícii samostatné jadro, a to hlavne z dôvodu, aby sa navzájom neovplyvňovali\footnote{\url{https://www.open-mpi.org/faq/?category=running#oversubscribing}}. Preto je nutné, aby hardvérové vybavenie strojov, na ktorých bude bežať rekonfigurácia mala aspoň toľko jadier procesoru ako je počet modulov RoFIbota. 
 
 \newcommand{\comment}[1]{}
-\comment{
-Z pohľadu hardvérového vybavenia sú kladené obmedzenia výhradne pri používaní distribuovanej rekonfigurácie. Nakoľko je každý modul reprezentovaný jedným procesom, tak je nutné mať hardvér, ktorý je schopný pustiť toľko procesov ako je počet modulov RoFIbota, ktorého rekonfiguráciu ideme simulovať. }
 
 \section{Použitie}
-Samotné spustenie algoritmov na rekonfiguráciu popísaných v tejto práci je možné buď ručným spustením, alebo využitím pripraveného skriptu. V prípade nevyužitia skriptu je nutné, aby vstup pre samotný algoritmus rekonfigurácie bol v špecifickom tvare. Ten je zhodný so súbormi, ktoré vytvára preprocessing. 
+Výpočet algoritmov na rekonfiguráciu popísaných v tejto práci je možné buď ručným spustením, alebo využitím pripraveného skriptu. V prípade nevyužitia skriptu je nutné, aby vstup pre samotný algoritmus rekonfigurácie bol v špecifickom tvare. Ten je zhodný s formátom súborov, ktoré vytvára preprocessing.
 
-Preprocessing slúži na to, aby z konfiguračných súborov kompatibilných s knižnicou RoFILib vytvoril súbory pre distribuovanú rekonfiguráciu. Na jeho výpočet je nutné zadať mu súbory s počiatočnou a cieľovou konfiguráciou RoFIbota a adresár, kde môže vytvárať pomocné súbory. Medzi nepovinné parametre patria názvy súborov pre počet modulov a slovník. 
+\subsection{Preprocessing}
+Preprocessing slúži na to, aby z konfiguračných súborov kompatibilných s knižnicou RoFILib vytvoril súbory pre distribuovanú rekonfiguráciu. Povinnov súčasťou spustenia časti preprocessing sú súbory s počiatočnou a cieľovou konfiguráciou RoFIbota a adresár, kde môže vytvárať pomocné súbory. Medzi nepovinné parametre patria názvy súborov pre počet modulov a slovník. 
 
-Výsledkom preprocessingu je príprava všetkých potrebných súborov na to, aby bolo možné využiť program na rekonfiguráciu a následný postprocessing. Toto sú všetky potrebné: 
+Výsledkom preprocessingu je príprava všetkých súborov potrebných na to, aby bolo možné využiť program na rekonfiguráciu a následný postprocessing. Toto sú všetky potrebné vstupy: 
 \begin{itemize}
-    \item súbory \texttt{id.init} a \texttt{id.goal} (pre všetky \textit{id} modulov RoFIbota) -- obsahujú počiatočný resp. cieľový stav modulu s identifikátorom \textit{id}, 
-    \item súbory \texttt{count} -- obsahuje počet modulov v konfigurácii, resp. hodnotu $-1$ ak nastal prípad, že počet modulov v počiatočnej a cieľovej konfigurácii nie je zhodný (teda rekonfigurácia nie je možná), 
-    \item súbory \texttt{dictionary} -- obsahuje slovník medzi pôvodnými identifikátormi modulov a identifikátormi využívanými pre rekonfiguráciu
+    \item súbory \texttt{id.init} a \texttt{id.goal} (pre všetky \textit{id} modulov RoFIbota) -- obsahujú počiatočný, resp. cieľový stav modulu s identifikátorom \textit{id} (príklad týchto súbor sa nachádza v prílohe \ref{sec:algoInput}), 
+    \item súbor \texttt{count} -- obsahuje počet modulov v konfigurácii, resp. hodnotu $-1$, ak nastal prípad, že počet modulov v počiatočnej a cieľovej konfigurácii nie je zhodný (teda ide o nesprávne zadané vstupy), 
+    \item súbor \texttt{dictionary} -- obsahuje slovník na preklad medzi pôvodnými identifikátormi modulov a identifikátormi využívanými pre rekonfiguráciu
 \end{itemize}
 
-Dôvod zavedenia súboru \texttt{count} je, že tento súbor slúži na to, aby bolo možné rýchlo zistiť koľko procesov je nutné spustiť na rekonfiguráciu. Zavedenia slovníka je potrebné, nakoľko algoritmy navrhnuté v tejto práci predpokladajú, že moduly majú hodnoty \textit{id} z množiny $\interval[0, n - 1)$, kde $n$ je počet modulov RoFIbota.
+Súbor \texttt{count} je použitý, aby bolo možné rýchlo zistiť, koľko procesov je nutné spustiť na rekonfiguráciu. Zavedenia slovníka je potrebné, nakoľko algoritmy navrhnuté v tejto práci predpokladajú, že moduly majú hodnoty \textit{id} z množiny $\interval[0, n - 1)$, kde $n$ je počet modulov RoFIbota.
 
-Príklad spustenia preprocessingu, kde \mintinline{text}{init} a \mintinline{text}{goal} sú súbory obsahujúce počiatočnú a cieľovú konfiguráciu RoFIbota a \mintinline{text}{dir} je adresár, kde sa budú ukladať pomocné súbory:
+Príklad spustenia preprocessingu, kde \mintinline{text}{init} a \mintinline{text}{goal} sú súbory obsahujúce počiatočnú a cieľovú konfiguráciu RoFIbota a \mintinline{text}{dir} je adresár, kde sa budú ukladať pomocné súbory, môže vyzerať takto:
 
 \begin{minted}{bash}
-./rofi-distribute-preprocessing -i init -g goal -d dir
+  ./rofi-distribute-preprocessing -i init -g goal -d dir
 \end{minted}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % tie prepinace treba prejst kvoli readme.. 
 
 \comment{
-Plný výpočet prepínačov preprocessingu, pričom platí, že prepínače na súbory počiatočnej a cieľovej konfigurácie RoFIbota sú povinné: 
 \begin{minted}{text}
   -h, --help            Print help
   -i, --init arg       Initial config file
@@ -705,18 +713,20 @@ Plný výpočet prepínačov preprocessingu, pričom platí, že prepínače na 
   -t, --dictionary arg  File name for module's dictionary
 \end{minted}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Ak sú vstupné súbory pripravené v tvare, ktorý vyžadujú algoritmy na rekonfiguráciu, tak je možné spustiť samotnú rekonfiguráciu. Samotný program vyžaduje adresár, v ktorom sa nachádzajú vyššie popísané súbory s počiatočným a cieľovým stavom každého modulu v samostatnom súbore. Okrem toho vyžaduje aj algoritmus, ktorý má použiť na výpočet rekonfigurácie. 
 
-\comment{Prehľad algoritmov je nasledovný: 
+\subsection{Algoritmy}
+Ak sú vstupné súbory pripravené v tvare, ktorý vyžadujú algoritmy na rekonfiguráciu, tak je možné spustiť samotnú rekonfiguráciu. Samotný program vyžaduje adresár, v ktorom sa nachádzajú vyššie popísané súbory s počiatočným a cieľovým stavom každého modulu v samostatnom súbore. Okrem toho vyžaduje aj výber algoritmu, ktorý má použiť na výpočet rekonfigurácie. 
 
+\comment{
 \begin{minted}{text}
   full     Full configuration knowledge
   partial  Patrial configuration knowledge 
            - full distributed
 \end{minted}}
 
-V prípade výberu algoritmu s plnou znalosťou konfigurácie je možné zvoliť aj heuristiku pre výpočet algoritmu \textit{A*}. Podrobný popis princípov heuristík je popísaný v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. \comment{Ich kompletný výpočet je: 
+V prípade výberu algoritmu s plnou znalosťou konfigurácie je možné zvoliť aj heuristiku pre výpočet algoritmu \textit{A*}. Podrobný popis princípov heuristík je popísaný v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. 
 
+\comment{
 \begin{minted}{text}
   trivial  All configurations have value 1 (default)
   dMatrix  Module matrices difference
@@ -724,8 +734,6 @@ V prípade výberu algoritmu s plnou znalosťou konfigurácie je možné zvoliť
   dJoint   Joint difference
   dAction  Action difference
 \end{minted}
-
-Samotný program na rekonfiguráciu má definované nasledujúce prepínače: 
 
 \begin{minted}{text}
   -h, --help           Print help
@@ -737,40 +745,38 @@ Samotný program na rekonfiguráciu má definované nasledujúce prepínače:
                        dMatrix, dCenter, dJoint, dAction
 \end{minted}}
 
-Výpočet algoritmu na rekonfiguráciu však prebieha tak, že sa spustí viacero procesov naraz. Toto umožňuje knižnica OpenMPI a to pomocou príkazu \mintinline{bash}{mpiexec} s vhodnými prepínačmi. Je nutné nastaviť počet procesov pomocou prepínača \mintinline{bash}{-np}. Zároveň je možné spúšťať tieto procesy plne distribuovane, teda na viacerých strojoch naraz, a tie sa špecifikujú prepínačom \mintinline{bash}{--hostfile} \cite{openMPIHostFile} s názvom súboru, ktorý obsahuje zoznam hostiteľských strojov. 
+Beh algoritmu rekonfigurácie prebieha tak, že sa spustí viacero procesov naraz. Toto umožňuje knižnica OpenMPI, a to pomocou príkazu \mintinline{bash}{mpiexec} s vhodnými prepínačmi: Je nutné nastaviť počet procesov pomocou prepínača \mintinline{bash}{-np}. Zároveň je možné spúšťať tieto procesy plne distribuovane, teda na viacerých strojoch naraz, a tie sa špecifikujú prepínačom \mintinline{bash}{--hostfile} s názvom súboru, ktorý obsahuje zoznam hostiteľských strojov\footnote{Popis formátu hostiteľských strojov sa nachádza na \url{https://www.open-mpi.org/faq/?category=running#mpirun-hostfile}.}. 
 
 Nech \mintinline{text}{host-file} je súbor so špecifikovanými hostiteľskými strojmi a \mintinline{text}{dir} je adresár, v ktorom sú súbory s počiatočnými a cieľovými stavmi modulov. Príkaz na spustenie napríklad algoritmu s plnou znalosťou konfigurácie RoFIbota na rekonfiguráciu $4$ modulov s triviálnou heuristikou je: 
 \begin{minted}{bash}
-mpiexec --hostfile host-file -np 4 
-  ./distribute/rofi-distribute -d dir -a full -e trivial
+  mpiexec --hostfile host-file -np 4 \
+    ./distribute/rofi-distribute -d dir -a full -e trivial
 \end{minted}.
 
 Výstup algoritmu je vypísaný na štandardný výstup. Jeho formát je nasledovný: Na úplnom začiatku je uvedená počiatočná konfigurácia RoFIbota tak, že každý riadok konfigurácie obsahuje prefix $0$. Nakoľko program nemá plnú znalosť konfigurácie, tak ju vytvorí tak, že každý modul vypíše svoj stav. Nasledujúce riadky obsahujú vykonané akcie, pričom ich poradie nemusí byť zhodné s poradím, v akom sa dané akcie vykonávali. Preto má každá akcia na začiatku svojho zápisu kladný celočíselný prefix, ktorý hovorí o poradovom čísle kroku, v ktorom sa daná akcia vykonala. Zároveň sa predpokladá, že výstup obsahuje všetky poradové čísla krokov (teda v každom kroku sa vykoná vždy aspoň jedna akcia). Ak je použitý druhý algoritmus a nastane prípad, že rekonfigurácia už nemôže pokračovať, ale aspoň jeden modul nie je v cieľovej konfigurácii, tak na konci výstupu je poznámka o skutočnosti, že sa nejedná o cieľový stav RoFIbota. 
 
-Tento výstup však nie je kompatibilný so zvyšnými časťami knižnice RoFILib. Na to, aby bola zaručená kompatibilita, tak je možné využiť časť postprocessing. 
+\subsection{Postprocessing}
+Tento výstup však nie je kompatibilný so zvyšnými časťami knižnice RoFILib. Na to slúži pripravený postprocessing, ktorý dokáže transformovať vzniknutý formát súboru z navrhnutých algoritmov do formátu kompatibilného s knižnicou. 
 
 Cieľom postprocessingu je vytvoriť súbor, ktorý obsahuje postupnosť konfigurácií rekonfigurácie RoFIbota, pričom na vstupe má súbor, kde sú časovými známkami označené počiatočná konfigurácia a akcie, ktoré sa na danej konfigurácii majú vykonáva. Teda postprocessing vezme súbor s akciami a postupne ich podľa časových známok aplikuje na počiatočnú konfiguráciu. Zároveň aj premenuje identifikátory modulov podľa zadaného slovníka, ktorý bol napríklad vytvorený ako produkt preprocessingu. 
 
-Nech \mintinline{text}{file} je súbor, ktorý obsahuje hodnoty, ktoré sú zhodné s popisom výstupu rekonfiguračného algoritmu a \mintinline{text}{dictionary} je súbor, v ktorom je uvedený slovník zmien unikátnych identifikátorov modulov, tak postprocessing môže byť spustený napríklad takýmto príkazom: 
+Nech \mintinline{text}{file} je súbor obsahujúci hodnoty, ktoré sú zhodné s výstupom rekonfiguračného algoritmu a \mintinline{text}{dictionary} je súbor, v ktorom je uvedený preklad unikátnych identifikátorov modulov. Postprocessing môže byť spustený napríklad takýmto príkazom: 
 \begin{minted}{bash}
-./rofi-distribute-postprocessing -i file -t dictionary
+  ./rofi-distribute-postprocessing -i file -t dictionary
 \end{minted}
 
 \comment{
-Oba vyššie uvedené prepínače sú povinné. Prehľad všetkých prepínačov pre postprocessing je nasledujúci: 
-
 \begin{minted}{text}
   -h, --help            Print help
   -t, --dictionary arg  Dictionary file
   -i, --input arg       File with time marked actions 
 \end{minted}}
 
-Toto je kompletné využitie časti \textit{distribute} knižnice RoFILib, ktorá vznikla ako implementačná časť tento bakalárskej práce. Nakoľko je z dôvodu kompatibility s knižnicou nutné spúšťať preprocessing a postprocessing, tak je pripravený aj skript, ktorý túto sekvenciu spúšťania všetky časti automaticky. 
+Toto je kompletné využitie časti \textit{distribute} knižnice RoFILib, ktorá vznikla ako implementačná časť tejto bakalárskej práce. Nakoľko je z dôvodu kompatibility s knižnicou nutné spúšťať preprocessing a postprocessing, tak je pripravený aj skript, ktorý túto sekvenciu spúšťania všetky časti vykoná automaticky. 
 
-Zoznam a podrobný popis všetkých prepínačov, ktoré sa využívajú v jednotlivých častiach a skripte sa nachádzajú v \texttt{README.md}\footnote{\url{https://github.com/paradise-fi/RoFI/blob/master/RoFILib/README.md}}. 
+Zoznam a podrobný popis všetkých prepínačov, ktoré sa využívajú v jednotlivých častiach knižnice a skripte, sa nachádzajú v \texttt{README.md}\footnote{\url{https://github.com/paradise-fi/RoFI/blob/master/RoFILib/README.md}} resp. časť, ktorá sa týka algoritmov implementovaných v tejto práci sa nachádza v prílohe \ref{sec:readme}. 
 
 \comment{
-Pripravený skript má nasledujúcu sadu prepínačov: 
 \begin{minted}{text}
   -h, --help           Print help
   -i, --init arg       Initial config file
@@ -785,8 +791,7 @@ Pripravený skript má nasledujúcu sadu prepínačov:
   -c, --noclear        Do not clear temporary files
   -o, --output arg     Output file name
 \end{minted}
-
-Prepínače \mintinline{text}{-i}, \mintinline{text}{-g} a \mintinline{text}{-d} sú zhodné s prepínačmi v preprocessingu a prepínače \mintinline{text}{-a} a \mintinline{text}{-e} ako v spúšťaní rekonfigurácie. Prepínačom \mintinline{text}{-f} sa nastavuje \textit{hostfile} pre spúšťanie rekonfigurácie pomocou \mintinline{bash}{mpiexec}. }
+}
 
 
 
@@ -852,17 +857,187 @@ Nakoľko algoritmy navrhnuté v tejto práci potrebujú dostatočný počet jadi
 % ------------------------------------------------------ 5 ------------------------------------------------------
 \chapter{Záver}
 \label{sec:future}
-// Rekapitulácia. 
+Táto práca stručne prezentovala robotickú platformu RoFI, a to predovšetkým popis modulu, matematický model popisujúci stav modulov a popis konfigurácií a rekonfigurácií RoFIbotov. V práci sa taktiež nachádza popis mnou navrhnutých dvoch distribuovaných algoritmov na rekonfiguráciu, dôkazy ich korektnosti a ich pozitívne, ale aj negatívne vlastnosti. Súčasťou práce je aj implementácia navrhnutých algoritmov a v práci sa nachádza aj popis použitia implementácie. 
 
-// Ako ďalej zlepšovať algoritmy a čo ešte pridávať a podobne. 
+Navrhnuté a implementované algoritmy boli otestované a vzájomne porovnané a vzorových vstupoch rôznych veľkostí RoFIbotov, či dĺžke rekonfigurácií. V prípade prvého algoritmu bolo zistené, že celkový čas rekonfigurácie síce prebiehal na vzorových vstupoch v priemere trikrát dlhšie ako samotné centralizované plánovanie rekonfigurácie, ale počet krokov rekonfigurácie sa podarilo znížiť takmer na pätinu dĺžky. To samozrejme v prípade fyzických modulov je prijateľný čas nakoľko čas potrebný na fyzickú zmenu trvá priemerne dlhšie ako samotné výpočty optimalizácie postupnosti rekonfigurácie. 
 
-Navrhnuté algoritmy nehľadajú optimálne riešenie a to hlavne z dôvodu časovej zložitosti výpočtov. Algoritmy sú, ale navrhnuté tak, aby sa dali jednoducho modifikovať a optimalizovať. V prípade prvého algoritmu ide hlavne o samotný výpočet postupnosti krokov rekonfigurácie a jej optimalizáciu. 
+Súčasný stav druhého algoritmu síce vo niektorých prípadoch nenájde žiadne riešenie, ale ak už riešenie nájde, tak je zaručene najkratšie možné. Zároveň je výpočet druhého algoritmu v porovnaní s prvým neporovnateľne kratší aj na veľkých vstupoch, a preto je vhodné ho využiť minimálne ako vhodnú heuristiku pre spustením iného algoritmu sa rekonfiguráciu. 
 
-V súčasnej dobe je tento algoritmus implementovaný tak, že každý modul počíta rovnaké hodnoty a na základe nich sa následne vykonáva fyzická rekonfigurácia. Jedným z návrhov na zlepšenie tohto algoritmu je, že každý z modulov môže počítať postupnosť krokov rôznymi algoritmami a inými heuristikami. Okrem toho je prístup optimalizácie krokov greedy, a teda nemusí vždy nájsť optimálne riešenie. Teda ďalším zlepšením je riešenie optimalizácie iným spôsobom a vzájomnou komunikáciou sa dohodnú, či je lepšie pokračovať v hľadaní optimálnej postupnosti tento výpočet bude trvať dlho a prejdú na samotnú rekonfiguráciu za cenu dlhšej postupnosti. 
+\section{Budúca práca}
+\label{sec:future}
+V práci je popísaný aktuálny stav algoritmov na distribuovanú rekonfiguráciu. Algoritmy sú navrhnuté tak, aby sa dali jednoducho modifikovať a optimalizovať, čo znamená, že sú v pláne minimálne tieto zmeny. 
 
-Druhý algoritmus...
+V prípade prvého algoritmu ide hlavne o samotný výpočet postupnosti krokov rekonfigurácie a jej optimalizáciu. V súčasnej dobe je tento algoritmus implementovaný tak, že každý modul počíta rovnaké hodnoty a na základe nich sa následne vykonáva fyzická rekonfigurácia. Jedným z návrhov na zlepšenie tohto algoritmu je, že každý z modulov môže počítať postupnosť krokov rôznymi algoritmami a inými heuristikami. Išlo by v podstate o prístup, ktorý bol využitý pri evaluácii tohto algoritmu, kde sa vždy vyberie najrýchlejší výsledok, resp. z najrýchlejších výsledkov ten najkratší. 
+
+Druhou časťou vhodnou na budúce zlepšenie je samotná optimalizácia krokov. Aktuálny prístup optimalizácie krokov je greedy, a teda nemusí vždy nájsť optimálne riešenie. Teda ďalším zlepšením je riešenie optimalizácie iným spôsobom a vzájomnou komunikáciou sa dohodnú, či je lepšie pokračovať v hľadaní optimálnej postupnosti tento výpočet bude trvať dlho a prejdú na samotnú rekonfiguráciu za cenu dlhšej postupnosti. Prípade opäť využiť distribuované prostredie na počítanie optimalizácie rôznymi prístupmi. 
+
+V prípade druhého algoritmu je častí na zlepšovanie oveľa viac. Navrhnutý algoritmus totiž nedokáže vždy s istotou nájsť triviálne riešenie, ak existuje, a teda jednou alternatívou zlepšovania tohto algoritmu je vyvinutie lepšieho výberu modulov, ktorý bude vykonávať akciu. S tým súvisí aj vylepšenie heuristiky výberu akcie, ktorú ma vyberaný modul vykonať. 
+
+Predchádzajúce zlepšenia však neriešia problém toho, že nie každá rekonfigurácia je nutne triviálna. Preto jedným z riešením takýchto prípadov je navrhnúť istú formu „preprocessingu“ konfigurácie pred spustením samotnej rekonfigurácie, ktorá umožní lepšiu manipuláciu s konfiguráciou. Príkladom môže byť napríklad vytvorenie z konfigurácie strom, ktorý umožní viacerých modulom rotáciu. Ďalším krokom k zlepšeniu tohto algoritmu je vývoj heuristiky, ktorá zistí kedy je vhodné vykonať akciu, ktorá síce neposúva konfiguráciu priamo k cieľovej konfigurácii, ale umožní tým ďalšie akcie, ktoré môžu doviesť k cieľovej konfigurácii. 
 
 % ------------------------------------------------------ 5 ------------------------------------------------------
+
+\cleardoublepage
+\appendix
+\chapter{Príklady vstupných a výstupných súborov}
+\label{sec:inOutFiles}
+\section{Vstupné súbory}
+\subsection{Počiatočná konfigurácia}
+M 9 90 90 90 \\
+M 10 90 0 90 \\
+M 5 -90 -90 -90 \\
+E 9 A +X W +X A 10 \\
+E 5 A +X W +X B 9
+
+\subsection{Cieľová konfigurácia}
+M 9 -90 90 0 \\
+M 10 90 0 0 \\
+M 5 -90 0 0 \\
+E 9 B -X N -Z B 10 \\
+E 5 A +X W +X B 9
+
+\subsection{Stavy modulu 10}
+\label{sec:algoInput}
+Podľa slovníka sa modul s \textit{id} $= 10$ premenoval na modul s \textit{id} $= 0$ a vystupne súbory na distribuovanú rekonfiguráciu pre tento modul vyzerajú nasledovne: \\ \\
+\mintinline{text}{0.init} \\
+M 10 90 0 90 \\
+E 9 A +X W +X A 10 \\
+\\
+\mintinline{text}{0.goal} \\
+M 10 90 0 0 \\
+E 9 B -X N -Z B 10 \\
+
+\section{Výstupné súbory}
+\subsection{Výstup distribuovanej rekonfigurácie -- log} 
+\label{sec:log}
+0 M 1 90 90 90 \\
+0 E 1 A +X W +X A 2 \\
+0 M 0 -90 -90 -90 \\
+0 E 0 A +X W +X B 1 \\
+0 M 2 90 0 90 \\
+1 R 1 2 -90 \\
+1 R 2 0 -90 \\
+1 R 2 1 90 \\
+1 R 0 2 90 \\
+1 R 0 1 90 \\ 
+2 C 1 B -X N -Z B 2 \\
+3 R 2 2 -90 \\
+3 R 2 1 -90 \\
+3 R 1 0 -90 \\
+3 R 1 0 -90 \\
+3 D 1 A +X W +X A 2 \\
+3 R 2 0 90 
+
+\subsection{Kompatibilný výstup s knižnicou RoFILib}
+M 9 90 90 90 \\
+M 10 90 0 90 \\
+M 5 -90 -90 -90 \\
+E 9 A +X W +X A 10 \\
+E 5 A +X W +X B 9 \\
+\\
+M 9 90 90 0 \\
+M 10 0 90 90 \\
+M 5 -90 0 0 \\
+E 9 A +X W +X A 10 \\
+E 5 A +X W +X B 9 \\
+\\
+M 9 90 90 0 \\
+M 10 0 90 90 \\
+M 5 -90 0 0 \\
+E 9 A +X W +X A 10 \\
+E 9 B -X N -Z B 10 \\
+E 5 A +X W +X B 9 \\
+\\
+M 9 -90 90 0 \\
+M 10 90 0 0 \\
+M 5 -90 0 0 \\
+E 9 B -X N -Z B 10 \\
+E 5 A +X W +X B 9
+
+\chapter{Tabuľky}
+
+\begin{table}[]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{c|cc|cc|cc|cc}
+\multirow{2}{*}{} & \multicolumn{2}{c|}{dCenter} & \multicolumn{2}{c|}{dJoint} & \multicolumn{2}{c|}{dMatrix} & \multicolumn{2}{c}{dAction} \\
+ & čas & dĺžka & čas & dĺžka & čas & dĺžka & čas & dĺžka \\ \hline
+
+2-5  & 00:02  &  4  & 00:02  &  4  & 00:02  &  4  & 00:02  &  4  \\
+2-10  & 00:02  &  2  & 00:02  &  2  & 00:02  &  2  & 00:02  &  2  \\
+2-20  & 00:05  &  4  & 00:06  &  4  & 00:04  &  8  & 00:04  &  4  \\
+2-30  & 00:09  &  6  & 00:03  &  6  & 00:02  &  6  & 00:04  &  6  \\
+2-50  & 00:21  &  4  & 00:09  &  4  & 00:02  &  4  & 00:04  &  4  \\ \hline
+3-5  & 00:02  &  2  & 00:02  &  2  & 00:02  &  2  & 00:02  &  2  \\
+3-10  & 00:02  &  2  & 00:02  &  2  & 00:02  &  2  & 00:02  &  2  \\
+3-20  & 00:08  &  4  & 00:08  &  4  & 00:02  &  4  & 00:03  &  4  \\
+3-30  & 00:03  &  2  & 00:02  &  2  & 00:06  &  2  & 00:03  &  2  \\
+3-50  & 38:48  &  5  & 23:22  &  5  & 00:02  &  5  & 00:19  &  5  \\ \hline
+5-5  & 00:29  &  3  & 00:03  &  3  & 00:02  &  3  & 00:08  &  3  \\
+5-10  & 07:02  &  5  & 00:23  &  5  & 00:07  &  6  & 00:16  &  5  \\
+5-20  & --  &  --  & --  &  --  & 03:49  &  6  & 01:49  &  6  \\
+5-30  & 00:15  &  4  & 01:39  &  4  & 00:03  &  4  & 00:13  &  4  \\
+5-50  & --  &  --  & --  &  --  & --  &  --  & --  &  --  \\ \hline
+10-5  & 00:15  &  2  & 00:02  &  2  & 00:02  &  2  & 00:02  &  2  \\
+10-10  & --  &  --  & 00:51  &  3  & 00:03  &  3  & 00:06  &  3  \\
+10-20  & --  &  --  & --  &  --  & --  &  --  & 05:15  &  4  \\
+10-30  & --  &  --  & --  &  --  & 00:19  &  11  & --  &  -- \\
+10-50  & --  &  --  & --  &  --  & --  &  --  & --  &  --  \\ \hline
+15-5  & --  &  --  & 01:15  &  4  & --  &  --  & 00:19  &  4  \\
+15-10  & --  &  --  & --  &  --  & 00:18  &  5  & 00:54  &  5  \\
+15-20  & --  &  --  & --  &  --  & --  &  --  & --  &  --  \\
+15-30  & --  &  --  & --  &  --  & --  &  --  & --  &  --  \\
+15-50  & --  &  --  & --  &  --  & --  &  --  & --  &  --  \\ \hline
+50-5  & --  &  --  & 00:34  &  2  & 00:17  &  2  & 00:24  &  2  \\ \hline
+80-5  & 65:21  &  1  & 04:04  &  2  & 00:28  &  2  & 01:10  &  2 \\
+
+
+\end{tabular}%
+}
+\caption{algo1}
+\label{tab:algo1}
+\end{table}
+
+
+\begin{table}[]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{c|cc|cc|cc|cc}
+\multirow{2}{*}{} & \multicolumn{2}{c|}{dCenter} & \multicolumn{2}{c|}{dJoint} & \multicolumn{2}{c|}{dMatrix} & \multicolumn{2}{c}{dAction} \\
+ & čas & dĺžka & čas & dĺžka & čas & dĺžka & čas & dĺžka \\ \hline
+2-5  & 00:00 & 5  & 00:00 & 5  & 00:00 & 5  & 00:00 & 5  \\
+2-10  & 00:00 & 6  & 00:00 & 6  & 00:00 & 8  & 00:00 & 6  \\
+2-20  & 00:02 & 14  & 00:01 & 14  & 00:01 & 20  & 00:01 & 14  \\
+2-30  & 00:04 & 13  & 00:00 & 13  & 00:00 & 13  & 00:00 & 13  \\
+2-50  & 00:09 & 14  & 00:06 & 14  & 00:00 & 14  & 00:01 & 14  \\ \hline
+3-5  & 00:00 & 6  & 00:00 & 6  & 00:00 & 6  & 00:00 & 6  \\
+3-10  & 00:00 & 9  & 00:00 & 7  & 00:00 & 11  & 00:00 & 7  \\
+3-20  & 00:05 & 11  & 00:03 & 11  & 00:00 & 13  & 00:00 & 11  \\
+3-30  & 00:00 & 11  & 00:00 & 11  & 00:03 & 13  & 00:00 & 11  \\
+3-50  & 09:21 & 15  & 03:08 & 15  & 00:00 & 15  & 00:09 & 15  \\ \hline
+5-5  & 00:40 & 8  & 00:00 & 8  & 00:00 & 8  & 00:00 & 8  \\
+5-10  & 05:49 & 13  & 00:19 & 13  & 00:04 & 13  & 00:10 & 13  \\
+5-20  & 12:58 & 17  & -- & --  & 01:29 & 25  & 00:51 & 17  \\
+5-30  & 01:06 & 17  & 01:28 & 13  & 01:22 & 25  & 00:18 & 13  \\
+5-50  & -- & --  & -- & --  & 02:06 & 35  & -- & --  \\ \hline
+10-5  & 00:02 & 5  & 00:00 & 5  & 00:00 & 5  & 00:00 & 5  \\
+10-10  & -- & -- & 00:07 & 11  & 00:00 & 11  & 00:05 & 11  \\
+10-20  & -- & -- & 13:47 & 17  & 01:16 & 29  & 04:29 & 17  \\
+10-30  & -- & -- & -- & -- & -- & --  & -- & --  \\
+10-50  & -- & --  & -- & -- & 25:15 & 51  & -- & --  \\ \hline
+50-5  & -- & --  & 00:16 & 6  & 00:17 & 6  & 00:17 & 6  \\ \hline
+80-5  &  &  &  &  &  &  &  &   
+
+\end{tabular}%
+}
+\caption{\textit{A*}}
+\label{tab:astar}
+\end{table}
+
+\chapter{readme}
+\label{sec:readme}
+
+
 
 \printbibliography[heading=bibintoc] %% Print the bibliography.
 
