@@ -96,7 +96,7 @@
 \setitemize{itemsep=-5pt,topsep=10pt,parsep=10pt,partopsep=10pt}
 \setenumerate{itemsep=-5pt,topsep=10pt,parsep=10pt,partopsep=10pt}
 \usepackage[slovak,linesnumbered,ruled,vlined]{algorithm2e}
-\newtheorem{lemma}{Lemma}
+\newtheorem{lemma}{Lema}
 \usepackage{minted}
 
 \usepackage{color}
@@ -167,7 +167,7 @@ Každý modul obsahuje práve šesť konektorov, ktoré sú rozmiestnené po tri
 \begin{figure}[hbt!]
     \centering
     \includegraphics[width=0.6\textwidth]{pictures/dock_desc.pdf}
-    \caption[Docky modulu]{Schéma umiestnení konektorov na module a ich označenia. Šípky na konektoroch znázorňujú orientačné vektory \cite{mrazekMasterThesis}.}
+    \caption[Konektory modulu]{Schéma umiestnení konektorov na module a ich označenia. Šípky na konektoroch znázorňujú orientačné vektory \cite{mrazekMasterThesis}.}
     \label{fig:dock_desc}
 \end{figure}
 
@@ -393,7 +393,7 @@ Aby mal modul úplnú konfiguráciu RoFIbota, je nutné získať hodnoty stupňo
 
 Cieľom je, aby každý modul vypočítal rovnakú postupnosť krokov. To znamená, že z algoritmov implementovaných v spomínanej diplomovej práci je nutné vybrať deterministický algoritmus, ktorým je buď \textit{BFS} alebo \textit{A*} (algoritmus \textit{RRT} nie je deterministický). Výsledky porovnania týchto dvoch algoritmov v spomínanej diplomovej práci ukazujú, že algoritmus \textit{A*} je časovo rýchlejší ako algoritmus \textit{BFS}. Z tohto dôvodu budú moduly využívať algoritmus \textit{A*}. 
 
-Pre algoritmus \textit{A*} je nutné vybrať heuristiku (pre každý modul rovnakú). Pre účely tejto práce bola vybraná heuristika, ktorá počíta rozdiel v hodnotách všetkých uhlov voľnosti. Zároveň budú moduly počítať postupnosť krokov tak, aby sa v každom kroku udiala výhradne jedna validná akcia. Algoritmus \textit{A*} je implementovaný tak, aby bolo možné nastaviť limit na maximálny počet akcií, ktoré je možné vykonať v jednom kroku rekonfigurácie. Obmedzenie na jednu akciu v kroku je vhodné hlavne kvôli optimalizácii krokov rekonfigurácie, ktorá je popísaná neskôr. 
+Pre algoritmus \textit{A*} je nutné vybrať ako jeho parameter heuristiku (pre každý modul rovnakú). Zároveň budú moduly počítať postupnosť krokov tak, aby sa v každom kroku udiala výhradne jedna validná akcia. Algoritmus \textit{A*} je implementovaný tak, aby bolo možné nastaviť limit na maximálny počet akcií, ktoré je možné vykonať v jednom kroku rekonfigurácie. Obmedzenie na jednu akciu v kroku je vhodné hlavne kvôli optimalizácii krokov rekonfigurácie, ktorá je popísaná neskôr. 
 
 Po výpočte má každý modul napočítanú tú istú postupnosť krokov, ktoré sa majú vykonávať na to, aby sa RoFIbot mohol rekonfigurovať, alebo dokáže identifikovať, že rekonfigurácia nie je možná. 
 
@@ -611,17 +611,17 @@ RoFIbot zostane spojitý po odpojení hrany $\mathcal{E}$ práve vtedy, keď exi
 \end{lemma}
 
 \begin{proof}
-Dôkaz lemmy \ref{lemma:disconnection} rozdelíme na dve časti. Prvá z nich je, že chceme dokázať, že ak existuje hrana s uvedenými podmienkami, tak RoFIbot ostane spojitý. Vezmeme si ľubovoľné dva moduly a chceme ukázať, že medzi nimi existuje fyzická cesta aj po odpojení. Cesty medzi týmito dvomi modulmi sa dajú rozdeliť podľa toho, či obsahujú alebo neobsahujú hranu $\mathcal{E}$: 
+Dôkaz lemy \ref{lemma:disconnection} rozdelíme na dve časti. Prvá z nich je, že chceme dokázať, že ak existuje hrana s uvedenými podmienkami, tak RoFIbot ostane spojitý. Vezmeme si ľubovoľné dva moduly a chceme ukázať, že medzi nimi existuje fyzická cesta aj po odpojení. Cesty medzi týmito dvomi modulmi sa dajú rozdeliť podľa toho, či obsahujú alebo neobsahujú hranu $\mathcal{E}$: 
 \begin{itemize}
     \item obsahuje -- cestu z pôvodnej konfigurácie je nutné pozmeniť, a to tak, že namiesto hrany $\mathcal{E}$ sa na toto miesto v ceste vloží iná cesta medzi modulmi $\mathcal{M}$ a $\mathcal{M}'$, 
     \item neobsahuje -- cestu z pôvodnej konfigurácie nie je nutné meniť, nakoľko všetky hrany budú naďalej existovať.
 \end{itemize}
 
-Ostáva ukázať, že ak je RoFIbot spojitý aj po rozpojení, tak v pôvodnej konfigurácii existovala cesta z $\mathcal{M}$ do $\mathcal{M}'$ neobsahujúca hranu $\mathcal{E}$. Keďže je konfigurácia po zmene spojitá, tak z definície musí existovať cesta z $\mathcal{M}$ do $\mathcal{M}'$ a zároveň neobsahuje hranu $\mathcal{E}$, lebo táto hrana sa v zmenenej konfigurácii už nenachádza. Zároveň vieme, že sa konfigurácia inak nezmenila, takže táto cesta musí existovať aj v pôvodnej konfigurácii, čím sme dokázali lemmu. 
+Ostáva ukázať, že ak je RoFIbot spojitý aj po rozpojení, tak v pôvodnej konfigurácii existovala cesta z $\mathcal{M}$ do $\mathcal{M}'$ neobsahujúca hranu $\mathcal{E}$. Keďže je konfigurácia po zmene spojitá, tak z definície musí existovať cesta z $\mathcal{M}$ do $\mathcal{M}'$ a zároveň neobsahuje hranu $\mathcal{E}$, lebo táto hrana sa v zmenenej konfigurácii už nenachádza. Zároveň vieme, že sa konfigurácia inak nezmenila, takže táto cesta musí existovať aj v pôvodnej konfigurácii, čím sme dokázali lemu. 
 
 \end{proof}
 
-Z toho vyplýva, že stačí zistiť, či existuje cesta popísaná v lemme~\ref{lemma:disconnection}. Modulu $\mathcal{M}$ pošlú všetky moduly informáciu, s akými ostatnými modulmi sú prepojené. Z týchto údajov si modul $\mathcal{M}$ dokáže vytvoriť neorientovaný súvislý graf, kde každý modul je vrcholom a prepojenie medzi modulmi je hranou v grafe. Zároveň je v grafe povolené mať aj viacnásobné hrany medzi vrcholmi (maximálne však môžu existovať dve hrany medzi rovnakými vrcholmi). Hranu $\mathcal{E}$ do tohto grafu nepridávame (je to graf reprezentujúci konfiguráciu po odpojení). Následne pomocou \textit{BFS} z vrcholu ekvivalentnému modulu $\mathcal{M}$ vyhľadáme cestu do vrcholu ekvivalentnému modulu $\mathcal{M}'$. Keďže tento výpočet prebieha nad konečným grafom, tak zaručene skončí. Odpojenie môžeme vykonať iba v prípade, ak prehľadávanie do šírky nájde cestu do požadovaného vrcholu. 
+Z toho vyplýva, že stačí zistiť, či existuje cesta popísaná v leme~\ref{lemma:disconnection}. Modulu $\mathcal{M}$ pošlú všetky moduly informáciu, s akými ostatnými modulmi sú prepojené. Z týchto údajov si modul $\mathcal{M}$ dokáže vytvoriť neorientovaný súvislý graf, kde každý modul je vrcholom a prepojenie medzi modulmi je hranou v grafe. Zároveň je v grafe povolené mať aj viacnásobné hrany medzi vrcholmi (maximálne však môžu existovať dve hrany medzi rovnakými vrcholmi). Hranu $\mathcal{E}$ do tohto grafu nepridávame (je to graf reprezentujúci konfiguráciu po odpojení). Následne pomocou \textit{BFS} z vrcholu ekvivalentnému modulu $\mathcal{M}$ vyhľadáme cestu do vrcholu ekvivalentnému modulu $\mathcal{M}'$. Keďže tento výpočet prebieha nad konečným grafom, tak zaručene skončí. Odpojenie môžeme vykonať iba v prípade, ak prehľadávanie do šírky nájde cestu do požadovaného vrcholu. 
 
 Posledným typom akcie, ktorú môže vybraný modul vykonať, je pripojenie k inému modulu. V tomto prípade je pre validitu tejto akcie postačujúce, ak druhý modul spojenia (označme ho opäť ako $\mathcal{M}'$) je schopný zadaného prepojenia. Inak povedané, nachádza sa na správnych súradniciach a zároveň je správne natočený (správnym konektorom a jeho natočením voči konektoru modulu $\mathcal{M}$). Tieto súradnice a natočenia dokáže určiť modul $\mathcal{M}$ zo svojej polohy v priestore a z hodnôt uhlov voľnosti. Stačí teda, aby prebehla komunikácia medzi $\mathcal{M}$ a $\mathcal{M}'$, či $\mathcal{M}'$ má požadovanú polohu v priestore a správne natočenie. V prípade, že je všetko podľa požiadaviek na spojenie, prebehne spojenie modulov. 
 
@@ -682,7 +682,7 @@ Knižnica OpenMPI spúšťa procesy tak, aby každý z nich mal k dispozícii sa
 Výpočet algoritmov na rekonfiguráciu popísaných v tejto práci je možné buď ručným spustením, alebo využitím pripraveného skriptu. V prípade nevyužitia skriptu je nutné, aby vstup pre samotný algoritmus rekonfigurácie bol v špecifickom tvare. Ten je zhodný s formátom súborov, ktoré vytvára preprocessing.
 
 \subsection{Preprocessing}
-Preprocessing slúži na to, aby z konfiguračných súborov kompatibilných s knižnicou RoFILib vytvoril súbory pre distribuovanú rekonfiguráciu. Povinnov súčasťou spustenia časti preprocessing sú súbory s počiatočnou a cieľovou konfiguráciou RoFIbota a adresár, kde môže vytvárať pomocné súbory. Medzi nepovinné parametre patria názvy súborov pre počet modulov a slovník. 
+Preprocessing slúži na to, aby z konfiguračných súborov kompatibilných s knižnicou RoFILib vytvoril súbory pre distribuovanú rekonfiguráciu. Povinnou súčasťou spustenia časti preprocessing sú súbory s počiatočnou a cieľovou konfiguráciou RoFIbota a adresár, kde môže vytvárať pomocné súbory. Medzi nepovinné parametre patria názvy súborov pre počet modulov a slovník. 
 
 Výsledkom preprocessingu je príprava všetkých súborov potrebných na to, aby bolo možné využiť program na rekonfiguráciu a následný postprocessing. Toto sú všetky potrebné vstupy: 
 \begin{itemize}
@@ -704,7 +704,7 @@ Ak sú vstupné súbory pripravené v tvare, ktorý vyžadujú algoritmy na reko
 
 V prípade výberu algoritmu s plnou znalosťou konfigurácie je možné zvoliť aj heuristiku pre výpočet algoritmu \textit{A*}. Podrobný popis princípov heuristík je popísaný v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. 
 
-Beh algoritmu rekonfigurácie prebieha tak, že sa spustí viacero procesov naraz. Toto umožňuje knižnica OpenMPI, a to pomocou príkazu \mintinline{bash}{mpiexec} s vhodnými prepínačmi: Je nutné nastaviť počet procesov pomocou prepínača \mintinline{bash}{-np}. Zároveň je možné spúšťať tieto procesy plne distribuovane, teda na viacerých strojoch naraz, a tie sa špecifikujú prepínačom \mintinline{bash}{--hostfile} s názvom súboru, ktorý obsahuje zoznam hostiteľských strojov\footnote{Popis formátu hostiteľských strojov sa nachádza na \url{https://www.open-mpi.org/faq/?category=running#mpirun-hostfile}.}. 
+Beh algoritmu rekonfigurácie prebieha tak, že sa spustí viacero procesov naraz. Toto umožňuje knižnica OpenMPI, a to pomocou príkazu \mintinline{bash}{mpiexec} s vhodnými prepínačmi: Je nutné nastaviť počet procesov pomocou prepínača \mintinline{bash}{-np}. Zároveň je možné spúšťať tieto procesy plne distribuovane, teda na viacerých strojoch naraz, a tie sa špecifikujú prepínačom \mintinline{bash}{--hostfile} s názvom súboru, ktorý obsahuje zoznam hostiteľských strojov\footnote{Popis formátu hostiteľských strojov sa nachádza na \url{https://www.open-mpi.org/faq/?category=running\#mpirun-hostfile}.}. 
 
 Nech \mintinline{text}{host-file} je súbor so špecifikovanými hostiteľskými strojmi a \mintinline{text}{dir} je adresár, v ktorom sú súbory s počiatočnými a cieľovými stavmi modulov. Príkaz na spustenie napríklad algoritmu s plnou znalosťou konfigurácie RoFIbota na rekonfiguráciu $4$ modulov s triviálnou heuristikou je: 
 \begin{minted}{bash}
@@ -973,61 +973,132 @@ E 5 A +X W +X B 9
 \label{tab:astar}
 \end{table}
 
-\chapter{readme}
+
+\chapter{Archív}
+
+\section{Readme}
 \label{sec:readme}
+\subsection*{Distribute}
+\subsubsection*{Preprocessing}
+
+The tool prepares files for distributed rekonfigurations. 
+
 \begin{minted}{text}
+./rofi-distribute-preprocessing --help
+RoFI Distributed Preprocessing: Tool for prepare files for 
+distrbuted reconfiguration. 
+Usage: 
+  rofi-distribute-preprocessing [OPTION...]
+
   -h, --help            Print help
-  -i, --init arg       Initial config file
+  -i, --init arg        Initial config file
   -g, --goal arg        Goal config file
   -d, --directory arg   Directory for module's configs
-  -c, --count arg       File name for module's count file
-  -t, --dictionary arg  File name for module's dictionary
 \end{minted}
 
-\begin{minted}{text}
-  full     Full configuration knowledge
-  partial  Partial configuration knowledge 
-           - fully distributed
+Example: 
+
+\begin{minted}{bash}
+  ./rofi-distribute-preprocessing -i ../data/init.in \
+      -g ../data/goal.in -d preprocessing
 \end{minted}
 
-\begin{minted}{text}
-  trivial  All configurations have value 1 (default)
-  dMatrix  Module matrices difference
-  dCenter  Module center difference
-  dJoint   Joint difference
-  dAction  Action difference
-\end{minted} 
+\subsubsection*{Distributed reconfiguration}
+
+The tool computes a reconfiguration path in distributed environment. 
+
+You can choose the algorithm using `--alg` option with two possible arguments:
 
 \begin{minted}{text}
+  `full`     Full configuration knowledge.
+  `partial`  Partial configuration knowledge 
+             - fully distributed. 
+\end{minted}
+
+If the `full` algorithm is chosen, you can choose from different evaluation functions for A* algorithm - the evaluation functions are the same as in the reconfiguration section. 
+
+\begin{minted}{text}
+./distribute/rofi-distribute --help
+RoFI Distributed Reconfiguration: Tool for distributed 
+computing a reconfiguration path.
+Usage:
+  distribute/rofi-distribute [OPTION...]
+
   -h, --help           Print help
   -d, --directory arg  Directory for module's configs
   -a, --alg arg        Algorithm for reconfiguration: 
                        full, partial
   -e, --eval arg       Evaluation function for full 
-                       algorithm for A*: trivial, 
-                       dMatrix, dCenter, dJoint, dAction
+                       A* algorithm: trivial, dMatrix, 
+                       dCenter, dJoint, dAction
 \end{minted}
 
+Examples:
+
+\begin{minted}{bash}
+  mpiexec -np 4 ./distribute/rofi-distribute \
+      -d preprocessing --alg partial 
+\end{minted}
+
+\begin{minted}{bash}
+  mpiexec --hostfile host-file -np 20 \
+      ./distribute/rofi-distribute -d preprocessing \ 
+      -a full --eval dCenter
+\end{minted}
+
+\subsubsection*{Postprocessing}
+
+The tool processes temporery timestamped file to sequence of configurations. 
+
 \begin{minted}{text}
+./rofi-ditribute-postprocessing --help
+RoFI Distributed Postprocessing: Tool for processes 
+temporery timestamped file to sequence of configurations. 
+Usage:
+  rofi-distribute-postprocessing [OPTION...]
   -h, --help            Print help
   -t, --dictionary arg  Dictionary file
-  -i, --input arg       File with time marked actions 
+  -i, --input arg       File with timestamped actions 
 \end{minted}
+
+Example: 
+
+\begin{minted}{bash}
+  ./rofi-distribute-postprocessing -i file \
+      -t processing/dictionary
+\end{minted}
+
+\subsection*{How to distributed reconfigurate in one step}
+
+Use script distribute.sh in distribute/scripts directory. 
+
+Options: 
 
 \begin{minted}{text}
   -h, --help           Print help
   -i, --init arg       Initial config file
   -g, --goal arg       Goal config file
   -d, --directory arg  Directory for module's configs
-  -f, --hostfile arg   Host file for mpiexec
+  -f, --hostfile arg   Host's file for mpiexec
   -a, --alg arg        Algorithm for reconfiguration: 
                        full, partial
   -e, --eval arg       Evaluation function for full 
-                       algorithm for A*: trivial, 
-                       dMatrix, dCenter, dJoint, dAction
-  -c, --noclear        Do not clear temporary files
-  -o, --output arg     Output file name
+                       A* algorithm: trivial, dMatrix, 
+                       dCenter, dJoint, dAction
 \end{minted}
+
+Examples:
+
+\begin{minted}{bash}
+  ./distribute.sh -i ../data/init.in -g ../data/goal.in \
+      -d processing -a partial
+\end{minted}
+
+\begin{minted}{bash}
+  ./distribute.sh -i ../data/init.in -g ../data/goal.in \
+      -d processing -a full -e dMatrix -f host-file
+\end{minted}
+
 
 
 
