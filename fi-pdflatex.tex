@@ -970,6 +970,59 @@ E 5 A +X W +X B 9
 
 \chapter{readme}
 \label{sec:readme}
+\begin{minted}{text}
+  -h, --help            Print help
+  -i, --init arg       Initial config file
+  -g, --goal arg        Goal config file
+  -d, --directory arg   Directory for module's configs
+  -c, --count arg       File name for module's count file
+  -t, --dictionary arg  File name for module's dictionary
+\end{minted}
+
+\begin{minted}{text}
+  full     Full configuration knowledge
+  partial  Partial configuration knowledge 
+           - fully distributed
+\end{minted}
+
+\begin{minted}{text}
+  trivial  All configurations have value 1 (default)
+  dMatrix  Module matrices difference
+  dCenter  Module center difference
+  dJoint   Joint difference
+  dAction  Action difference
+\end{minted} 
+
+\begin{minted}{text}
+  -h, --help           Print help
+  -d, --directory arg  Directory for module's configs
+  -a, --alg arg        Algorithm for reconfiguration: 
+                       full, partial
+  -e, --eval arg       Evaluation function for full 
+                       algorithm for A*: trivial, 
+                       dMatrix, dCenter, dJoint, dAction
+\end{minted}
+
+\begin{minted}{text}
+  -h, --help            Print help
+  -t, --dictionary arg  Dictionary file
+  -i, --input arg       File with time marked actions 
+\end{minted}
+
+\begin{minted}{text}
+  -h, --help           Print help
+  -i, --init arg       Initial config file
+  -g, --goal arg       Goal config file
+  -d, --directory arg  Directory for module's configs
+  -f, --hostfile arg   Host file for mpiexec
+  -a, --alg arg        Algorithm for reconfiguration: 
+                       full, partial
+  -e, --eval arg       Evaluation function for full 
+                       algorithm for A*: trivial, 
+                       dMatrix, dCenter, dJoint, dAction
+  -c, --noclear        Do not clear temporary files
+  -o, --output arg     Output file name
+\end{minted}
 
 
 
