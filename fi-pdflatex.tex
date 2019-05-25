@@ -61,8 +61,8 @@
     TeXtitle      = {Distribuované algoritmy pro rekonfiguraci platformy RoFI},
     keywords      = {modulárny, robot, distribuovaný, algoritmus, rekonfigurácia, platforma RoFI, MPI, openMPI},
     TeXkeywords   = {modulárny, robot, distribuovaný, algoritmus, rekonfigurácia, platforma RoFI, MPI, openMPI},
-    abstract      = {Platforma RoFI je nová modulárna robotická platforma vyvíjaná v laboratóriu ParaDiSe. Táto práca stavia na už definovaných konceptoch platformy a prináša nový pohľad na rekonfigurácie modularnych robotov tejto platformy. Táto práca navrhuje a implementuje riešenie problému rekonfigurácie robotov z distribuovaného hľadiska, teda z pohľadu jedného modulu platformy na problém rekonfigurácie celého robota. Táto práca prezentuje nástroj \textit{rofi-distribute}, ktorý poskytuje dva algoritmy na simuláciu distribuovanej rekonfigurácie, ktoré boli ostatestované na množstve príkladov. Výsledkami práce sú porovnanie navrhnutých algoritmov medzi sebou navzájom, ale aj porovnanie voči centralizovanému riešeniu problému rekonfigurácia z pohľadu času výpočtov a dĺžok samotných rekonfigurácií. },
-    thanks        = {Veľká vďaka patrí všetkým ľudom v laboratóriu ParaDiSe za príjemnú atmosféru pri práci a každodennú čokoládu, hlavne celému tímu, ktorý sa podieľa na vývoji platformy RoFI, a to hlavne vedúcej práce Ivane Černej a ďalším členom: Jiřímu Barnatovi, Janovi Mrázkovi, Viktórii Vozárovej a Markéte Naušovej, ktorí boli vždy ochotní zodpovedať mi otázky, prípadne konzultovať nápady. 
+    abstract      = {Platforma RoFI je nová modulárna robotická platforma vyvíjaná v laboratóriu ParaDiSe. Táto práca stavia na už definovaných konceptoch platformy a prináša nový pohľad na rekonfiguráciu modulárnych robotov tejto platformy. Táto práca navrhuje a implementuje riešenie problému rekonfigurácie robotov z distribuovaného hľadiska, teda z pohľadu jedného modulu. Táto práca prezentuje nástroj \textit{rofi-distribute}, ktorý poskytuje dva algoritmy na výpočet distribuovanej rekonfigurácie, ktoré boli otestované na sade príkladov. Výsledkami práce sú porovnanie navrhnutých algoritmov medzi sebou navzájom, ale aj porovnanie voči centralizovanému riešeniu problému rekonfigurácie z pohľadu času výpočtov a počtu krokov rekonfigurácie. },
+    thanks        = {Veľká vďaka patrí všetkým ľudom v laboratóriu ParaDiSe za príjemnú atmosféru pri práci a každodennú čokoládu, hlavne celému tímu, ktorý sa podieľa na vývoji platformy RoFI, a to menovite vedúcej práce Ivane Černej a ďalším členom: Jiřímu Barnatovi, Janovi Mrázkovi, Viktórii Vozárovej a Markéte Naušovej, ktorí boli vždy ochotní zodpovedať mi otázky, prípadne konzultovať nápady. 
     
     Rovnaká vďaka patrí aj Vladimírovi Štillovi za pohotovú pomoc pri technických komplikáciách a Lukášovi Korenčikovi za podporu pri práci počas sviatkov a víkendov. V neposlednom rade aj Tomášovi Szaniszlovi za podporu a korekcie textu práce do neskorých nočných hodín. A aj rodine a kamarátom za ich podporu nielen pri tvorbe tejto práce. },
     bib           = bibliography.bib,
@@ -677,8 +677,6 @@ Na praktické využitie knižnice na simuláciu rekonfigurácie a vizualizácie 
 
 Knižnica openMPI spúšťa procesy tak, aby každý z nich mal k dispozícii samostatné jadro, a to hlavne z dôvodu, aby sa navzájom neovplyvňovali\footnote{\url{https://www.open-mpi.org/faq/?category=running#oversubscribing}}. Preto je nutné, aby hardvérové vybavenie strojov, na ktorých bude bežať rekonfigurácia mala aspoň toľko jadier procesoru ako je počet modulov RoFIbota. 
 
-\newcommand{\comment}[1]{}
-
 \section{Použitie}
 Výpočet algoritmov na rekonfiguráciu popísaných v tejto práci je možné buď ručným spustením, alebo využitím pripraveného skriptu. V prípade nevyužitia skriptu je nutné, aby vstup pre samotný algoritmus rekonfigurácie bol v špecifickom tvare. Ten je zhodný s formátom súborov, ktoré vytvára preprocessing.
 
@@ -700,50 +698,10 @@ Príklad spustenia preprocessingu, kde \mintinline{text}{init} a \mintinline{tex
   ./rofi-distribute-preprocessing -i init -g goal -d dir
 \end{minted}.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% tie prepinace treba prejst kvoli readme.. 
-
-\comment{
-\begin{minted}{text}
-  -h, --help            Print help
-  -i, --init arg       Initial config file
-  -g, --goal arg        Goal config file
-  -d, --directory arg   Directory for module's configs
-  -c, --count arg       File name for module's count file
-  -t, --dictionary arg  File name for module's dictionary
-\end{minted}}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \subsection{Algoritmy}
 Ak sú vstupné súbory pripravené v tvare, ktorý vyžadujú algoritmy na rekonfiguráciu, tak je možné spustiť samotnú rekonfiguráciu. Samotný program vyžaduje adresár, v ktorom sa nachádzajú vyššie popísané súbory s počiatočným a cieľovým stavom každého modulu v samostatnom súbore. Okrem toho vyžaduje aj výber algoritmu, ktorý má použiť na výpočet rekonfigurácie. 
 
-\comment{
-\begin{minted}{text}
-  full     Full configuration knowledge
-  partial  Patrial configuration knowledge 
-           - full distributed
-\end{minted}}
-
 V prípade výberu algoritmu s plnou znalosťou konfigurácie je možné zvoliť aj heuristiku pre výpočet algoritmu \textit{A*}. Podrobný popis princípov heuristík je popísaný v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis}. 
-
-\comment{
-\begin{minted}{text}
-  trivial  All configurations have value 1 (default)
-  dMatrix  Module matrices difference
-  dCenter  Module center difference
-  dJoint   Joint difference
-  dAction  Action difference
-\end{minted}
-
-\begin{minted}{text}
-  -h, --help           Print help
-  -d, --directory arg  Directory for module's configs
-  -a, --alg arg        Algorithm for reconfiguration: 
-                       full, partial
-  -e, --eval arg       Evaluation function for full 
-                       algorithm for A*: trivial, 
-                       dMatrix, dCenter, dJoint, dAction
-\end{minted}}
 
 Beh algoritmu rekonfigurácie prebieha tak, že sa spustí viacero procesov naraz. Toto umožňuje knižnica OpenMPI, a to pomocou príkazu \mintinline{bash}{mpiexec} s vhodnými prepínačmi: Je nutné nastaviť počet procesov pomocou prepínača \mintinline{bash}{-np}. Zároveň je možné spúšťať tieto procesy plne distribuovane, teda na viacerých strojoch naraz, a tie sa špecifikujú prepínačom \mintinline{bash}{--hostfile} s názvom súboru, ktorý obsahuje zoznam hostiteľských strojov\footnote{Popis formátu hostiteľských strojov sa nachádza na \url{https://www.open-mpi.org/faq/?category=running#mpirun-hostfile}.}. 
 
@@ -765,38 +723,9 @@ Nech \mintinline{text}{file} je súbor obsahujúci hodnoty, ktoré sú zhodné s
   ./rofi-distribute-postprocessing -i file -t dictionary
 \end{minted}
 
-\comment{
-\begin{minted}{text}
-  -h, --help            Print help
-  -t, --dictionary arg  Dictionary file
-  -i, --input arg       File with time marked actions 
-\end{minted}}
-
-Toto je kompletné využitie časti \textit{distribute} knižnice RoFILib, ktorá vznikla ako implementačná časť tejto bakalárskej práce. Nakoľko je z dôvodu kompatibility s knižnicou nutné spúšťať preprocessing a postprocessing, tak je pripravený aj skript, ktorý túto sekvenciu spúšťania všetky časti vykoná automaticky. 
+Toto je kompletný popis využitia časti \textit{rofi-distribute} knižnice RoFILib, ktorá vznikla ako implementačná časť tejto bakalárskej práce. Nakoľko je z dôvodu kompatibility s knižnicou nutné spúšťať preprocessing a postprocessing, tak je pripravený aj skript, ktorý túto sekvenciu spúšťania všetky časti vykoná automaticky. 
 
 Zoznam a podrobný popis všetkých prepínačov, ktoré sa využívajú v jednotlivých častiach knižnice a skripte, sa nachádzajú v \texttt{README.md}\footnote{\url{https://github.com/paradise-fi/RoFI/blob/master/RoFILib/README.md}} resp. časť, ktorá sa týka algoritmov implementovaných v tejto práci sa nachádza v prílohe \ref{sec:readme}. 
-
-\comment{
-\begin{minted}{text}
-  -h, --help           Print help
-  -i, --init arg       Initial config file
-  -g, --goal arg       Goal config file
-  -d, --directory arg  Directory for module's configs
-  -f, --hostfile arg   Host file for mpiexec
-  -a, --alg arg        Algorithm for reconfiguration: 
-                       full, partial
-  -e, --eval arg       Evaluation function for full 
-                       algorithm for A*: trivial, 
-                       dMatrix, dCenter, dJoint, dAction
-  -c, --noclear        Do not clear temporary files
-  -o, --output arg     Output file name
-\end{minted}
-}
-
-
-
-
-
 
 % ------------------------------------------------------ 3 ------------------------------------------------------
 
@@ -805,16 +734,20 @@ Zoznam a podrobný popis všetkých prepínačov, ktoré sa využívajú v jedno
 
 % ------------------------------------------------------ 4 ------------------------------------------------------
 \chapter{Experimentálne vyhodnotenie}
-Oba navrhnuté a implementované algoritmy boli otestované na vzorových vstupoch. Vyhodnotenie spočíva v porovnávaní časov, ktorý bol nutný na ich výpočet, schopnosti nájsť riešenie a zároveň aj porovnávanie dĺžok nájdených rekonfiguračných postupností. 
+Oba navrhnuté a implementované algoritmy boli otestované na vzorových vstupoch. Vyhodnotenie spočíva v porovnávaní časov, ktorý bol nutný na ich výpočet, schopnosti nájsť riešenie a zároveň aj porovnaní dĺžok nájdených rekonfiguračných postupností. 
 
 \section{Ukážkové rekonfigurácie}
 Vzorové vstupy vznikli generátorom konfigurácií\footnote{\url{https://github.com/paradise-fi/RoFI/tree/master/RoFILib/generate}}, ktorý patrí do knižnice RoFILib. 
 
-Testované vstupy sú vybrané tak, že ich počiatočná konfigurácia je vygenerovaná náhodne s tým, že má predom určený počet modulov. Tie sú vybrané tak, aby pokryli rôzne veľkosť RoFIbotov od malých konfigurácií s $2$, $3$ alebo $5$ modulmi po veľké konfigurácie s $15$, $50$ a $80$ modulmi. Vybrané počiatočné konfigurácie sú zobrazené na obrázku~\ref{fig:rofibotExamples}. 
+Testované vstupy sú vybrané tak, že ich počiatočná konfigurácia je vygenerovaná náhodne s tým, že má vopred určený počet modulov. Tie sú vybrané tak, aby pokryli rôzne veľkosť RoFIbotov od malých konfigurácií s $2$, $3$ alebo $5$ modulmi po veľké konfigurácie s $15$, $50$ a $80$ modulmi. Vybrané počiatočné konfigurácie sú zobrazené na obrázku~\ref{fig:rofibotExamples}. 
 
-Cieľová konfigurácia je vygenerovaná tak, že generátor vygeneruje zadaný počet validných krokov, ktoré sa majú vykonať na počiatočnej konfigurácií a tie sa aplikujú na túto konfiguráciu. Tento prístup zaručuje, že existuje rekonfiguračná postupnosť a dokonca jej dĺžku dokážeme zadanou hodnotou zhora ohraničiť. Vzorové vstupy sú generované na rekonfigurácie dĺžok $5$, $10$, $20$, $30$ a $50$ krokov. 
+Cieľová konfigurácia je vygenerovaná tak, že generátor vygeneruje zadaný počet validných krokov, a tie sa postupne aplikujú na túto konfiguráciu. Tento prístup zaručuje existenciu rekonfiguračnej postupnosti. Vzorové vstupy sú generované na rekonfigurácie dĺžok $5$, $10$, $20$, $30$ a $50$ krokov. 
 
-Každý vstup má na základe týchto údajov aj určené značenie. Názvy vstupných súborov majú nasledujúci formát \textit{<počet modulov>-<počet krokov>-\{init, goal\}.in}, teda napríklad súbor s popisom konfigurácie na obrázku \ref{fig:3-10-init} sa nazýva \textit{3-10-init.in}, nakoľko ide o konfiguráciu s $3$ modulmi, ktorá bola generovaná na rekofiguráciu o $10$ krokoch. 
+Každý vstup má na základe týchto údajov aj určené označenie. Názvy vstupných súborov majú nasledujúci formát:
+
+\texttt{<počet modulov>-<počet krokov>-\{init,goal\}.in}. 
+
+Napríklad súbor s popisom konfigurácie na obrázku \ref{fig:3-10-init} sa nazýva \textit{3-10-init.in}, nakoľko ide o konfiguráciu s $3$ modulmi, ktorá bola generovaná na rekonfiguráciu s $10$ krokmi. 
 
 \begin{figure}[hbt!]
     \centering
@@ -831,9 +764,11 @@ Každý vstup má na základe týchto údajov aj určené značenie. Názvy vstu
     \label{fig:rofibotExamples}
 \end{figure}
 
-Okrem náhodne generovaných vstupov boli skúšané aj ručne vytvorené vstupy, kde nie je nutne zaručená existencia cesty rekonfigurácie. Niektoré príklady vizualizuje obrázok \ref{fig:rotationExampleByHand}. 
+\newcommand{\comment}[1]{}
+\comment{
+Okrem náhodne generovaných vstupov boli skúšané aj ručne vytvorené vstupy, kde nie je nutne zaručená existencia rekonfigurácie. Niektoré príklady vizualizuje obrázok \ref{fig:rotationExampleByHand}. }
 
-Nakoľko algoritmy navrhnuté v tejto práci potrebujú dostatočný počet jadier procesorov, tak boli vstupy spúšťané na príslušnom počte strojov z $20$ hardvérovo zhodne vybavených strojov. Každý z nich má štvorjadrový procesor \texttt{Intel Xeon 5130} o takte $2.00$\,GHz a $16$\,GB RAM. 
+Nakoľko algoritmy navrhnuté v tejto práci potrebujú dostatočný počet jadier procesorov, tak boli vstupy spúšťané na potrebnom počte strojov z $20$ hardvérovo zhodne vybavených strojov. Každý z nich má štvorjadrový procesor \texttt{Intel Xeon 5130} o takte $2.00$\,GHz a $16$\,GB RAM. 
 
 \section{Evaluácia výsledkov na vzorových príkladoch}
 -- Porovnanie algoritmov z pohľadu časovej a priestorovej zložitosti
@@ -856,24 +791,23 @@ Nakoľko algoritmy navrhnuté v tejto práci potrebujú dostatočný počet jadi
 
 % ------------------------------------------------------ 5 ------------------------------------------------------
 \chapter{Záver}
+Táto práca stručne prezentovala robotickú platformu RoFI, a to predovšetkým popis modulu, matematický model popisujúci stav modulu a popis konfigurácie a rekonfigurácie RoFIbota. V práci sa taktiež nachádza popis mnou navrhnutých dvoch distribuovaných algoritmov na rekonfiguráciu, dôkazy ich korektnosti a ich pozitívne, ale aj negatívne vlastnosti. Súčasťou práce je aj implementácia navrhnutých algoritmov a v práci sa nachádza aj popis použitia implementácie. 
+
+Navrhnuté a implementované algoritmy boli otestované a vzájomne porovnané na vzorových vstupoch rôznych veľkostí RoFIbotov či dĺžke rekonfigurácií. V prípade prvého algoritmu bolo zistené, že celkový čas rekonfigurácie síce prebiehal na vzorových vstupoch v priemere trikrát dlhšie ako samotné centralizované plánovanie rekonfigurácie, ale počet krokov rekonfigurácie sa podarilo znížiť takmer na pätinu. To samozrejme je v prípade fyzických modulov prijateľný čas, nakoľko fyzická zmena trvá priemerne dlhšie ako samotné výpočty optimalizácie postupnosti rekonfigurácie. 
+
+V súčasnej dobe, druhý algoritmus síce v niektorých prípadoch nenájde žiadne riešenie, ale ak už riešenie nájde, tak je zaručene najkratšie možné. Zároveň je výpočet druhého algoritmu v porovnaní s prvým významne kratší aj na veľkých vstupoch, takže je vhodné využiť ho minimálne ako vhodnú heuristiku pred spustením iného algoritmu na rekonfiguráciu. 
+
+\section{Možnosti rozšírenia práce}
 \label{sec:future}
-Táto práca stručne prezentovala robotickú platformu RoFI, a to predovšetkým popis modulu, matematický model popisujúci stav modulov a popis konfigurácií a rekonfigurácií RoFIbotov. V práci sa taktiež nachádza popis mnou navrhnutých dvoch distribuovaných algoritmov na rekonfiguráciu, dôkazy ich korektnosti a ich pozitívne, ale aj negatívne vlastnosti. Súčasťou práce je aj implementácia navrhnutých algoritmov a v práci sa nachádza aj popis použitia implementácie. 
+V práci je popísaný aktuálny stav algoritmov na distribuovanú rekonfiguráciu. Algoritmy sú navrhnuté tak, aby sa dali jednoducho modifikovať a optimalizovať, čo umožní jednoduchšie zapracovanie napríklad nižšie popísaných zmien. 
 
-Navrhnuté a implementované algoritmy boli otestované a vzájomne porovnané a vzorových vstupoch rôznych veľkostí RoFIbotov, či dĺžke rekonfigurácií. V prípade prvého algoritmu bolo zistené, že celkový čas rekonfigurácie síce prebiehal na vzorových vstupoch v priemere trikrát dlhšie ako samotné centralizované plánovanie rekonfigurácie, ale počet krokov rekonfigurácie sa podarilo znížiť takmer na pätinu dĺžky. To samozrejme v prípade fyzických modulov je prijateľný čas nakoľko čas potrebný na fyzickú zmenu trvá priemerne dlhšie ako samotné výpočty optimalizácie postupnosti rekonfigurácie. 
+V prípade prvého algoritmu (algoritmus s plnou znalosťou konfigurácie) ide hlavne o samotný výpočet postupnosti krokov rekonfigurácie a jej optimalizáciu. V súčasnej dobe je tento algoritmus implementovaný tak, že každý modul počíta rovnaké hodnoty a na základe nich sa následne vykonáva fyzická rekonfigurácia. Jedným z návrhov na zlepšenie tohto algoritmu je, že každý z modulov môže počítať postupnosť krokov rôznymi algoritmami a inými heuristikami. Išlo by v podstate o prístup, ktorý bol využitý pri evaluácii tohto algoritmu, kde sa vždy vyberie najrýchlejší výsledok, resp. z najrýchlejších výsledkov ten najkratší. 
 
-Súčasný stav druhého algoritmu síce vo niektorých prípadoch nenájde žiadne riešenie, ale ak už riešenie nájde, tak je zaručene najkratšie možné. Zároveň je výpočet druhého algoritmu v porovnaní s prvým neporovnateľne kratší aj na veľkých vstupoch, a preto je vhodné ho využiť minimálne ako vhodnú heuristiku pre spustením iného algoritmu sa rekonfiguráciu. 
+Druhou časťou vhodnou na budúce zlepšenie je samotná optimalizácia krokov. Aktuálny prístup optimalizácie krokov je greedy, a teda nemusí vždy nájsť optimálne riešenie. Ďalším zlepšením je teda riešenie optimalizácie iným spôsobom, napríklad vzájomnou komunikáciou modulov, ktoré sa dohodnú, či je lepšie pokračovať v hľadaní optimálnej postupnosti alebo bude tento výpočet trvať dlho a prejdú na samotnú rekonfiguráciu za cenu dlhšej postupnosti krokov. Alternatívou môže byť využitie faktu, že RoFIbot tvorí distribuovaný systém a ten využiť na počítanie optimalizácie rôznymi prístupmi. 
 
-\section{Budúca práca}
-\label{sec:future}
-V práci je popísaný aktuálny stav algoritmov na distribuovanú rekonfiguráciu. Algoritmy sú navrhnuté tak, aby sa dali jednoducho modifikovať a optimalizovať, čo znamená, že sú v pláne minimálne tieto zmeny. 
+V prípade druhého algoritmu (bez znalosti celej konfigurácie) je častí na zlepšovanie oveľa viac. Navrhnutý algoritmus totiž nedokáže vždy s istotou nájsť triviálne riešenie, ak existuje, a teda jednou alternatívou zlepšovania tohto algoritmu je vyvinutie lepšieho výberu modulu, ktorý bude vykonávať akciu. S tým súvisí aj vylepšenie heuristiky výberu akcie, ktorú ma vyberaný modul vykonať. 
 
-V prípade prvého algoritmu ide hlavne o samotný výpočet postupnosti krokov rekonfigurácie a jej optimalizáciu. V súčasnej dobe je tento algoritmus implementovaný tak, že každý modul počíta rovnaké hodnoty a na základe nich sa následne vykonáva fyzická rekonfigurácia. Jedným z návrhov na zlepšenie tohto algoritmu je, že každý z modulov môže počítať postupnosť krokov rôznymi algoritmami a inými heuristikami. Išlo by v podstate o prístup, ktorý bol využitý pri evaluácii tohto algoritmu, kde sa vždy vyberie najrýchlejší výsledok, resp. z najrýchlejších výsledkov ten najkratší. 
-
-Druhou časťou vhodnou na budúce zlepšenie je samotná optimalizácia krokov. Aktuálny prístup optimalizácie krokov je greedy, a teda nemusí vždy nájsť optimálne riešenie. Teda ďalším zlepšením je riešenie optimalizácie iným spôsobom a vzájomnou komunikáciou sa dohodnú, či je lepšie pokračovať v hľadaní optimálnej postupnosti tento výpočet bude trvať dlho a prejdú na samotnú rekonfiguráciu za cenu dlhšej postupnosti. Prípade opäť využiť distribuované prostredie na počítanie optimalizácie rôznymi prístupmi. 
-
-V prípade druhého algoritmu je častí na zlepšovanie oveľa viac. Navrhnutý algoritmus totiž nedokáže vždy s istotou nájsť triviálne riešenie, ak existuje, a teda jednou alternatívou zlepšovania tohto algoritmu je vyvinutie lepšieho výberu modulov, ktorý bude vykonávať akciu. S tým súvisí aj vylepšenie heuristiky výberu akcie, ktorú ma vyberaný modul vykonať. 
-
-Predchádzajúce zlepšenia však neriešia problém toho, že nie každá rekonfigurácia je nutne triviálna. Preto jedným z riešením takýchto prípadov je navrhnúť istú formu „preprocessingu“ konfigurácie pred spustením samotnej rekonfigurácie, ktorá umožní lepšiu manipuláciu s konfiguráciou. Príkladom môže byť napríklad vytvorenie z konfigurácie strom, ktorý umožní viacerých modulom rotáciu. Ďalším krokom k zlepšeniu tohto algoritmu je vývoj heuristiky, ktorá zistí kedy je vhodné vykonať akciu, ktorá síce neposúva konfiguráciu priamo k cieľovej konfigurácii, ale umožní tým ďalšie akcie, ktoré môžu doviesť k cieľovej konfigurácii. 
+Predchádzajúce zlepšenia však neriešia problém toho, že nie každá rekonfigurácia je nutne triviálna. Preto jedným z riešením takýchto prípadov je upraviť konfiguráciu pred spustením samotnej rekonfigurácie, čo s ňou umožní lepšiu manipuláciu. Príkladom môže byť vytvorenie stromu, ktorý umožní rotáciu viacerým modulom. Ďalším krokom k zlepšeniu tohto algoritmu je vývoj heuristiky, ktorá zistí, kedy je vhodné vykonať akciu, ktorá síce neposúva konfiguráciu priamo k cieľovej konfigurácii, ale umožní tým ďalšie akcie, ktoré môžu viesť k cieľovej konfigurácii. 
 
 % ------------------------------------------------------ 5 ------------------------------------------------------
 
@@ -898,14 +832,14 @@ E 5 A +X W +X B 9
 
 \subsection{Stavy modulu 10}
 \label{sec:algoInput}
-Podľa slovníka sa modul s \textit{id} $= 10$ premenoval na modul s \textit{id} $= 0$ a vystupne súbory na distribuovanú rekonfiguráciu pre tento modul vyzerajú nasledovne: \\ \\
+Podľa slovníka sa modul s \textit{id} $= 10$ premenoval na modul s \textit{id} $= 0$ a výstupné súbory na distribuovanú rekonfiguráciu pre tento modul vyzerajú nasledovne: \\ \\
 \mintinline{text}{0.init} \\
-M 10 90 0 90 \\
-E 9 A +X W +X A 10 \\
+M 0 90 0 90 \\
+E 1 A +X W +X A 0 \\
 \\
 \mintinline{text}{0.goal} \\
-M 10 90 0 0 \\
-E 9 B -X N -Z B 10 \\
+M 0 90 0 0 \\
+E 1 B -X N -Z B 0 \\
 
 \section{Výstupné súbory}
 \subsection{Výstup distribuovanej rekonfigurácie -- log} 
@@ -928,7 +862,7 @@ E 9 B -X N -Z B 10 \\
 3 D 1 A +X W +X A 2 \\
 3 R 2 0 90 
 
-\subsection{Kompatibilný výstup s knižnicou RoFILib}
+\subsection{Výstup kompatibilný s knižnicou RoFILib}
 M 9 90 90 90 \\
 M 10 90 0 90 \\
 M 5 -90 -90 -90 \\
