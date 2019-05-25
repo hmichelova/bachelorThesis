@@ -643,26 +643,26 @@ Problémy rekonfigurácie, ktoré riešia spomínané práce, majú jednotné vs
 
 Podrobný popis vstupných a výstupných súborov sa nachádza v diplomovej práci \textit{Motion Planning for the RoFI Platform} \cite{vozarovaMasterThesis} a ukážka v prílohe \ref{sec:inOutFiles}. Keďže je definícia vstupov a výstupov pre rekonfiguračné problémy jednotná pre celú knižnicu RoFILib, tak je zaručená kompatibilita aj s vizualizačným programom spomínanej knižnice. 
 
-Vstupné a výstupné súbory obsahujú celú konfiguráciu RoFIbota, ktorej celková znalosť na vstupe simulácie ľubovoľného modulu nie je pre túto prácu možná. Tým pádom je z dôvodu kompatibility so zvyškom knižnice implementovaný aj preprocessing a postprocessing, ktorý obaľuje tu implementované algoritmy. 
+Vstupné a výstupné súbory obsahujú celú konfiguráciu RoFIbota, ktorej celková znalosť na vstupe simulácie ľubovoľného modulu nie je pre túto prácu možná. Preto je z dôvodu kompatibility so zvyškom knižnice implementovaný aj preprocessing a postprocessing, ktorý obaľuje tu implementované algoritmy. 
 
-Výpočet rekonfigurácie prebieha tak, že každý modul je samostatný proces, ktorý dostane na vstup vstupné informácie (svoj počiatočný a cieľový stav). Spustené procesy si následne medzi sebou vymieňajú správy a na základe tejto komunikácie prebiehajú výpočty a validné akcie tak, aby sa každý modul rekonfiguroval z počiatočného stavu do cieľového stavu. 
+Výpočet rekonfigurácie prebieha tak, že každý modul je samostatným procesom, ktorý dostane na vstup vstupné informácie (svoj počiatočný a cieľový stav). Spustené procesy si následne medzi sebou vymieňajú správy a na základe tejto komunikácie prebiehajú výpočty a validné akcie tak, aby sa každý modul rekonfiguroval z počiatočného stavu do cieľového stavu. 
 
 Aby bol výstup tejto práce plne kompatibilný s vizualizérom knižnice RoFILib, tak sú jednotlivé vykonané akcie zapísané do logu (príklad logu je v príloha \ref{sec:log}). Na tie sa po skončení rekonfigurácie spustí postprocessing, ktorý vytvorí výstup kompatibilný so zvyškom knižnice. 
 
 \section{Využité knižnice}
 \label{sec:libraries}
-Táto práca je zameraná na distribuované algoritmy a tie sú navrhnuté tak, aby každý modul RoFIbota fungoval ako samostatná entita. Komunikácia medzi entitami je možná výhradne pomocou správ, ktorá je vo fyzických modulov uskutočnená pomocou protokolu MPI\footnote{Message Passing Interface}. Z tohto dôvod implementácia navrhnutých algoritmov využíva knižnicu OpenMPI \cite{openMPILibrary}. Je to open-source knižnica \cite{openMPIGit}, ktorá uľahčuje vývoj multiprocesových aplikácií v distribuovanom prostredí. 
+Táto práca je zameraná na distribuované algoritmy a tie sú navrhnuté tak, aby každý modul RoFIbota fungoval ako samostatná entita. Komunikácia medzi entitami je možná výhradne pomocou správ a vo fyzických moduloch je uskutočnená pomocou protokolu MPI\footnote{Message Passing Interface}. Z tohto dôvodu implementácia navrhnutých algoritmov využíva knižnicu OpenMPI \cite{openMPILibrary}. Je to open-source knižnica \cite{openMPIGit}, ktorá uľahčuje vývoj multiprocesových aplikácií v distribuovanom prostredí. 
 
-Keďže navrhnuté algoritmy majú simulovať výpočty rekonfigurácie fyzických modulov, tak ich cieľom sa čo najviac priblížiť fyzickému modelu. To znamená, že algoritmy využívajú iba minimálnu sadu funkcií a možností knižnice OpenMPI, a to tie, ktoré je možné využiť vo fyzických moduloch. V implementácii sú využité nasledujúce súčasti knižnice OpenMPI: 
+Keďže navrhnuté algoritmy majú simulovať výpočty rekonfigurácie fyzických modulov, tak ich cieľom je čo najviac sa priblížiť fyzickému modelu. To znamená, že algoritmy využívajú iba minimálnu sadu funkcií a možností knižnice OpenMPI, a to tie, ktoré je možné využiť vo fyzických moduloch. V implementácii sú využité nasledujúce súčasti knižnice OpenMPI: 
 \begin{itemize}
-    \item každý proces je unikátne identifikovaný tzv. \textit{rank} procesu, 
-    \item komunikácia medzi dvomi procesmi \textit{send} a \textit{recv} (jednosmerné posielanie dát) resp. \textit{sendrecv} (obojsmerné posielanie dát), 
-    \item jednosmerné posielanie dát všetkým procesom \textit{bcast} (broadcast), 
-    \item jednosmerné posielanie dát jednému procesu \textit{gather}, 
-    \item zdieľanie dát každý s každým \textit{alltoall}. 
+    \item každý proces je unikátne identifikovaný, tzv. \textit{rank} procesu, 
+    \item komunikácia medzi dvomi procesmi pomocou \textit{send} a \textit{recv} (jednosmerné posielanie dát) resp. \textit{sendrecv} (obojsmerné posielanie dát), 
+    \item \textit{bcast} (broadcast): jednosmerné posielanie dát všetkým procesom, 
+    \item \textit{gather}: jednosmerné posielanie dát jednému procesu, 
+    \item \textit{alltoall}: zdieľanie dát každý s každým. 
 \end{itemize}
 
-Na druhú stranu bol návrh vytvorený tak, aby nepoužíval možnosti knižnice OpenMPI, ktoré sa nedajú využívať na fyzických moduloch. Príkladom tohto obmedzenia je nevyužívanie zdieľanej pamäte, nakoľko fyzické moduly žiadnu zdieľanú pamäť nemajú. 
+Okrem toho bol návrh vytvorený tak, aby nepoužíval možnosti knižnice OpenMPI, ktoré sa nedajú využívať na fyzických moduloch. Príkladom tohto obmedzenia je nevyužívanie zdieľanej pamäte, nakoľko fyzické moduly žiadnu zdieľanú pamäť nemajú. 
 
 Na praktické využitie knižnice na simuláciu rekonfigurácie a vizualizácie je nutné mať nainštalované nasledujúce knižnice: 
 \begin{itemize}
@@ -675,7 +675,7 @@ Na praktické využitie knižnice na simuláciu rekonfigurácie a vizualizácie 
 
  Návody na ich inštaláciu sa nachádzajú v súbore \texttt{README.md}\footnote{\url{https://github.com/paradise-fi/RoFI/blob/master/RoFILib/README.md}} knižnice RoFILib. 
 
-Knižnica openMPI spúšťa procesy tak, aby každý z nich mal k dispozícii samostatné jadro, a to hlavne z dôvodu, aby sa navzájom neovplyvňovali\footnote{\url{https://www.open-mpi.org/faq/?category=running#oversubscribing}}. Preto je nutné, aby hardvérové vybavenie strojov, na ktorých bude bežať rekonfigurácia mala aspoň toľko jadier procesoru ako je počet modulov RoFIbota. 
+Knižnica OpenMPI spúšťa procesy tak, aby každý z nich mal k dispozícii samostatné jadro, a to hlavne z dôvodu, aby sa navzájom neovplyvňovali\footnote{\url{https://www.open-mpi.org/faq/?category=running\#oversubscribing}}. Preto je nutné, aby hardvérové vybavenie strojov, na ktorých bude bežať rekonfigurácia, mala aspoň toľko jadier procesoru ako je počet modulov RoFIbota. 
 
 \section{Použitie}
 Výpočet algoritmov na rekonfiguráciu popísaných v tejto práci je možné buď ručným spustením, alebo využitím pripraveného skriptu. V prípade nevyužitia skriptu je nutné, aby vstup pre samotný algoritmus rekonfigurácie bol v špecifickom tvare. Ten je zhodný s formátom súborov, ktoré vytvára preprocessing.
@@ -734,14 +734,14 @@ Zoznam a podrobný popis všetkých prepínačov, ktoré sa využívajú v jedno
 
 % ------------------------------------------------------ 4 ------------------------------------------------------
 \chapter{Experimentálne vyhodnotenie}
-Oba navrhnuté a implementované algoritmy boli otestované na vzorových vstupoch. Vyhodnotenie spočíva v porovnávaní časov, ktorý bol nutný na ich výpočet, schopnosti nájsť riešenie a zároveň aj porovnaní dĺžok nájdených rekonfiguračných postupností. 
+Oba navrhnuté a implementované algoritmy boli otestované na vzorových vstupoch. Vyhodnotenie spočíva v porovnávaní časov, ktoré boli nutné na ich výpočet, schopnosti nájsť riešenie a zároveň aj porovnaní dĺžok nájdených rekonfiguračných postupností. 
 
 \section{Ukážkové rekonfigurácie}
 Vzorové vstupy vznikli generátorom konfigurácií\footnote{\url{https://github.com/paradise-fi/RoFI/tree/master/RoFILib/generate}}, ktorý patrí do knižnice RoFILib. 
 
 Testované vstupy sú vybrané tak, že ich počiatočná konfigurácia je vygenerovaná náhodne s tým, že má vopred určený počet modulov. Tie sú vybrané tak, aby pokryli rôzne veľkosť RoFIbotov od malých konfigurácií s $2$, $3$ alebo $5$ modulmi po veľké konfigurácie s $15$, $50$ a $80$ modulmi. Vybrané počiatočné konfigurácie sú zobrazené na obrázku~\ref{fig:rofibotExamples}. 
 
-Cieľová konfigurácia je vygenerovaná tak, že generátor vygeneruje zadaný počet validných krokov, a tie sa postupne aplikujú na túto konfiguráciu. Tento prístup zaručuje existenciu rekonfiguračnej postupnosti. Vzorové vstupy sú generované na rekonfigurácie dĺžok $5$, $10$, $20$, $30$ a $50$ krokov. 
+Cieľová konfigurácia je vygenerovaná tak, že generátor vygeneruje zadaný počet validných krokov, a tie sa postupne aplikujú na počiatočnú konfiguráciu. Tento prístup zaručuje existenciu rekonfiguračnej postupnosti. Vzorové vstupy sú generované na rekonfigurácie dĺžok $5$, $10$, $20$, $30$ a $50$ krokov. 
 
 Každý vstup má na základe týchto údajov aj určené označenie. Názvy vstupných súborov majú nasledujúci formát:
 
@@ -793,21 +793,23 @@ Nakoľko algoritmy navrhnuté v tejto práci potrebujú dostatočný počet jadi
 \chapter{Záver}
 Táto práca stručne prezentovala robotickú platformu RoFI, a to predovšetkým popis modulu, matematický model popisujúci stav modulu a popis konfigurácie a rekonfigurácie RoFIbota. V práci sa taktiež nachádza popis mnou navrhnutých dvoch distribuovaných algoritmov na rekonfiguráciu, dôkazy ich korektnosti a ich pozitívne, ale aj negatívne vlastnosti. Súčasťou práce je aj implementácia navrhnutých algoritmov a v práci sa nachádza aj popis použitia implementácie. 
 
-Navrhnuté a implementované algoritmy boli otestované a vzájomne porovnané na vzorových vstupoch rôznych veľkostí RoFIbotov či dĺžke rekonfigurácií. V prípade prvého algoritmu bolo zistené, že celkový čas rekonfigurácie síce prebiehal na vzorových vstupoch v priemere trikrát dlhšie ako samotné centralizované plánovanie rekonfigurácie, ale počet krokov rekonfigurácie sa podarilo znížiť takmer na pätinu. To samozrejme je v prípade fyzických modulov prijateľný čas, nakoľko fyzická zmena trvá priemerne dlhšie ako samotné výpočty optimalizácie postupnosti rekonfigurácie. 
+Navrhnuté a implementované algoritmy boli otestované a vzájomne porovnané na vzorových vstupoch rôznych veľkostí RoFIbotov či dĺžke rekonfigurácií. V prípade algoritmu s úplnou znalosťou konfigurácie bolo zistené, že celkový čas rekonfigurácie síce prebiehal na vzorových vstupoch v priemere trikrát dlhšie ako samotné centralizované plánovanie rekonfigurácie, ale počet krokov rekonfigurácie sa podarilo znížiť takmer na pätinu. To je samozrejme v prípade fyzických modulov prijateľný čas, nakoľko fyzická zmena trvá priemerne dlhšie ako samotné výpočty optimalizácie postupnosti rekonfigurácie. 
 
-V súčasnej dobe, druhý algoritmus síce v niektorých prípadoch nenájde žiadne riešenie, ale ak už riešenie nájde, tak je zaručene najkratšie možné. Zároveň je výpočet druhého algoritmu v porovnaní s prvým významne kratší aj na veľkých vstupoch, takže je vhodné využiť ho minimálne ako vhodnú heuristiku pred spustením iného algoritmu na rekonfiguráciu. 
+Druhý algoritmus síce v niektorých prípadoch nenájde žiadne riešenie, ale ak už riešenie nájde, tak je zaručene najkratšie možné. Zároveň je výpočet druhého algoritmu v porovnaní s prvým významne kratší aj na veľkých vstupoch, takže je vhodné využiť ho minimálne ako vhodnú heuristiku pred spustením iného algoritmu na rekonfiguráciu. 
 
 \section{Možnosti rozšírenia práce}
 \label{sec:future}
 V práci je popísaný aktuálny stav algoritmov na distribuovanú rekonfiguráciu. Algoritmy sú navrhnuté tak, aby sa dali jednoducho modifikovať a optimalizovať, čo umožní jednoduchšie zapracovanie napríklad nižšie popísaných zmien. 
 
-V prípade prvého algoritmu (algoritmus s plnou znalosťou konfigurácie) ide hlavne o samotný výpočet postupnosti krokov rekonfigurácie a jej optimalizáciu. V súčasnej dobe je tento algoritmus implementovaný tak, že každý modul počíta rovnaké hodnoty a na základe nich sa následne vykonáva fyzická rekonfigurácia. Jedným z návrhov na zlepšenie tohto algoritmu je, že každý z modulov môže počítať postupnosť krokov rôznymi algoritmami a inými heuristikami. Išlo by v podstate o prístup, ktorý bol využitý pri evaluácii tohto algoritmu, kde sa vždy vyberie najrýchlejší výsledok, resp. z najrýchlejších výsledkov ten najkratší. 
+V prípade algoritmu s plnou znalosťou konfigurácie ide hlavne o samotný výpočet postupnosti krokov rekonfigurácie a jej optimalizáciu. V súčasnej dobe je tento algoritmus implementovaný tak, že každý modul počíta rovnaké hodnoty a na základe nich sa následne vykonáva fyzická rekonfigurácia. Jedným z návrhov na zlepšenie tohto algoritmu je, že každý z modulov môže počítať postupnosť krokov rôznymi algoritmami a inými heuristikami. Išlo by v podstate o prístup, ktorý bol využitý pri evaluácii tohto algoritmu, kde sa vždy vyberie najrýchlejší výsledok, resp. z najrýchlejších výsledkov ten najkratší. 
 
-Druhou časťou vhodnou na budúce zlepšenie je samotná optimalizácia krokov. Aktuálny prístup optimalizácie krokov je greedy, a teda nemusí vždy nájsť optimálne riešenie. Ďalším zlepšením je teda riešenie optimalizácie iným spôsobom, napríklad vzájomnou komunikáciou modulov, ktoré sa dohodnú, či je lepšie pokračovať v hľadaní optimálnej postupnosti alebo bude tento výpočet trvať dlho a prejdú na samotnú rekonfiguráciu za cenu dlhšej postupnosti krokov. Alternatívou môže byť využitie faktu, že RoFIbot tvorí distribuovaný systém a ten využiť na počítanie optimalizácie rôznymi prístupmi. 
+Druhou časťou vhodnou na budúce zlepšenie je samotná optimalizácia krokov. Aktuálny prístup optimalizácie krokov je greedy, a teda nemusí vždy nájsť optimálne riešenie. Ďalším zlepšením je teda riešenie optimalizácie iným spôsobom, napríklad vzájomnou komunikáciou modulov, ktoré sa dohodnú, či je lepšie pokračovať v hľadaní optimálnej postupnosti alebo bude tento výpočet trvať dlho a prejdú na samotnú rekonfiguráciu za cenu dlhšej postupnosti krokov. Alternatívne môžeme využiť fakt, že RoFIbot tvorí distribuovaný systém, a počítať optimalizácie rôznymi prístupmi. 
 
 V prípade druhého algoritmu (bez znalosti celej konfigurácie) je častí na zlepšovanie oveľa viac. Navrhnutý algoritmus totiž nedokáže vždy s istotou nájsť triviálne riešenie, ak existuje, a teda jednou alternatívou zlepšovania tohto algoritmu je vyvinutie lepšieho výberu modulu, ktorý bude vykonávať akciu. S tým súvisí aj vylepšenie heuristiky výberu akcie, ktorú ma vyberaný modul vykonať. 
 
 Predchádzajúce zlepšenia však neriešia problém toho, že nie každá rekonfigurácia je nutne triviálna. Preto jedným z riešením takýchto prípadov je upraviť konfiguráciu pred spustením samotnej rekonfigurácie, čo s ňou umožní lepšiu manipuláciu. Príkladom môže byť vytvorenie stromu, ktorý umožní rotáciu viacerým modulom. Ďalším krokom k zlepšeniu tohto algoritmu je vývoj heuristiky, ktorá zistí, kedy je vhodné vykonať akciu, ktorá síce neposúva konfiguráciu priamo k cieľovej konfigurácii, ale umožní tým ďalšie akcie, ktoré môžu viesť k cieľovej konfigurácii. 
+
+V prípade oboch algoritmov je možné uvažovať o optimalizácii premenovania uzlov tak, aby bol výpočet centralizovaného riešenia rekonfigurácie vypočítaný za čo najkratší čas s minimálnou dĺžkou postupnosti.
 
 % ------------------------------------------------------ 5 ------------------------------------------------------
 
@@ -896,22 +898,23 @@ E 5 A +X W +X B 9
 \begin{tabular}{c|cc|cc|cc|cc}
 \multirow{2}{*}{} & \multicolumn{2}{c|}{dCenter} & \multicolumn{2}{c|}{dJoint} & \multicolumn{2}{c|}{dMatrix} & \multicolumn{2}{c}{dAction} \\
  & čas & dĺžka & čas & dĺžka & čas & dĺžka & čas & dĺžka \\ \hline
+2-5  & 00:02 & 4 & 00:02 & 4 & 00:02 & 4 & 00:02 & 4 \\
+2-10  & 00:03 & 2 & 00:02 & 2 & 00:02 & 2 & 00:02 & 2 \\
+2-20  & 00:05 & 4 & 00:06 & 4 & 00:04 & 8 & 00:04 & 4 \\
+2-30  & 00:09 & 6 & 00:03 & 6 & 00:02 & 6 & 00:04 & 6 \\
+2-50  & 00:21 & 4 & 00:09 & 4 & 00:02 & 4 & 00:04 & 4 \\ \hline
+3-5  & 00:02 & 2 & 00:02 & 2 & 00:02 & 2 & 00:02 & 2 \\
+3-10  & 00:02 & 2 & 00:02 & 2 & 00:02 & 2 & 00:02 & 2 \\
+3-20  & 00:08 & 4 & 00:08 & 4 & 00:02 & 4 & 00:03 & 4 \\
+3-30  & 00:02 & 2 & 00:02 & 2 & 00:06 & 2 & 00:03 & 2 \\
+3-50  & 38:39 & 5 & 24:33 & 5 & 00:03 & 5 & 00:20 & 5 \\ \hline
+5-5  & 00:30 & 3 & 00:03 & 3 & 00:02 & 3 & 00:03 & 3 \\
+5-10  & 07:03 & 5 & 00:23 & 5 & 00:07 & 6 & 00:17 & 5 \\
+5-20  & 30:23 & 1 & 30:01 & 1 & 03:46 & 6 & 01:50 & 6 \\
+5-30  & 00:16 & 4 & 01:40 & 4 & 00:03 & 4 & 00:14 & 4 \\
+5-50  & 30:16 & 1 & 30:01 & 1 & 30:20 & 2 & 30:17 & 1 \\ \hline
 
-2-5  & 00:02  &  4  & 00:02  &  4  & 00:02  &  4  & 00:02  &  4  \\
-2-10  & 00:02  &  2  & 00:02  &  2  & 00:02  &  2  & 00:02  &  2  \\
-2-20  & 00:05  &  4  & 00:06  &  4  & 00:04  &  8  & 00:04  &  4  \\
-2-30  & 00:09  &  6  & 00:03  &  6  & 00:02  &  6  & 00:04  &  6  \\
-2-50  & 00:21  &  4  & 00:09  &  4  & 00:02  &  4  & 00:04  &  4  \\ \hline
-3-5  & 00:02  &  2  & 00:02  &  2  & 00:02  &  2  & 00:02  &  2  \\
-3-10  & 00:02  &  2  & 00:02  &  2  & 00:02  &  2  & 00:02  &  2  \\
-3-20  & 00:08  &  4  & 00:08  &  4  & 00:02  &  4  & 00:03  &  4  \\
-3-30  & 00:03  &  2  & 00:02  &  2  & 00:06  &  2  & 00:03  &  2  \\
-3-50  & 38:48  &  5  & 23:22  &  5  & 00:02  &  5  & 00:19  &  5  \\ \hline
-5-5  & 00:29  &  3  & 00:03  &  3  & 00:02  &  3  & 00:08  &  3  \\
-5-10  & 07:02  &  5  & 00:23  &  5  & 00:07  &  6  & 00:16  &  5  \\
-5-20  & --  &  --  & --  &  --  & 03:49  &  6  & 01:49  &  6  \\
-5-30  & 00:15  &  4  & 01:39  &  4  & 00:03  &  4  & 00:13  &  4  \\
-5-50  & --  &  --  & --  &  --  & --  &  --  & --  &  --  \\ \hline
+
 10-5  & 00:15  &  2  & 00:02  &  2  & 00:02  &  2  & 00:02  &  2  \\
 10-10  & --  &  --  & 00:51  &  3  & 00:03  &  3  & 00:06  &  3  \\
 10-20  & --  &  --  & --  &  --  & --  &  --  & 05:15  &  4  \\
@@ -948,12 +951,13 @@ E 5 A +X W +X B 9
 3-10  & 00:00 & 9  & 00:00 & 7  & 00:00 & 11  & 00:00 & 7  \\
 3-20  & 00:05 & 11  & 00:03 & 11  & 00:00 & 13  & 00:00 & 11  \\
 3-30  & 00:00 & 11  & 00:00 & 11  & 00:03 & 13  & 00:00 & 11  \\
-3-50  & 09:21 & 15  & 03:08 & 15  & 00:00 & 15  & 00:09 & 15  \\ \hline
+3-50  & 09:23 & 15  & 03:06 & 15  & 00:00 & 15  & 00:09 & 15  \\ \hline
 5-5  & 00:40 & 8  & 00:00 & 8  & 00:00 & 8  & 00:00 & 8  \\
-5-10  & 05:49 & 13  & 00:19 & 13  & 00:04 & 13  & 00:10 & 13  \\
-5-20  & 12:58 & 17  & -- & --  & 01:29 & 25  & 00:51 & 17  \\
+5-10  & 05:48 & 13  & 00:19 & 13  & 00:04 & 13  & 00:10 & 13  \\
+5-20  & 12:45 & 17  & -- & --  & 01:29 & 25  & 00:52 & 17  \\
 5-30  & 01:06 & 17  & 01:28 & 13  & 01:22 & 25  & 00:18 & 13  \\
-5-50  & -- & --  & -- & --  & 02:06 & 35  & -- & --  \\ \hline
+5-50  & -- & --  & -- & --  & 02:05 & 35  & -- & --  \\ \hline
+ 
 10-5  & 00:02 & 5  & 00:00 & 5  & 00:00 & 5  & 00:00 & 5  \\
 10-10  & -- & -- & 00:07 & 11  & 00:00 & 11  & 00:05 & 11  \\
 10-20  & -- & -- & 13:47 & 17  & 01:16 & 29  & 04:29 & 17  \\
