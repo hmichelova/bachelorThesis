@@ -978,15 +978,15 @@ E 5 A +X W +X B 9
 
 \section{Readme}
 \label{sec:readme}
-\subsection*{Distribute}
+\subsection*{Distributed reconfiguration}
 \subsubsection*{Preprocessing}
 
-The tool prepares files for distributed rekonfigurations. 
+This process prepares files for distributed reconfigurations. 
 
 \begin{minted}{text}
-./rofi-distribute-preprocessing --help
-RoFI Distributed Preprocessing: Tool for prepare files for 
-distrbuted reconfiguration. 
+$ ./rofi-distribute-preprocessing --help
+RoFI Distributed Preprocessing: Tool for preparing files 
+for distrbuted reconfiguration. 
 Usage: 
   rofi-distribute-preprocessing [OPTION...]
 
@@ -995,7 +995,6 @@ Usage:
   -g, --goal arg        Goal config file
   -d, --directory arg   Directory for module's configs
 \end{minted}
-
 Example: 
 
 \begin{minted}{bash}
@@ -1005,22 +1004,21 @@ Example:
 
 \subsubsection*{Distributed reconfiguration}
 
-The tool computes a reconfiguration path in distributed environment. 
+This tool computes a reconfiguration path in distributed environment. 
 
-You can choose the algorithm using `--alg` option with two possible arguments:
+You can choose the algorithm using the \mintinline{text}{--alg} option with two possible arguments:
+
+\begin{itemize}
+    \item \mintinline{text}{full} -- Full configuration knowledge.
+    \item \mintinline{text}{partial} -- Partial configuration knowledge -- fully distributed. 
+\end{itemize}
+
+If the \mintinline{text}{full} algorithm is chosen, you can choose from different evaluation functions for the \textit{A*} algorithm -- the evaluation functions are the same as in the reconfiguration section. 
 
 \begin{minted}{text}
-  `full`     Full configuration knowledge.
-  `partial`  Partial configuration knowledge 
-             - fully distributed. 
-\end{minted}
-
-If the `full` algorithm is chosen, you can choose from different evaluation functions for A* algorithm - the evaluation functions are the same as in the reconfiguration section. 
-
-\begin{minted}{text}
-./distribute/rofi-distribute --help
+$ ./distribute/rofi-distribute --help
 RoFI Distributed Reconfiguration: Tool for distributed 
-computing a reconfiguration path.
+computation of a reconfiguration path.
 Usage:
   distribute/rofi-distribute [OPTION...]
 
@@ -1032,7 +1030,6 @@ Usage:
                        A* algorithm: trivial, dMatrix, 
                        dCenter, dJoint, dAction
 \end{minted}
-
 Examples:
 
 \begin{minted}{bash}
@@ -1048,19 +1045,19 @@ Examples:
 
 \subsubsection*{Postprocessing}
 
-The tool processes temporery timestamped file to sequence of configurations. 
+This tool processes given temporary timestamped file to a sequence of configurations. 
 
 \begin{minted}{text}
-./rofi-ditribute-postprocessing --help
-RoFI Distributed Postprocessing: Tool for processes 
-temporery timestamped file to sequence of configurations. 
+$ ./rofi-ditribute-postprocessing --help
+RoFI Distributed Postprocessing: Tool for processing given
+temporary timestamped file to a sequence of configurations. 
 Usage:
   rofi-distribute-postprocessing [OPTION...]
+  
   -h, --help            Print help
   -t, --dictionary arg  Dictionary file
   -i, --input arg       File with timestamped actions 
 \end{minted}
-
 Example: 
 
 \begin{minted}{bash}
@@ -1068,9 +1065,9 @@ Example:
       -t processing/dictionary
 \end{minted}
 
-\subsection*{How to distributed reconfigurate in one step}
+\subsection*{How to do distributed reconfiguration in one step}
 
-Use script distribute.sh in distribute/scripts directory. 
+Use the script \texttt{distribute.sh} in \texttt{distribute/scripts} directory. 
 
 Options: 
 
@@ -1086,7 +1083,6 @@ Options:
                        A* algorithm: trivial, dMatrix, 
                        dCenter, dJoint, dAction
 \end{minted}
-
 Examples:
 
 \begin{minted}{bash}
@@ -1098,7 +1094,6 @@ Examples:
   ./distribute.sh -i ../data/init.in -g ../data/goal.in \
       -d processing -a full -e dMatrix -f host-file
 \end{minted}
-
 
 
 
