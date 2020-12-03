@@ -3,7 +3,11 @@
 
 Aktuálnu verziu práce vo formáte pdf môžete nájsť
 [tu](https://www.fi.muni.cz/~xmichel/bachelorThesis.pdf "Henrieta Micheľová:
-bakalárska práca").
+bakalárska práca"). 
+
+Bakalárska práca bola úspešne [odovzdaná](https://is.muni.cz/th/seaqf/ "Henrieta Micheľová: 
+IS záverečná práca" a [obhájená](https://www.fi.muni.cz/~xmichel/slidy.pdf "Henrieta Micheľová: 
+obhajoba záverečnej práce"). 
 
 ## Repozitár platformy RoFI
 
