@@ -61,7 +61,9 @@
     TeXtitle      = {Distribuované algoritmy pro rekonfiguraci platformy RoFI},
     keywords      = {modulárny, robot, RoFIbot, distribuovaný algoritmus, rekonfigurácia, platforma RoFI, MPI, OpenMPI},
     TeXkeywords   = {modulárny, robot, RoFIbot, distribuovaný algoritmus, rekonfigurácia, platforma RoFI, MPI, OpenMPI},
-    abstract      = {Platforma RoFI je nová modulárna robotická platforma vyvíjaná v~laboratóriu ParaDiSe. Táto práca stavia na už definovaných konceptoch platformy a prináša nový pohľad na rekonfiguráciu modulárnych robotov tejto platformy. Ďalej navrhuje a implementuje riešenie problému rekonfigurácie robotov z~distribuovaného hľadiska, teda z~pohľadu jedného modulu. Prínosom tejto práce je nástroj \textit{rofi-distribute}, ktorý poskytuje dva algoritmy na výpočet distribuovanej rekonfigurácie, ktoré boli otestované na sade príkladov. Výsledkami práce sú tiež porovnania navrhnutých algoritmov medzi sebou navzájom, ale aj porovnanie voči existujúcemu riešeniu problému rekonfigurácie z~pohľadu dĺžky trvanie výpočtov a počtu krokov rekonfigurácie. },
+    abstract      = {Platforma RoFI je nová modulárna robotická platforma vyvíjaná v~laboratóriu ParaDiSe. Táto práca stavia na už definovaných konceptoch platformy a prináša nový pohľad na rekonfiguráciu modulárnych robotov tejto platformy. Ďalej navrhuje a implementuje riešenie problému rekonfigurácie robotov z~distribuovaného hľadiska, teda z~pohľadu jedného modulu. Prínosom tejto práce je nástroj \textit{rofi-distribute}, ktorý poskytuje dva algoritmy na výpočet distribuovanej rekonfigurácie, ktoré boli otestované na sade príkladov. Výsledkami práce sú tiež porovnania navrhnutých algoritmov medzi sebou navzájom, ale aj porovnanie voči existujúcemu riešeniu problému rekonfigurácie z~pohľadu dĺžky trvanie výpočtov a počtu krokov rekonfigurácie. 
+    
+    The RoFI platform is a brand new modular robotic platform developed in the ParaDiSe laboratory. This thesis builds on already defined platform concepts and brings new perspective on the reconfiguration of this platform's modular robots. Furthermore, it designs and implements a solution to the problem of reconfiguring robots from a distributed point of view, i.e. from a single module perspective. The result of this thesis is a rofi-distribute tool, which provides two distributed reconfiguration algorithms, that have been tested on a set of inputs examples. The thesis compares the results of the proposed algorithms with each other, but also contains a comparison with the existing solution of the reconfiguration problem. The evaluation is based on length of the calculation and the number of reconfiguration steps.},
     thanks        = {Veľká vďaka patrí všetkým ľudom v~laboratóriu ParaDiSe za príjemnú atmosféru pri práci a každodennú čokoládu, hlavne celému tímu, ktorý sa podieľa na vývoji platformy RoFI, a to menovite vedúcej práce Ivane Černej a ďalším členom: Jiřímu Barnatovi, Janovi Mrázkovi, Viktórii Vozárovej a Markéte Naušovej, ktorí boli vždy ochotní zodpovedať mi otázky, prípadne konzultovať nápady. 
     
     Rovnaká vďaka patrí aj Vladimírovi Štillovi za pohotovú pomoc pri technických komplikáciách a Lukášovi Korenčikovi za podporu pri práci počas sviatkov a víkendov. Ďalej aj Tomášovi Szaniszlovi za podporu a korekcie textu práce do neskorých nočných hodín. V~neposlednom rade rodine a kamarátom za ich podporu nielen pri tvorbe tejto práce. },
@@ -272,8 +274,6 @@ Formálny popis výpočtu kolízií v~konfigurácii RoFIbota je podrobnejšie uv
 
 Keďže komunikácia medzi modulmi môže prebiehať po fyzickom spojení pomocou konektorov, ale aj bezdrôtovo, tak si zadefinujeme spojitosť RoFIbota. 
 
-RoFIbot je \textit{spojitý}, ak medzi akýmikoľvek jeho dvomi modulmi existuje cesta tvorená modulmi a prepojeniami. To značí, že komunikácia medzi akýmikoľvek dvomi modulmi spojitého RoFIbota môže prebiehať výhradne fyzickými spojeniami (viď príklad spojitej a nespojitej konfigurácie na obrázku \ref{fig:exampleCfg}). 
-
 \begin{figure}[hbt!]
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
@@ -289,6 +289,8 @@ RoFIbot je \textit{spojitý}, ak medzi akýmikoľvek jeho dvomi modulmi existuje
     \caption[Príklad konfigurácie]{Príklad spojitej a nespojitej konfigurácie.}
     \label{fig:exampleCfg}
 \end{figure}
+
+RoFIbot je \textit{spojitý}, ak medzi akýmikoľvek jeho dvomi modulmi existuje cesta tvorená modulmi a prepojeniami. To značí, že komunikácia medzi akýmikoľvek dvomi modulmi spojitého RoFIbota môže prebiehať výhradne fyzickými spojeniami (viď príklad spojitej a nespojitej konfigurácie na obrázku \ref{fig:exampleCfg}). 
 
 Predpokladá sa, že každý modul je definovaný validne. To znamená, že údaje sú z~popísaných rozsahov a množín. Každá hrana je definovaná pre oba prepojené moduly, a to v~rovnakom tvare. Zároveň platí, že konfigurácia RoFIbota, ktorú popisujú dané stavy modulov, je spojitá a validná. 
 
@@ -314,7 +316,7 @@ Nie každú akciu je možné aplikovať na akúkoľvek konfiguráciu RoFIbota. \
     \item akcia rotácie: nesmie dôjsť ku kolízii s~inými modulmi (viď obrázok \ref{fig:rotationExample}), 
     \item akcia prepojenia: 
     \begin{itemize}[topsep=-5pt]
-        \item oba konektory sa musia podieľať na spojení (príklad na obrázku \ref{fig:reconnectionExample}), 
+        \item oba konektory sa podieľajú na spojení (napr obrázok \ref{fig:reconnectionExample}), 
         \item každý konektor sa podieľa na maximálne jednom spojení,
         \item konektory, ktoré sa majú prepojiť, musia byť fyzicky schopné prepojenia.
     \end{itemize}
@@ -470,8 +472,6 @@ Toto spájanie prebieha nasledovne: Postupne sa prechádza každý index krokov 
 
 Rovnosť \ref{align:stepSwap} popisuje iba výmenu dvoch krokov. Cieľom algoritmu však bude v~časti výmeny krokov vymeniť ich viacero, nakoľko tieto výmeny môžu umožniť ďalšie spájania krokov. 
 
-Výmeny prebiehajú nasledovne: Postupne sa prechádza každý index krokov od $1$ až po predposledný krok rekonfigurácie. Ak sa kroky $\mathcal{S}_i$ a $\mathcal{S}_{i + 1}$ dajú vymeniť, tak sa vymenia. Následne sa pokračuje testovaním výmeny pre krok na indexe $i + 1$ a $i + 2$. Tento postup je uvedený pomocou pseudokódu v~algoritme~\ref{algorithm:stepSwap}. 
-
 \begin{algorithm}
     \caption{swapSteps}
     \label{algorithm:stepSwap}
@@ -491,6 +491,8 @@ Výmeny prebiehajú nasledovne: Postupne sa prechádza každý index krokov od $
         }
     }
 \end{algorithm}
+
+Výmeny prebiehajú nasledovne: Postupne sa prechádza každý index krokov od $1$ až po predposledný krok rekonfigurácie. Ak sa kroky $\mathcal{S}_i$ a $\mathcal{S}_{i + 1}$ dajú vymeniť, tak sa vymenia. Následne sa pokračuje testovaním výmeny pre krok na indexe $i + 1$ a $i + 2$. Tento postup je uvedený pomocou pseudokódu v~algoritme~\ref{algorithm:stepSwap}. 
 
 Celá optimalizácia prebieha nasledovným spôsobom: V~prvom rade sa vykoná spájanie krokov. Následne sa opakuje výmena krokov a spájanie krokov, a to dovtedy, kým spájanie krokov vykoná nejakú zmenu. Táto optimalizácia je znázornená aj v~algoritme~\ref{algorithm:algo1}. 
 
@@ -532,11 +534,11 @@ Spôsob zavedenia súradnicového systému a aj algoritmus na výpočet súradn�
 
 \begin{figure}[hbt!]
     \centering
-    \begin{subfigure}[b]{0.47\textwidth}
+    \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{pictures/module_dock_identification.pdf}
         \caption[Pohľad spredu]{Pohľad spredu.}
     \end{subfigure}
-    \begin{subfigure}[b]{0.47\textwidth}
+    \begin{subfigure}[b]{0.49\textwidth}
         \includegraphics[width=\textwidth]{pictures/module_dock_identification_bottom.pdf}
         \caption[Pohľad zospodu]{Pohľad zospodu.}
     \end{subfigure}
@@ -836,7 +838,7 @@ V~tabuľke \ref{tab:all} je použitý vždy najlepší výsledok merania pre dan
 
 V~prvom rade je nutné porovnať dĺžky výpočtov a dĺžky výslednej rekonfiguračnej postupnosti medzi algoritmom s~úplnou znalosťou konfigurácie a algoritmom \textit{A*}. Algoritmus s~úplnou znalosťou využíva algoritmus \textit{A*} hneď po zistení celkovej konfigurácie RoFIbota, čo znamená, že čas potrebný na výpočet algoritmu s~plnou znalosťou je nutne väčší ako pre algoritmus \textit{A*}. 
 
-Zároveň platí, že je nutné brať ohľad na označenie modulov v~RoFIbotovi. Na základe tabuliek \ref{tab:astar-orig} a \ref{tab:astar-renamed} je tento rozdiel značný už pri RoFIbotoch s~$5$ modulmi, kde napríklad vstup \textit{5-50} s~heuristikou dMatrix trvá v~pôvodnom značení identifikátorov iba niečo viac ako $2$ minúty, ale po zmene značenia preprocessingom je nutné mať na rekonfiguráciu $28$ minút. Opačný prípad nastáva napríklad pri vstupe \textit{80-5} s~heuristikou dMatrix. 
+Zároveň platí, že je nutné brať ohľad na označenie modulov v~RoFIbotovi. Na základe tabuliek \ref{tab:astar-orig} a \ref{tab:astar-renamed} je tento rozdiel značný už pri RoFIbotoch s~$5$ modulmi, kde napríklad vstup \textit{5-50} s~heuristikou dMatrix trvá v~pôvodnom značení identifikátorov iba niečo viac ako $2$ minúty, ale po zmene značenia preprocessingom je nutné mať na~rekonfiguráciu $28$ minút. Opačný prípad nastáva napríklad pri vstupe \textit{80-5} s~heuristikou dMatrix. 
 
 Výsledkom porovnania algoritmu s~plnou znalosťou konfigurácie a algoritmu \textit{A*} v~najkratších časoch rekonfigurácie a dĺžkach výslednej rekonfiguračnej postupnosti je, že čas sa nepravidelne zvyšuje (od zanedbateľných stotín percenta až po trojnásobok pôvodného výpočtu), ale dĺžka cesty sa vo väčšine prípadov skrátila na tretinu pôvodnej dĺžky. Nakoľko je možné optimalizáciu tohto algoritmu v~akomkoľvek bode zastaviť, tak je tento algoritmus minimálne efektívny z~pohľadu toho, že dokáže v~niektorých prípadoch za krátke navýšenie výpočtového času efektívne skrátiť dĺžku rekonfiguračnej postupnosti. 
 
@@ -855,7 +857,7 @@ Namerané hodnoty ukazujú, že je vhodné použiť algoritmus s~čiastočnou zn
 
 % ------------------------------------------------------ 5 ------------------------------------------------------
 \chapter{Záver}
-Táto práca stručne prezentovala robotickú platformu RoFI, a to predovšetkým popis modulu, matematický model popisujúci stav modulu a popis konfigurácie a rekonfigurácie RoFIbota. V~práci sa taktiež nachádza popis mnou navrhnutých dvoch distribuovaných algoritmov na rekonfiguráciu, dôkazy ich korektnosti a ich pozitívne, ale aj negatívne vlastnosti. Súčasťou práce je aj implementácia navrhnutých algoritmov a v~práci sa nachádza aj popis použitia implementácie. 
+Táto práca stručne prezentovala robotickú platformu RoFI, a to predovšetkým popis modulu, matematický model popisujúci stav modulu a~popis konfigurácie a rekonfigurácie RoFIbota. V~práci sa taktiež nachádza popis mnou navrhnutých dvoch distribuovaných algoritmov na rekonfiguráciu, dôkazy ich korektnosti a ich pozitívne, ale aj negatívne vlastnosti. Súčasťou práce je aj implementácia navrhnutých algoritmov a v~práci sa nachádza aj popis použitia implementácie. 
 
 Navrhnuté a implementované algoritmy boli otestované a vzájomne porovnané na vzorových vstupoch rôznych veľkostí RoFIbotov či dĺžke rekonfigurácií. V~prípade algoritmu s~úplnou znalosťou konfigurácie bolo zistené, že celkový čas rekonfigurácie síce prebiehal na vzorových vstupoch v~priemere trikrát dlhšie ako samotné centralizované plánovanie rekonfigurácie, ale počet krokov rekonfigurácie sa podarilo znížiť takmer na pätinu. To je samozrejme v~prípade fyzických modulov prijateľný čas, nakoľko fyzická zmena trvá priemerne dlhšie ako samotné výpočty optimalizácie postupnosti rekonfigurácie. 
 
@@ -867,7 +869,7 @@ V~práci je popísaný aktuálny stav algoritmov na distribuovanú rekonfigurác
 
 V~prípade algoritmu s~plnou znalosťou konfigurácie ide hlavne o~samotný výpočet postupnosti krokov rekonfigurácie a jej optimalizáciu. V~súčasnej dobe je tento algoritmus implementovaný tak, že každý modul počíta rovnaké hodnoty a na základe nich sa následne vykonáva fyzická rekonfigurácia. Jedným z~návrhov na zlepšenie tohto algoritmu je, že každý z~modulov môže počítať postupnosť krokov rôznymi algoritmami a inými heuristikami. Išlo by v~podstate o~prístup, ktorý bol využitý pri evaluácii tohto algoritmu, kde sa vždy vyberie najrýchlejší výsledok, resp. z~najrýchlejších výsledkov ten najkratší. 
 
-Druhou časťou vhodnou na budúce zlepšenie je samotná optimalizácia krokov. Aktuálny prístup optimalizácie krokov je greedy, a teda nemusí vždy nájsť optimálne riešenie. Ďalším zlepšením je teda riešenie optimalizácie iným spôsobom, napríklad vzájomnou komunikáciou modulov, ktoré sa dohodnú, či je lepšie pokračovať v~hľadaní optimálnej postupnosti alebo bude tento výpočet trvať dlho a prejdú na samotnú rekonfiguráciu za cenu dlhšej postupnosti krokov. Alternatívne môžeme využiť fakt, že RoFIbot tvorí distribuovaný systém, a počítať optimalizácie rôznymi prístupmi. 
+Druhou časťou vhodnou na budúce zlepšenie je samotná optimalizácia krokov. Aktuálny prístup optimalizácie krokov je greedy, a~teda nemusí vždy nájsť optimálne riešenie. Ďalším zlepšením je teda riešenie optimalizácie iným spôsobom, napríklad vzájomnou komunikáciou modulov, ktoré sa dohodnú, či je lepšie pokračovať v~hľadaní optimálnej postupnosti alebo bude tento výpočet trvať dlho a prejdú na samotnú rekonfiguráciu za cenu dlhšej postupnosti krokov. Alternatívne môžeme využiť fakt, že RoFIbot tvorí distribuovaný systém, a~počítať optimalizácie rôznymi prístupmi. 
 
 V~prípade druhého algoritmu (bez znalosti celej konfigurácie) je častí na zlepšovanie oveľa viac. Navrhnutý algoritmus totiž nedokáže vždy s~istotou nájsť triviálne riešenie, ak existuje, a teda jednou alternatívou zlepšovania tohto algoritmu je vyvinutie lepšieho výberu modulu, ktorý bude vykonávať akciu. S~tým súvisí aj vylepšenie heuristiky výberu akcie, ktorú ma vyberaný modul vykonať. 
 
@@ -898,7 +900,7 @@ E 5 A~+X W +X B 9
 
 \subsection{Stavy modulu 10}
 \label{sec:algoInput}
-Podľa slovníka sa modul s~\textit{id} $= 10$ premenoval na modul s~\textit{id} $= 0$ a výstupné súbory na distribuovanú rekonfiguráciu pre tento modul vyzerajú nasledovne: \\ \\
+Podľa slovníka sa modul s~\textit{id} $= 10$ premenoval na modul s~\textit{id} $= 0$ a~výstupné súbory na distribuovanú rekonfiguráciu pre tento modul vyzerajú nasledovne: \\ \\
 \mintinline{text}{0.init} \\
 M 0 90 0 90 \\
 E 1 A~+X W +X A~0 \\
@@ -959,7 +961,7 @@ E 5 A~+X W +X B 9
 
 Tabuľky \ref{tab:algo1}, \ref{tab:astar-orig} a \ref{tab:astar-renamed} majú nasledujúci formát: 
 
-V~prvom stĺpci tabuľky sa nachádza označenie testu, ktoré je vo formáte \textit{<počet modulov>-<dĺžka postupnosti>}, pričom zadaná dĺžka je dĺžkou rekonfiguračnej postupnosti, z~ktorej vznikla cieľová konfigurácia. Nasledujúce stĺpce znázorňujú výpočty daného algoritmu (záleží na tabuľke) s~vybranou heuristikou (záleží na stĺpci), pričom je pri každej heuristike uvedený čas (vo formáte \textit{minúty:sekundy}) výpočtu rekonfiguračného algoritmu a dĺžka rekonfiguračnej postupnosti. 
+V~prvom stĺpci tabuľky sa nachádza označenie testu, ktoré je vo formáte \textit{<počet modulov>-<dĺžka postupnosti>}, pričom zadaná dĺžka je dĺžkou rekonfiguračnej postupnosti, z~ktorej vznikla cieľová konfigurácia. Nasledujúce stĺpce znázorňujú výpočty daného algoritmu (záleží na tabuľke) s~vybranou heuristikou (záleží na stĺpci), pričom je pri~každej heuristike uvedený čas (vo formáte \textit{minúty:sekundy}) výpočtu rekonfiguračného algoritmu a dĺžka rekonfiguračnej postupnosti. 
 
 \colorbox{table-green}{Zelenou} je vyznačený výpočet, ktorého čas je najkratší spomedzi heuristík. V~prípade rovnosti časov je rozhodujúca dĺžka rekonfiguračnej postupnosti vzostupne. Označenie \uv{--} predstavuje výpočet, ktorý neskončil do vypršania timeoutu 30 minút. 
 
